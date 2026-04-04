@@ -162,13 +162,7 @@ export function GoldBrushText({
   );
 }
 
-// ─── GoldBrushStroke — decorative painted divider ──────────────────────
-
-const brushPaths = [
-  "M0,25 C30,5 60,40 100,20 C140,0 180,35 220,15 C260,-5 300,30 340,25 C380,20 420,10 460,28 C500,45 540,5 580,20 C620,35 660,8 700,25",
-  "M0,20 Q80,0 160,22 Q240,44 320,18 Q400,-5 480,24 Q560,50 640,20 Q720,0 800,22",
-  "M0,30 C50,10 100,45 150,20 C200,-5 250,35 300,25 C350,15 400,40 450,18 C500,0 550,30 600,22 C650,14 700,38 750,20",
-];
+// ─── GoldBrushStroke — solid gold underline with drifting particles ────
 
 interface GoldBrushStrokeProps {
   className?: string;
@@ -181,52 +175,136 @@ export function GoldBrushStroke({
   className = "",
   delay = 0,
   width = "120px",
-  brushIndex = 1,
 }: GoldBrushStrokeProps) {
   const { ref, isVisible } = useScrollReveal(0.3);
-  const path = brushPaths[brushIndex % brushPaths.length];
-  const filterId = useRef(`brush-${Math.random().toString(36).slice(2, 8)}`).current;
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const particlesRef = useRef<{ x: number; y: number; vx: number; vy: number; life: number; maxLife: number; size: number; alpha: number }[]>([]);
+  const animRef = useRef<number>(0);
+  const spawnedRef = useRef(false);
+
+  useEffect(() => {
+    if (!isVisible || spawnedRef.current) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const timer = setTimeout(() => {
+      spawnedRef.current = true;
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      const cw = rect.width;
+      const ch = rect.height;
+      canvas.width = cw * dpr;
+      canvas.height = ch * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      // Spawn initial particles along the line
+      const spawnBatch = () => {
+        const count = Math.floor(cw / 12);
+        for (let i = 0; i < count; i++) {
+          particlesRef.current.push({
+            x: Math.random() * cw,
+            y: ch / 2 + (Math.random() - 0.5) * 2,
+            vx: (Math.random() - 0.5) * 0.3,
+            vy: -Math.random() * 0.4 - 0.1,
+            life: 0,
+            maxLife: Math.random() * 80 + 40,
+            size: Math.random() * 1.5 + 0.5,
+            alpha: Math.random() * 0.5 + 0.2,
+          });
+        }
+      };
+
+      spawnBatch();
+
+      // Ongoing slow spawn
+      let frameCount = 0;
+      const frame = () => {
+        ctx.clearRect(0, 0, cw, ch);
+        frameCount++;
+
+        // Trickle new particles
+        if (frameCount % 8 === 0 && particlesRef.current.length < 30) {
+          particlesRef.current.push({
+            x: Math.random() * cw,
+            y: ch / 2 + (Math.random() - 0.5) * 2,
+            vx: (Math.random() - 0.5) * 0.2,
+            vy: -Math.random() * 0.3 - 0.05,
+            life: 0,
+            maxLife: Math.random() * 60 + 30,
+            size: Math.random() * 1.2 + 0.4,
+            alpha: Math.random() * 0.4 + 0.15,
+          });
+        }
+
+        particlesRef.current = particlesRef.current.filter((p) => {
+          p.life++;
+          if (p.life > p.maxLife) return false;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy -= 0.002; // slight upward drift
+
+          const lifeP = p.life / p.maxLife;
+          let a: number;
+          if (lifeP < 0.2) a = (lifeP / 0.2) * p.alpha;
+          else if (lifeP > 0.6) a = ((1 - lifeP) / 0.4) * p.alpha;
+          else a = p.alpha;
+
+          // Tiny glow
+          const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 3);
+          grad.addColorStop(0, `rgba(218,190,110,${a})`);
+          grad.addColorStop(1, `rgba(200,168,78,0)`);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
+          ctx.fillStyle = grad;
+          ctx.fill();
+
+          // Core dot
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size * 0.6, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(232,212,138,${a * 1.2})`;
+          ctx.fill();
+
+          return true;
+        });
+
+        animRef.current = requestAnimationFrame(frame);
+      };
+
+      animRef.current = requestAnimationFrame(frame);
+    }, delay);
+
+    return () => {
+      clearTimeout(timer);
+      cancelAnimationFrame(animRef.current);
+    };
+  }, [isVisible, delay]);
 
   return (
     <div ref={ref} className={`relative ${className}`} style={{ width }}>
-      <svg
-        className="w-full h-3 overflow-visible"
-        viewBox="0 0 700 50"
-        preserveAspectRatio="none"
-      >
-        <defs>
-          <linearGradient id={`${filterId}-g`} x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#c8a84e" stopOpacity="0" />
-            <stop offset="20%" stopColor="#c8a84e" stopOpacity="0.8" />
-            <stop offset="50%" stopColor="#e8d48a" stopOpacity="1" />
-            <stop offset="80%" stopColor="#c8a84e" stopOpacity="0.8" />
-            <stop offset="100%" stopColor="#c8a84e" stopOpacity="0" />
-          </linearGradient>
-          <filter id={`${filterId}-f`}>
-            <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="3" result="n" />
-            <feDisplacementMap in="SourceGraphic" in2="n" scale="2" />
-          </filter>
-        </defs>
-        <path
-          d={path}
-          fill="none"
-          stroke={`url(#${filterId}-g)`}
-          strokeWidth="6"
-          strokeLinecap="round"
-          style={{
-            strokeDasharray: 1200,
-            strokeDashoffset: isVisible ? 0 : 1200,
-            transition: `stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1) ${delay}ms`,
-            filter: `url(#${filterId}-f)`,
-          }}
-        />
-      </svg>
+      {/* The solid gold line */}
       <div
-        className="absolute inset-0 -inset-y-3 pointer-events-none"
+        className="relative"
         style={{
-          background: "radial-gradient(ellipse at center, rgba(200,168,78,0.15) 0%, transparent 70%)",
+          height: "3px",
+          background: "linear-gradient(90deg, transparent 0%, #c8a84e 15%, #e8d48a 50%, #c8a84e 85%, transparent 100%)",
           opacity: isVisible ? 1 : 0,
-          transition: `opacity 1.5s ease ${delay + 600}ms`,
+          transform: isVisible ? "scaleX(1)" : "scaleX(0)",
+          transition: `opacity 0.4s ease ${delay}ms, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1) ${delay}ms`,
+          transformOrigin: "left center",
+          boxShadow: "0 0 8px rgba(200,168,78,0.3), 0 0 20px rgba(200,168,78,0.1)",
+        }}
+      />
+      {/* Particle canvas — contained, no overflow */}
+      <canvas
+        ref={canvasRef}
+        className="absolute pointer-events-none"
+        style={{
+          left: 0,
+          top: "-12px",
+          width: "100%",
+          height: "28px",
         }}
       />
     </div>

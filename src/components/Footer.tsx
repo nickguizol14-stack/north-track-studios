@@ -1,4 +1,4 @@
-import { CompassLogo } from "./CompassLogo";
+import Image from "next/image";
 
 export function Footer() {
   return (
@@ -7,11 +7,14 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="md:col-span-2">
-            <div className="flex items-center gap-3 mb-5">
-              <CompassLogo size={28} />
-              <span className="text-[13px] font-medium tracking-[0.2em] uppercase">
-                North Track Studios
-              </span>
+            <div className="mb-5">
+              <Image
+                src="/logo.png"
+                alt="North Track Studios"
+                width={120}
+                height={80}
+                className="select-none"
+              />
             </div>
             <p className="text-sm text-muted leading-relaxed max-w-md font-light">
               An AI-native technology studio engineering intelligent systems at
