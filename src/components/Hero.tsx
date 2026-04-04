@@ -5,14 +5,14 @@ import { GoldBrushText, ThunderShimmer } from "./GoldPaint";
 import { GoldParticles } from "./GoldParticles";
 
 const services = [
-  { num: "01", title: "Intelligent Systems", desc: "AI agents, LLM orchestration & cognitive architecture" },
-  { num: "02", title: "Digital Craft", desc: "Interfaces engineered at the intersection of design & code" },
-  { num: "03", title: "Engineered Automation", desc: "Production-grade pipelines that scale without overhead" },
+  { title: "AI Consulting", desc: "Strategy, architecture & deployment of intelligent systems" },
+  { title: "Web Design", desc: "Interfaces crafted at the intersection of beauty & performance" },
+  { title: "Engineered Automation", desc: "Production-grade pipelines that scale without overhead" },
 ];
 
 export function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden vignette">
+    <section className="relative min-h-screen flex items-end pb-28 lg:items-center lg:pb-0 lg:pt-24 overflow-hidden vignette">
       {/* Deep gradient background */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#070709] via-[#0a0912] to-[#12111a]" />
 
@@ -27,23 +27,11 @@ export function Hero() {
         <CompassLogoLarge />
       </div>
 
-      {/* Gold corner accents */}
-      <ThunderShimmer interval={12000} intensity={0.25}>
-        <div className="absolute top-0 left-0 w-40 h-40">
-          <div className="absolute top-10 left-10 w-20 h-px bg-gradient-to-r from-gold/50 to-transparent" />
-          <div className="absolute top-10 left-10 w-px h-20 bg-gradient-to-b from-gold/50 to-transparent" />
-        </div>
-      </ThunderShimmer>
+      {/* Gold corner accents — top-right and bottom-right only */}
       <ThunderShimmer interval={14000} intensity={0.2}>
         <div className="absolute top-0 right-0 w-40 h-40">
           <div className="absolute top-10 right-10 w-20 h-px bg-gradient-to-l from-gold/50 to-transparent" />
           <div className="absolute top-10 right-10 w-px h-20 bg-gradient-to-b from-gold/50 to-transparent" />
-        </div>
-      </ThunderShimmer>
-      <ThunderShimmer interval={11000} intensity={0.15}>
-        <div className="absolute bottom-0 left-0 w-40 h-40">
-          <div className="absolute bottom-10 left-10 w-20 h-px bg-gradient-to-r from-gold/30 to-transparent" />
-          <div className="absolute bottom-10 left-10 w-px h-20 bg-gradient-to-t from-gold/30 to-transparent" />
         </div>
       </ThunderShimmer>
       <ThunderShimmer interval={13000} intensity={0.15}>
@@ -55,10 +43,10 @@ export function Hero() {
 
       {/* ─── Split content ─── */}
       <div className="relative z-10 mx-auto max-w-7xl w-full px-6 lg:px-12">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center gap-12 lg:gap-0">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center gap-14 lg:gap-20">
 
           {/* ─── Left: studio name ─── */}
-          <div className="lg:w-[55%] lg:pr-16">
+          <div className="lg:w-[55%]">
             <div className="animate-fade-in-up">
               <span className="block text-[10px] tracking-[0.6em] uppercase text-gold-dim font-mono mb-6">
                 Est. 2024
@@ -66,7 +54,7 @@ export function Hero() {
             </div>
 
             <div className="animate-fade-in-up delay-100">
-              <h1 className="text-6xl md:text-8xl lg:text-[7rem] font-extralight tracking-tight leading-[0.9]">
+              <h1 className="font-extralight tracking-tight leading-[0.9]">
                 <ThunderShimmer interval={10000} intensity={0.35}>
                   <GoldBrushText
                     as="span"
@@ -74,11 +62,9 @@ export function Hero() {
                     delay={100}
                     speed={500}
                   >
-                    North
+                    North Track
                   </GoldBrushText>
                 </ThunderShimmer>
-                <br />
-                <span className="text-foreground-warm">Track</span>
                 <br />
                 <span className="text-foreground-warm opacity-60 text-5xl md:text-6xl lg:text-[4.5rem] font-thin tracking-[0.05em]">
                   Studios
@@ -113,45 +99,37 @@ export function Hero() {
             </div>
           </div>
 
-          {/* ─── Divider ─── */}
-          <div className="hidden lg:block self-stretch py-8">
-            <div
-              className="w-px h-full animate-fade-in-up delay-300"
-              style={{
-                background: "linear-gradient(to bottom, transparent, rgba(200,168,78,0.3) 30%, rgba(200,168,78,0.3) 70%, transparent)",
-              }}
-            />
-          </div>
-
-          {/* ─── Right: service pillars ─── */}
-          <div className="lg:w-[45%] lg:pl-16 flex flex-col gap-10">
+          {/* ─── Right: service bullets ─── */}
+          <div className="lg:w-[45%] flex flex-col gap-8">
             {services.map((s, i) => (
               <div
-                key={s.num}
-                className={`animate-fade-in-up delay-${(i + 3) * 100} group relative pl-8 border-l border-gold/[0.12] hover:border-gold/40 transition-all duration-500`}
+                key={s.title}
+                className={`animate-fade-in-up delay-${(i + 3) * 100} group flex items-start gap-4 cursor-default`}
               >
-                {/* Number */}
-                <span className="absolute left-0 -translate-x-1/2 top-0 text-[10px] font-mono text-gold/40 bg-[#070709] px-1">
-                  {s.num}
-                </span>
+                {/* Bullet dot */}
+                <div className="mt-2.5 shrink-0">
+                  <div className="w-1.5 h-1.5 rounded-full bg-gold/40 group-hover:bg-gold group-hover:shadow-[0_0_8px_rgba(200,168,78,0.5)] transition-all duration-500" />
+                </div>
 
-                {/* Title */}
-                <h3 className="text-xl md:text-2xl font-extralight tracking-wide text-foreground-warm group-hover:text-gold transition-colors duration-500">
-                  {s.title}
-                </h3>
+                <div>
+                  {/* Title */}
+                  <h3 className="text-lg md:text-xl font-extralight tracking-wide text-foreground-warm group-hover:text-gold transition-colors duration-500">
+                    {s.title}
+                  </h3>
 
-                {/* Underline — expands on hover */}
-                <div className="mt-2 h-px w-8 group-hover:w-full bg-gradient-to-r from-gold/50 to-gold/0 transition-all duration-700 ease-out" />
+                  {/* Underline — expands on hover */}
+                  <div className="mt-1.5 h-px w-8 group-hover:w-full bg-gradient-to-r from-gold/50 to-gold/0 transition-all duration-700 ease-out" />
 
-                {/* Desc */}
-                <p className="mt-3 text-sm text-muted leading-relaxed font-light opacity-70 group-hover:opacity-100 transition-opacity duration-500">
-                  {s.desc}
-                </p>
+                  {/* Desc */}
+                  <p className="mt-2 text-sm text-muted leading-relaxed font-light opacity-60 group-hover:opacity-100 transition-opacity duration-500">
+                    {s.desc}
+                  </p>
+                </div>
               </div>
             ))}
 
             {/* Coordinates accent */}
-            <div className="animate-fade-in-up delay-700 pt-4">
+            <div className="animate-fade-in-up delay-700 pt-2 pl-5">
               <span className="text-[9px] text-gold-dim/40 font-mono tracking-[0.4em]">
                 40.7128° N &middot; 74.0060° W
               </span>
@@ -160,8 +138,8 @@ export function Hero() {
 
         </div>
 
-        {/* Scroll indicator — centered below */}
-        <div className="animate-fade-in-up delay-800 mt-20 flex justify-center">
+        {/* Scroll indicator */}
+        <div className="animate-fade-in-up delay-800 mt-16 flex justify-center">
           <div className="flex flex-col items-center gap-3">
             <span className="text-[9px] tracking-[0.5em] uppercase text-gold-dim font-mono">
               Explore
