@@ -42,7 +42,7 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
   const [logoStyle, setLogoStyle] = useState({
     opacity: 0,
     scale: 1,
-    transition: "opacity 1.0s ease-out, transform 0.2s ease",
+    transition: "opacity 0.7s ease-out, transform 0.14s ease",
   });
   const [overlayOpacity, setOverlayOpacity] = useState(1);
   const [done, setDone] = useState(false);
@@ -89,7 +89,7 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
           size: Math.random() * 3 + 1,
           peak: Math.random() * 0.6 + 0.3,
           born: now,
-          lifespan: Math.random() * 1400 + 1050,
+          lifespan: Math.random() * 980 + 735,
           color: GOLD[Math.floor(Math.random() * GOLD.length)],
         });
       }
@@ -106,7 +106,7 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
           size: Math.random() * 2 + 0.5,
           peak: Math.random() * 0.4 + 0.15,
           born: now,
-          lifespan: Math.random() * 1750 + 1050,
+          lifespan: Math.random() * 1225 + 735,
           color: GOLD[Math.floor(Math.random() * GOLD.length)],
         });
       }
@@ -123,24 +123,24 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
       ctx.clearRect(0, 0, w, h);
 
       // ── Logo fade-in ──
-      if (t >= 0.28 && t < 0.35) {
+      if (t >= 0.2 && t < 0.25) {
         setLogoStyle({
           opacity: 1,
           scale: 1,
-          transition: "opacity 1.0s ease-out, transform 0.2s ease",
+          transition: "opacity 0.7s ease-out, transform 0.14s ease",
         });
       }
 
       let glow = 0;
 
-      // Single pulse: t=1.05 to t=2.94
-      if (t >= 1.05 && t <= 2.94) {
-        const p = (t - 1.05) / 1.89;
+      // Single pulse: t=0.74 to t=2.06
+      if (t >= 0.74 && t <= 2.06) {
+        const p = (t - 0.74) / 1.32;
         glow = Math.sin(p * Math.PI) * 0.55;
       }
 
       // ── Spawn particles with pulse ──
-      if (t >= 1.26 && !burst1Done) {
+      if (t >= 0.88 && !burst1Done) {
         burst1Done = true;
         spawnBurst(now, 60, 120, 1.4);
         spawnAmbient(now, 40);
@@ -219,22 +219,22 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
         return true;
       });
 
-      // ── Logo zoom: starts at t=3.85 ──
-      if (t >= 3.85 && t < 3.92) {
+      // ── Logo zoom: starts at t=2.7 ──
+      if (t >= 2.7 && t < 2.77) {
         setLogoStyle({
           opacity: 0,
           scale: 3,
-          transition: "opacity 1.5s ease-out, transform 1.7s cubic-bezier(0.05, 0, 0.15, 1)",
+          transition: "opacity 1.05s ease-out, transform 1.2s cubic-bezier(0.05, 0, 0.15, 1)",
         });
       }
 
-      // ── Overlay fade: t=4.9 ──
-      if (t >= 4.9 && t < 4.97) {
+      // ── Overlay fade: t=3.43 ──
+      if (t >= 3.43 && t < 3.5) {
         setOverlayOpacity(0);
       }
 
-      // ── Complete: t=5.74 ──
-      if (t >= 5.74 && !completedRef.current) {
+      // ── Complete: t=4.0 ──
+      if (t >= 4.0 && !completedRef.current) {
         completedRef.current = true;
         setDone(true);
         onCompleteCb();
@@ -260,7 +260,7 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
       style={{
         backgroundColor: "#070709",
         opacity: overlayOpacity,
-        transition: "opacity 0.7s ease-out",
+        transition: "opacity 0.5s ease-out",
         pointerEvents: overlayOpacity === 0 ? "none" : "all",
       }}
     >
