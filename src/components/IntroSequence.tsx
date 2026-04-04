@@ -266,20 +266,16 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
             const step = 3;
             const originX = cx - displayW / 2;
             const originY = cy - displayH / 2;
-            const maxReach = Math.hypot(w, h) / 2;
 
-            // 10 speed tiers from "barely move" to "hit screen edge"
-            // Each tier has 5 lifespan sub-levels = 50 distinct combos
-            // tier 0: nearly still, short life
-            // tier 9: full blast to edges, longer life
-            //
-            // Speed range: 0.3 (tier 0) → maxReach/50+3 (tier 9)
-            // Life range:  150ms (tier 0, sub 0) → 1050ms (tier 9, sub 4)
-
-            const minSpd = 0.3;
-            const maxSpd = maxReach / 50 + 3;
-            const minLife = 150;
-            const maxLife = 1050;
+            // 20 speed tiers × 8 lifespan sub-levels = 160 combos
+            // Wind-blown: each particle gets a random direction (not radial)
+            // with varying drift speeds from "barely floating" to "swept away"
+            const TIERS = 20;
+            const SUBS = 8;
+            const minSpd = 0.1;
+            const maxSpd = 18;  // fast enough to clear the screen
+            const minLife = 100;
+            const maxLife = 1500;
 
             for (let sy = 0; sy < sampleH; sy += step) {
               for (let sx = 0; sx < sampleW; sx += step) {
@@ -289,34 +285,39 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
 
                 const px = originX + sx;
                 const py = originY + sy;
-                const angle = Math.atan2(py - cy, px - cx) + (Math.random() - 0.5) * 0.3;
                 const peakAlpha = (a / 255) * 0.8 + 0.2;
 
-                // Pick a random tier (0-9) and sub-level (0-4)
-                const tier = Math.floor(Math.random() * 10);
-                const sub = Math.floor(Math.random() * 5);
-                const tN = tier / 9;  // 0..1
-                const sN = sub / 4;   // 0..1
+                // Random tier and sub-level
+                const tier = Math.floor(Math.random() * TIERS);
+                const sub = Math.floor(Math.random() * SUBS);
+                const tN = tier / (TIERS - 1); // 0..1
+                const sN = sub / (SUBS - 1);   // 0..1
 
-                // Speed interpolates across tiers with some randomness
-                const baseSpd = minSpd + (maxSpd - minSpd) * tN;
-                const spd = baseSpd * (0.85 + Math.random() * 0.3);
+                // Wind direction: random for each particle, not radial from center
+                const windAngle = Math.random() * Math.PI * 2;
 
-                // Life: higher tiers live longer, sub-levels add spread within tier
-                // Each tier's base life, then sub adds up to 50ms within it
+                // Speed: exponential curve so low tiers cluster near still,
+                // high tiers spread far apart — bigger gaps between fast layers
+                const spd = minSpd + (maxSpd - minSpd) * (tN * tN);
+                const jitteredSpd = spd * (0.8 + Math.random() * 0.4);
+
+                // Life: slow particles die fast, fast ones live longer to travel far
+                // Sub-levels spread within each tier
                 const tierLife = minLife + (maxLife - minLife) * tN;
-                const life = tierLife - 25 + sN * 50 * tN; // subs spread more for faster tiers
+                const subSpread = 60 * tN; // more spread for faster tiers
+                const life = tierLife + (sN - 0.5) * subSpread;
 
-                // Drift amount scales with speed (slow = mostly in place)
-                const drift = (Math.random() - 0.5) * (0.3 + tN * 0.4);
+                // Perpendicular wobble for organic wind feel
+                const perpAngle = windAngle + Math.PI / 2;
+                const wobble = (Math.random() - 0.5) * 1.5 * tN;
 
                 motes.current.push({
                   x: px,
                   y: py,
-                  vx: Math.cos(angle) * spd + drift,
-                  vy: Math.sin(angle) * spd + drift,
-                  size: Math.random() * 1.6 + 0.8 + (1 - tN) * 0.6, // slower ones slightly bigger
-                  peak: peakAlpha * (0.6 + (1 - tN) * 0.4), // slower ones brighter initially
+                  vx: Math.cos(windAngle) * jitteredSpd + Math.cos(perpAngle) * wobble,
+                  vy: Math.sin(windAngle) * jitteredSpd + Math.sin(perpAngle) * wobble,
+                  size: Math.random() * 1.4 + 0.6 + (1 - tN) * 0.8,
+                  peak: peakAlpha * (0.5 + (1 - tN) * 0.5),
                   born: now,
                   lifespan: life,
                   color: GOLD[Math.floor(Math.random() * GOLD.length)],
@@ -327,8 +328,8 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
         }
       }
 
-      // ── Complete: t=4.0 ──
-      if (t >= 4.0 && !completedRef.current) {
+      // ── Complete: t=4.5 ──
+      if (t >= 4.5 && !completedRef.current) {
         completedRef.current = true;
         setDone(true);
         onCompleteCb();
