@@ -1,25 +1,49 @@
 @import "tailwindcss";
 
+/*
+ * North Track Studios — Clair Obscur palette
+ *
+ * Inspired by chiaroscuro: obsidian darkness against
+ * luminous gold, the drama of oil paint on dark canvas.
+ */
+
 :root {
-  --black: #0a0a0a;
-  --black-light: #111111;
-  --black-card: #141414;
+  /* Obsidian depths */
+  --black: #070709;
+  --black-warm: #0c0b0e;
+  --black-card: #0f0e12;
+  --surface: #12111a;
+  --surface-light: #1a1824;
+
+  /* Gold spectrum — warm, luminous, painterly */
   --gold: #c8a84e;
-  --gold-dim: #a08535;
-  --gold-glow: rgba(200, 168, 78, 0.15);
-  --white: #f0ece4;
-  --gray: #6b6b6b;
-  --gray-light: #9a9a9a;
+  --gold-bright: #e8d48a;
+  --gold-deep: #a08535;
+  --gold-warm: #dab856;
+  --gold-dim: #7a6428;
+  --gold-glow: rgba(200, 168, 78, 0.12);
+  --gold-glow-strong: rgba(200, 168, 78, 0.25);
+
+  /* Text */
+  --white: #ede8df;
+  --white-warm: #f5f0e6;
+  --gray: #5c5870;
+  --gray-light: #8e8a9e;
 }
 
 @theme inline {
   --color-background: var(--black);
   --color-foreground: var(--white);
+  --color-foreground-warm: var(--white-warm);
   --color-gold: var(--gold);
+  --color-gold-bright: var(--gold-bright);
+  --color-gold-deep: var(--gold-deep);
+  --color-gold-warm: var(--gold-warm);
   --color-gold-dim: var(--gold-dim);
   --color-gold-glow: var(--gold-glow);
   --color-card: var(--black-card);
-  --color-surface: var(--black-light);
+  --color-surface: var(--surface);
+  --color-surface-light: var(--surface-light);
   --color-muted: var(--gray);
   --color-muted-light: var(--gray-light);
   --font-sans: var(--font-geist-sans);
@@ -47,29 +71,26 @@ body {
   color: var(--black);
 }
 
-/* Grid overlay effect */
+/* ─── Grid overlay — subtle obsidian grid ─────────────────────────── */
+
 .grid-overlay {
   background-image:
-    linear-gradient(rgba(200, 168, 78, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(200, 168, 78, 0.03) 1px, transparent 1px);
-  background-size: 60px 60px;
+    linear-gradient(rgba(200, 168, 78, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200, 168, 78, 0.02) 1px, transparent 1px);
+  background-size: 80px 80px;
 }
 
-/* Gold gradient text */
+/* ─── Gold gradient text ──────────────────────────────────────────── */
+
 .text-gradient-gold {
-  background: linear-gradient(135deg, #c8a84e 0%, #e8d48a 50%, #c8a84e 100%);
+  background: linear-gradient(135deg, #c8a84e 0%, #e8d48a 30%, #dab856 50%, #c8a84e 70%, #a08535 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Subtle gold border glow */
-.border-glow {
-  box-shadow: 0 0 0 1px rgba(200, 168, 78, 0.2),
-              0 0 20px rgba(200, 168, 78, 0.05);
-}
+/* ─── Shimmer line ────────────────────────────────────────────────── */
 
-/* Animated gradient line */
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
@@ -79,14 +100,15 @@ body {
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--gold), transparent);
   background-size: 200% 100%;
-  animation: shimmer 3s ease-in-out infinite;
+  animation: shimmer 4s ease-in-out infinite;
 }
 
-/* Fade in animation */
+/* ─── Fade in up animation ────────────────────────────────────────── */
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(24px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -95,33 +117,85 @@ body {
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.8s ease-out forwards;
+  animation: fadeInUp 1s ease-out forwards;
   opacity: 0;
 }
 
-.animation-delay-100 { animation-delay: 0.1s; }
-.animation-delay-200 { animation-delay: 0.2s; }
-.animation-delay-300 { animation-delay: 0.3s; }
-.animation-delay-400 { animation-delay: 0.4s; }
-.animation-delay-500 { animation-delay: 0.5s; }
-.animation-delay-600 { animation-delay: 0.6s; }
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
+.delay-600 { animation-delay: 0.6s; }
+.delay-700 { animation-delay: 0.7s; }
+.delay-800 { animation-delay: 0.8s; }
 
-/* Compass spin */
+/* ─── Compass animations ──────────────────────────────────────────── */
+
 @keyframes compassSpin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
 .compass-ring {
-  animation: compassSpin 20s linear infinite;
+  animation: compassSpin 25s linear infinite;
 }
 
-/* Pulse glow */
 @keyframes pulseGlow {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 1; }
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; }
 }
 
 .pulse-glow {
-  animation: pulseGlow 3s ease-in-out infinite;
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+/* ─── Gold radiate effect — settles then softly pulses ────────────── */
+
+@keyframes radiateSettle {
+  0% {
+    box-shadow: 0 0 0px rgba(200, 168, 78, 0);
+    opacity: 0;
+  }
+  40% {
+    box-shadow: 0 0 40px rgba(200, 168, 78, 0.3), 0 0 80px rgba(200, 168, 78, 0.1);
+    opacity: 1;
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(200, 168, 78, 0.15), 0 0 60px rgba(200, 168, 78, 0.05);
+    opacity: 1;
+  }
+}
+
+.radiate-gold {
+  animation: radiateSettle 2s ease-out forwards;
+}
+
+/* ─── Vignette — dark edges like oil painting ─────────────────────── */
+
+.vignette {
+  box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.6);
+}
+
+/* ─── Section divider with painted feel ───────────────────────────── */
+
+.painted-divider {
+  position: relative;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(200, 168, 78, 0.1) 15%,
+    rgba(200, 168, 78, 0.4) 40%,
+    rgba(200, 168, 78, 0.5) 50%,
+    rgba(200, 168, 78, 0.4) 60%,
+    rgba(200, 168, 78, 0.1) 85%,
+    transparent 100%
+  );
+}
+
+.painted-divider::after {
+  content: "";
+  position: absolute;
+  inset: -4px 10%;
+  background: radial-gradient(ellipse at center, rgba(200, 168, 78, 0.08) 0%, transparent 70%);
 }
