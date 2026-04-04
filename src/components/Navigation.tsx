@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CompassLogo } from "./CompassLogo";
+import Image from "next/image";
 
 const navLinks = [
   { href: "#capabilities", label: "Capabilities" },
@@ -32,16 +32,15 @@ export function Navigation() {
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         {/* Logo */}
-        <a href="#" className="flex items-center gap-3 group">
-          <CompassLogo size={34} />
-          <div className="flex flex-col">
-            <span className="text-[13px] font-medium tracking-[0.2em] uppercase text-foreground-warm">
-              North Track
-            </span>
-            <span className="text-[9px] tracking-[0.35em] uppercase text-gold-dim font-mono">
-              Studios
-            </span>
-          </div>
+        <a href="#" className="flex items-center group">
+          <Image
+            src="/logo.png"
+            alt="North Track Studios"
+            width={140}
+            height={93}
+            className="select-none"
+            priority
+          />
         </a>
 
         {/* Desktop links */}
