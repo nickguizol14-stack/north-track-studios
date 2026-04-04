@@ -1,6 +1,6 @@
 "use client";
 
-import { GoldBrushText, GoldBrushStroke, GoldReveal, ThunderShimmer } from "./GoldPaint";
+import { GoldBrushText, GoldReveal, ThunderShimmer } from "./GoldPaint";
 
 const capabilities = [
   {
@@ -80,8 +80,6 @@ export function Services() {
               </GoldBrushText>
             </ThunderShimmer>
           </div>
-
-          <GoldBrushStroke width="80px" delay={500} className="mt-6" />
 
           <GoldReveal delay={300}>
             <p className="mt-8 max-w-xl text-base text-muted-light leading-relaxed font-light">

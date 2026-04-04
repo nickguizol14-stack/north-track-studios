@@ -1,6 +1,6 @@
 "use client";
 
-import { GoldBrushText, GoldBrushStroke, GoldReveal, ThunderShimmer } from "./GoldPaint";
+import { GoldBrushText, GoldReveal, ThunderShimmer } from "./GoldPaint";
 
 const steps = [
   {
@@ -65,7 +65,6 @@ export function Process() {
             </ThunderShimmer>
           </div>
 
-          <GoldBrushStroke width="70px" delay={500} className="mt-6" brushIndex={0} />
         </div>
 
         {/* Timeline */}

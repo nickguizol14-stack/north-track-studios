@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { GoldBrushText, GoldBrushStroke, ThunderShimmer } from "./GoldPaint";
+import { GoldBrushText, ThunderShimmer } from "./GoldPaint";
 import { GoldParticles } from "./GoldParticles";
 
 const questions = [
@@ -93,7 +93,6 @@ export function Survey({ embedded = false }: { embedded?: boolean }) {
               </GoldBrushText>
             </ThunderShimmer>
           </div>
-          <GoldBrushStroke width="80px" delay={500} className="mt-6 mx-auto" />
         </div>
 
         {/* Progress bar */}

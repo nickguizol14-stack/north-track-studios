@@ -1,6 +1,6 @@
 "use client";
 
-import { GoldBrushText, GoldBrushStroke, GoldReveal, ThunderShimmer } from "./GoldPaint";
+import { GoldBrushText, GoldReveal, ThunderShimmer } from "./GoldPaint";
 import { GoldParticles } from "./GoldParticles";
 
 const stats = [
@@ -70,7 +70,6 @@ export function About() {
             </ThunderShimmer>
           </div>
 
-          <GoldBrushStroke width="100px" delay={500} className="mt-6" brushIndex={2} />
         </div>
 
         {/* Two-column: narrative + principles */}

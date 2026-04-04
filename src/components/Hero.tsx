@@ -1,7 +1,7 @@
 "use client";
 
 import { CompassLogoLarge } from "./CompassLogo";
-import { GoldBrushText, GoldBrushStroke, ThunderShimmer } from "./GoldPaint";
+import { GoldBrushText, ThunderShimmer } from "./GoldPaint";
 import { GoldParticles } from "./GoldParticles";
 
 export function Hero() {
@@ -66,10 +66,6 @@ export function Hero() {
           </h1>
         </div>
 
-        {/* Brush stroke divider */}
-        <div className="flex justify-center mt-10 mb-8">
-          <GoldBrushStroke width="160px" delay={1200} />
-        </div>
 
         {/* Subtitle */}
         <p className="animate-fade-in-up delay-400 mx-auto max-w-2xl text-base md:text-lg text-muted-light leading-relaxed font-light">

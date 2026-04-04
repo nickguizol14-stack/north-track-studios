@@ -158,6 +158,9 @@ export function GoldBrushText({
           transition: "opacity 1.2s ease-out",
         }}
       />
+
+      {/* Gold underline — full text width */}
+      <GoldBrushStroke width="100%" delay={delay + speed * 0.6} className="mt-3" />
     </div>
   );
 }
