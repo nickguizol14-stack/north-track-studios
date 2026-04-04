@@ -1,6 +1,6 @@
 "use client";
 
-import { GoldBrushText, GoldBrushStroke, GoldReveal } from "./GoldPaint";
+import { GoldBrushText, GoldBrushStroke, GoldReveal, ThunderShimmer } from "./GoldPaint";
 import { GoldParticles } from "./GoldParticles";
 
 export function Contact() {
@@ -21,14 +21,16 @@ export function Contact() {
             </GoldReveal>
 
             <div className="mt-5">
-              <GoldBrushText
-                as="h2"
-                className="text-4xl md:text-5xl font-extralight tracking-tight"
-                delay={200}
-                brushIndex={2}
-              >
-                Let&apos;s build something
-              </GoldBrushText>
+              <ThunderShimmer interval={10000} intensity={0.3}>
+                <GoldBrushText
+                  as="h2"
+                  className="text-4xl md:text-5xl font-extralight tracking-tight"
+                  delay={200}
+                  speed={1100}
+                >
+                  Let&apos;s build something
+                </GoldBrushText>
+              </ThunderShimmer>
             </div>
             <h2 className="text-4xl md:text-5xl font-extralight tracking-tight text-foreground-warm mt-1">
               that matters.

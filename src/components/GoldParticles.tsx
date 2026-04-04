@@ -9,23 +9,31 @@ interface Particle {
   vy: number;
   size: number;
   opacity: number;
-  fadeSpeed: number;
   life: number;
   maxLife: number;
+  colorIndex: number;
+  wobbleSpeed: number;
+  wobbleAmp: number;
 }
 
 interface GoldParticlesProps {
   density?: number;
   className?: string;
   speed?: number;
-  glow?: boolean;
 }
 
+const GOLD_COLORS = [
+  [200, 168, 78],   // base gold
+  [218, 190, 110],  // warm light gold
+  [232, 212, 138],  // bright highlight
+  [180, 148, 58],   // deeper amber
+  [160, 133, 53],   // rich dark gold
+];
+
 export function GoldParticles({
-  density = 40,
+  density = 60,
   className = "",
-  speed = 0.3,
-  glow = true,
+  speed = 0.4,
 }: GoldParticlesProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
@@ -38,97 +46,97 @@ export function GoldParticles({
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    let w = 0;
+    let h = 0;
+
     const resize = () => {
       const rect = canvas.parentElement?.getBoundingClientRect();
       if (!rect) return;
-      canvas.width = rect.width * window.devicePixelRatio;
-      canvas.height = rect.height * window.devicePixelRatio;
-      canvas.style.width = `${rect.width}px`;
-      canvas.style.height = `${rect.height}px`;
-      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      const dpr = window.devicePixelRatio || 1;
+      w = rect.width;
+      h = rect.height;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      canvas.style.width = `${w}px`;
+      canvas.style.height = `${h}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
     resize();
 
-    const createParticle = (): Particle => {
-      const rect = canvas.parentElement?.getBoundingClientRect();
-      const w = rect?.width ?? 800;
-      const h = rect?.height ?? 600;
-      return {
-        x: Math.random() * w,
-        y: Math.random() * h,
-        vx: (Math.random() - 0.5) * speed,
-        vy: -Math.random() * speed * 0.5 - 0.1,
-        size: Math.random() * 2.5 + 0.5,
-        opacity: 0,
-        fadeSpeed: Math.random() * 0.008 + 0.003,
-        life: 0,
-        maxLife: Math.random() * 300 + 150,
-      };
-    };
-
-    particlesRef.current = Array.from({ length: density }, createParticle);
-    // Stagger initial life so they don't all appear at once
-    particlesRef.current.forEach((p, i) => {
-      p.life = Math.random() * p.maxLife;
-      p.opacity = Math.sin((p.life / p.maxLife) * Math.PI) * 0.6;
+    const createParticle = (): Particle => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      vx: (Math.random() - 0.5) * speed,
+      vy: -Math.random() * speed * 0.8 - 0.15,
+      size: Math.random() * 3.5 + 1,
+      opacity: 0,
+      life: 0,
+      maxLife: Math.random() * 250 + 120,
+      colorIndex: Math.floor(Math.random() * GOLD_COLORS.length),
+      wobbleSpeed: Math.random() * 0.02 + 0.005,
+      wobbleAmp: Math.random() * 1.5 + 0.5,
     });
 
-    const goldColors = [
-      "200, 168, 78",   // base gold
-      "218, 190, 110",  // lighter gold
-      "180, 148, 58",   // deeper gold
-      "232, 212, 138",  // highlight gold
-    ];
+    particlesRef.current = Array.from({ length: density }, () => {
+      const p = createParticle();
+      p.life = Math.random() * p.maxLife;
+      return p;
+    });
 
     const animate = () => {
-      const rect = canvas.parentElement?.getBoundingClientRect();
-      const w = rect?.width ?? 800;
-      const h = rect?.height ?? 600;
-
       ctx.clearRect(0, 0, w, h);
 
-      particlesRef.current.forEach((p) => {
+      for (const p of particlesRef.current) {
         p.life++;
-        p.x += p.vx;
+
+        // Wobble motion
+        p.x += p.vx + Math.sin(p.life * p.wobbleSpeed) * p.wobbleAmp * 0.3;
         p.y += p.vy;
 
-        // Fade in/out based on life cycle
+        // Fade in/out — sharper peak
         const lifeRatio = p.life / p.maxLife;
-        p.opacity = Math.sin(lifeRatio * Math.PI) * 0.6;
+        if (lifeRatio < 0.15) {
+          p.opacity = (lifeRatio / 0.15) * 0.85;
+        } else if (lifeRatio > 0.7) {
+          p.opacity = ((1 - lifeRatio) / 0.3) * 0.85;
+        } else {
+          p.opacity = 0.85;
+        }
 
-        // Reset when dead
-        if (p.life >= p.maxLife) {
+        // Reset
+        if (p.life >= p.maxLife || p.y < -20 || p.x < -20 || p.x > w + 20) {
           Object.assign(p, createParticle());
+          p.y = h + 10;
           p.life = 0;
         }
 
-        // Wrap around edges
-        if (p.x < -10) p.x = w + 10;
-        if (p.x > w + 10) p.x = -10;
+        const [r, g, b] = GOLD_COLORS[p.colorIndex];
 
-        const color = goldColors[Math.floor(Math.random() * 1000) % goldColors.length];
+        // Outer glow halo
+        const glowRadius = p.size * 4;
+        const glowGrad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, glowRadius);
+        glowGrad.addColorStop(0, `rgba(${r},${g},${b},${p.opacity * 0.25})`);
+        glowGrad.addColorStop(0.5, `rgba(${r},${g},${b},${p.opacity * 0.08})`);
+        glowGrad.addColorStop(1, `rgba(${r},${g},${b},0)`);
 
-        if (glow && p.opacity > 0.2) {
-          ctx.save();
-          ctx.globalAlpha = p.opacity * 0.3;
-          ctx.shadowColor = `rgba(${color}, 0.8)`;
-          ctx.shadowBlur = 12;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.size * 2, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(${color}, ${p.opacity * 0.15})`;
-          ctx.fill();
-          ctx.restore();
-        }
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, glowRadius, 0, Math.PI * 2);
+        ctx.fillStyle = glowGrad;
+        ctx.fill();
 
-        ctx.globalAlpha = p.opacity;
+        // Bright core
+        const coreGrad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
+        coreGrad.addColorStop(0, `rgba(${Math.min(r + 40, 255)},${Math.min(g + 40, 255)},${Math.min(b + 30, 255)},${p.opacity})`);
+        coreGrad.addColorStop(0.6, `rgba(${r},${g},${b},${p.opacity * 0.7})`);
+        coreGrad.addColorStop(1, `rgba(${r},${g},${b},0)`);
+
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${color}, ${p.opacity})`;
+        ctx.fillStyle = coreGrad;
         ctx.fill();
-      });
+      }
 
-      ctx.globalAlpha = 1;
       animRef.current = requestAnimationFrame(animate);
     };
 
@@ -139,7 +147,7 @@ export function GoldParticles({
       cancelAnimationFrame(animRef.current);
       window.removeEventListener("resize", resize);
     };
-  }, [density, speed, glow]);
+  }, [density, speed]);
 
   return (
     <canvas

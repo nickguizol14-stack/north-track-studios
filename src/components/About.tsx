@@ -1,6 +1,6 @@
 "use client";
 
-import { GoldBrushText, GoldBrushStroke, GoldReveal } from "./GoldPaint";
+import { GoldBrushText, GoldBrushStroke, GoldReveal, ThunderShimmer } from "./GoldPaint";
 import { GoldParticles } from "./GoldParticles";
 
 const stats = [
@@ -44,7 +44,7 @@ export function About() {
   return (
     <section id="about" className="relative py-36 overflow-hidden">
       {/* Sparse particles for depth */}
-      <GoldParticles density={20} speed={0.15} glow={false} />
+      <GoldParticles density={25} speed={0.15} />
 
       <div className="absolute inset-0 grid-overlay" />
 
@@ -58,14 +58,16 @@ export function About() {
           </GoldReveal>
 
           <div className="mt-5">
-            <GoldBrushText
-              as="h2"
-              className="text-4xl md:text-5xl lg:text-6xl font-extralight tracking-tight"
-              delay={200}
-              brushIndex={0}
-            >
-              Built different. By design.
-            </GoldBrushText>
+            <ThunderShimmer interval={10000} intensity={0.3}>
+              <GoldBrushText
+                as="h2"
+                className="text-4xl md:text-5xl lg:text-6xl font-extralight tracking-tight"
+                delay={200}
+                speed={1300}
+              >
+                Built different. By design.
+              </GoldBrushText>
+            </ThunderShimmer>
           </div>
 
           <GoldBrushStroke width="100px" delay={500} className="mt-6" brushIndex={2} />
@@ -156,14 +158,16 @@ export function About() {
           </GoldReveal>
 
           <div className="mt-5 mb-12">
-            <GoldBrushText
-              as="h3"
-              className="text-2xl md:text-3xl font-extralight tracking-tight"
-              delay={100}
-              brushIndex={1}
-            >
-              Our stack
-            </GoldBrushText>
+            <ThunderShimmer interval={10000} intensity={0.25}>
+              <GoldBrushText
+                as="h3"
+                className="text-2xl md:text-3xl font-extralight tracking-tight"
+                delay={100}
+                speed={800}
+              >
+                Our stack
+              </GoldBrushText>
+            </ThunderShimmer>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
