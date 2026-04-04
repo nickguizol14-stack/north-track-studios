@@ -189,53 +189,46 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
       setLogoOpacity(1);
     }, 300);
 
-    // Phase 2: Heartbeat pulses — slow fade in, slow fade out
-    // Pulse 1 — gentle
+    // Phase 2: Two heartbeat pulses — slow fade in, slow fade out
+    // Pulse 1
     t(() => {
       setPhase("thunder");
       setThunderFlash(1);
-      burstParticles(45);
+      burstParticles(50);
     }, 1800);
-    t(() => setThunderFlash(0), 2800); // 1s pulse
+    t(() => setThunderFlash(0), 3200); // hold 1.4s then fade out
 
-    // Pulse 2 — stronger
+    // Pulse 2 — stronger, final
     t(() => {
       setThunderFlash(2);
-      burstParticles(60);
-    }, 3400);
-    t(() => setThunderFlash(0), 4500); // 1.1s pulse
+      burstParticles(75);
+    }, 4200);
+    t(() => setThunderFlash(0), 5800); // hold 1.6s then fade out
 
-    // Pulse 3 — strongest, final heartbeat
-    t(() => {
-      setThunderFlash(3);
-      burstParticles(80);
-    }, 5100);
-    t(() => setThunderFlash(0), 6300); // 1.2s pulse
-
-    // Phase 3: Zoom + fade — slower, more cinematic
+    // Phase 3: Zoom + fade — slow and cinematic (3x longer)
     t(() => {
       setPhase("zoom");
       setLogoScale(3.2);
       setLogoOpacity(0);
-    }, 6500);
+    }, 6800);
 
-    // Phase 4: Remove overlay
+    // Phase 4: Remove overlay — let zoom fully play out
     t(() => {
       setOverlayOpacity(0);
-    }, 7500);
+    }, 9500);
 
     t(() => {
       setPhase("done");
       onComplete();
-    }, 8300);
+    }, 10500);
 
     return () => timers.forEach(clearTimeout);
   }, [burstParticles, onComplete]);
 
   if (phase === "done") return null;
 
-  // Heartbeat intensity — escalates with each pulse
-  const pulseIntensity = thunderFlash === 0 ? 0 : thunderFlash === 1 ? 0.25 : thunderFlash === 2 ? 0.4 : 0.55;
+  // Heartbeat intensity — two pulses
+  const pulseIntensity = thunderFlash === 0 ? 0 : thunderFlash === 1 ? 0.3 : 0.5;
   const isActive = thunderFlash > 0;
 
   return (
@@ -262,8 +255,8 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
           background: `radial-gradient(ellipse at 50% 46%, transparent 12%, rgba(200,168,78,${pulseIntensity * 0.6}) 18%, rgba(200,168,78,${pulseIntensity}) 28%, rgba(200,168,78,${pulseIntensity * 0.4}) 40%, rgba(200,168,78,${pulseIntensity * 0.08}) 55%, transparent 70%)`,
           opacity: isActive ? 1 : 0,
           transition: isActive
-            ? "opacity 0.6s ease-in"
-            : "opacity 1s ease-out",
+            ? "opacity 0.8s ease-in"
+            : "opacity 1.4s ease-out",
         }}
       />
 
@@ -274,8 +267,8 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
           background: `radial-gradient(ellipse at 50% 46%, transparent 20%, rgba(200,168,78,${pulseIntensity * 0.08}) 35%, rgba(200,168,78,${pulseIntensity * 0.04}) 55%, transparent 80%)`,
           opacity: isActive ? 1 : 0,
           transition: isActive
-            ? "opacity 0.8s ease-in"
-            : "opacity 1.2s ease-out",
+            ? "opacity 1s ease-in"
+            : "opacity 1.6s ease-out",
           filter: "blur(30px)",
         }}
       />
@@ -287,7 +280,7 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
           opacity: logoOpacity,
           transform: `scale(${logoScale})`,
           transition: phase === "zoom"
-            ? "transform 1s cubic-bezier(0.15, 0, 0.2, 1), opacity 0.9s ease-out"
+            ? "transform 3s cubic-bezier(0.08, 0, 0.2, 1), opacity 2.5s ease-out"
             : "opacity 1s ease-out, transform 0.3s ease",
           willChange: "transform, opacity",
         }}
@@ -309,8 +302,8 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
             inset: "-40px -50px",
             background: `radial-gradient(ellipse at 50% 50%, transparent 35%, rgba(200,168,78,${isActive ? pulseIntensity * 0.3 : 0.03}) 50%, rgba(200,168,78,${isActive ? pulseIntensity * 0.15 : 0.01}) 65%, transparent 80%)`,
             transition: isActive
-              ? "background 0.6s ease-in"
-              : "background 1s ease-out",
+              ? "background 0.8s ease-in"
+              : "background 1.4s ease-out",
           }}
         />
       </div>
