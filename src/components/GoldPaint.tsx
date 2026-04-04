@@ -326,11 +326,12 @@ export function ThunderShimmer({
   }, [interval]);
 
   return (
-    <div className={`relative ${className}`}>
+    <span className={`relative inline-block ${className}`}>
       {children}
-      <div
-        className="absolute inset-0 -inset-x-16 -inset-y-8 pointer-events-none rounded-3xl"
+      <span
+        className="absolute pointer-events-none rounded-3xl"
         style={{
+          inset: "-8px -20px",
           background: `radial-gradient(ellipse at 50% 50%, rgba(200,168,78,${intensity}) 0%, rgba(200,168,78,${intensity * 0.25}) 35%, transparent 70%)`,
           opacity: flash ? 1 : 0,
           transition: flash
@@ -339,6 +340,6 @@ export function ThunderShimmer({
           filter: "blur(10px)",
         }}
       />
-    </div>
+    </span>
   );
 }
