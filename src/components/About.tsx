@@ -63,7 +63,7 @@ export function About() {
                 as="h2"
                 className="text-4xl md:text-5xl lg:text-6xl font-extralight tracking-tight"
                 delay={0}
-                speed={400}
+                speed={200}
               >
                 Built different. By design.
               </GoldBrushText>
@@ -162,7 +162,7 @@ export function About() {
                 as="h3"
                 className="text-2xl md:text-3xl font-extralight tracking-tight"
                 delay={0}
-                speed={400}
+                speed={200}
               >
                 Our stack
               </GoldBrushText>

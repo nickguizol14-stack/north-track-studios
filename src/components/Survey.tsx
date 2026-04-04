@@ -87,7 +87,7 @@ export function Survey({ embedded = false }: { embedded?: boolean }) {
                 as="h2"
                 className="text-3xl md:text-4xl lg:text-5xl font-extralight tracking-tight"
                 delay={0}
-                speed={400}
+                speed={200}
               >
                 {submitted ? "We'll be in touch." : "Tell us your vision."}
               </GoldBrushText>

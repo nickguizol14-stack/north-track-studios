@@ -58,7 +58,7 @@ export function Process() {
                 as="h2"
                 className="text-4xl md:text-5xl lg:text-6xl font-extralight tracking-tight"
                 delay={0}
-                speed={400}
+                speed={200}
               >
                 Our process
               </GoldBrushText>

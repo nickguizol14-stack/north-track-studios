@@ -74,7 +74,7 @@ export function Services() {
                 as="h2"
                 className="text-4xl md:text-5xl lg:text-6xl font-extralight tracking-tight"
                 delay={0}
-                speed={400}
+                speed={200}
               >
                 What we engineer
               </GoldBrushText>

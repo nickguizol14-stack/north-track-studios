@@ -26,7 +26,7 @@ export function Contact() {
                   as="h2"
                   className="text-4xl md:text-5xl font-extralight tracking-tight"
                   delay={0}
-                  speed={400}
+                  speed={200}
                 >
                   Let&apos;s build something
                 </GoldBrushText>
