@@ -137,7 +137,7 @@ export function GoldBrushText({
         className={`relative z-10 ${className}`}
         style={{
           background:
-            "linear-gradient(135deg, #c8a84e 0%, #e8d48a 25%, #dab856 50%, #c8a84e 70%, #a08535 100%)",
+            "linear-gradient(135deg, #b89a42 0%, #c8a84e 18%, #e8d48a 35%, #f0e0a0 48%, #dab856 55%, #c8a84e 72%, #a08535 100%)",
           WebkitBackgroundClip: "text",
           WebkitTextFillColor: "transparent",
           backgroundClip: "text",
