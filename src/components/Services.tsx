@@ -99,7 +99,7 @@ export function Services() {
               delay={i * 100}
               direction={i % 2 === 0 ? "left" : "right"}
             >
-              <div className="group relative border border-gold/[0.08] bg-card h-full p-8 hover:border-gold/25 transition-all duration-700">
+              <div className={`group relative border border-gold/[0.08] bg-card h-full p-8 hover:border-gold/25 card-alive sway-${(i % 6) + 1}`}>
                 {/* Top gradient accent */}
                 <div
                   className={`absolute top-0 left-0 right-0 h-px bg-gradient-to-r ${cap.accent}`}

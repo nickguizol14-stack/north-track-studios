@@ -76,7 +76,7 @@ export function Contact() {
 
           {/* Right — Form */}
           <GoldReveal delay={200} direction="right">
-            <div className="border border-gold/[0.08] bg-card p-8 md:p-10 relative">
+            <div className="border border-gold/[0.08] bg-card p-8 md:p-10 relative card-alive sway-2">
               {/* Corner accents */}
               <div className="absolute top-0 left-0 w-4 h-4">
                 <div className="absolute top-0 left-0 w-full h-px bg-gold/30" />

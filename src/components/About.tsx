@@ -109,7 +109,7 @@ export function About() {
             <div className="mt-14 grid grid-cols-2 sm:grid-cols-4 gap-6">
               {stats.map((stat, i) => (
                 <GoldReveal key={stat.label} delay={400 + i * 100} direction="up">
-                  <div className="border-l border-gold/25 pl-4">
+                  <div className={`border-l border-gold/25 pl-4 card-alive sway-${(i % 4) + 1}`}>
                     <div className="text-2xl font-extralight text-gradient-gold">
                       {stat.value}
                     </div>
@@ -126,7 +126,7 @@ export function About() {
           <div className="flex flex-col gap-5">
             {principles.map((principle, i) => (
               <GoldReveal key={principle.title} delay={200 + i * 150} direction="right">
-                <div className="group border border-gold/[0.08] bg-card/50 p-7 relative hover:border-gold/20 transition-all duration-500">
+                <div className={`group border border-gold/[0.08] bg-card/50 p-7 relative hover:border-gold/20 card-alive sway-${(i % 4) + 1}`}>
                   {/* Gold left accent bar */}
                   <div className="absolute top-0 left-0 w-[2px] h-full bg-gradient-to-b from-gold/40 via-gold/20 to-transparent" />
 
@@ -173,7 +173,7 @@ export function About() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {techStack.map((group, i) => (
               <GoldReveal key={group.category} delay={i * 100} direction="up">
-                <div className="border border-gold/[0.06] bg-card/30 p-6">
+                <div className={`border border-gold/[0.06] bg-card/30 p-6 card-alive sway-${(i % 4) + 1}`}>
                   <h4 className="text-[10px] tracking-[0.3em] uppercase text-gold-dim font-mono mb-4">
                     {group.category}
                   </h4>

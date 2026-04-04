@@ -70,7 +70,7 @@ export function Work() {
         <div className="flex flex-col gap-8">
           {projects.map((project, i) => (
             <GoldReveal key={project.title} delay={i * 150} direction="up">
-              <div className="group border border-gold/[0.08] bg-card relative overflow-hidden hover:border-gold/20 transition-all duration-700">
+              <div className={`group border border-gold/[0.08] bg-card relative overflow-hidden hover:border-gold/20 card-alive sway-${(i % 3) + 1}`}>
                 {/* Top accent */}
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
 

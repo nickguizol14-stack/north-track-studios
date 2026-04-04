@@ -90,7 +90,7 @@ export function Process() {
 
                   {/* Content */}
                   <div
-                    className={`pl-12 md:pl-0 ${
+                    className={`pl-12 md:pl-0 border border-gold/[0.05] bg-card/30 p-6 card-alive sway-${(i % 5) + 1} ${
                       i % 2 === 0
                         ? "md:pr-16 md:text-right"
                         : "md:col-start-2 md:pl-16"
