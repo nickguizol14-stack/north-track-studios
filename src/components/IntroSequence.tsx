@@ -119,6 +119,7 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
 
     let burst1Done = false;
     let fizzleDone = false;
+    let fizzleStart = 0;
 
     // ─── The single animation loop ────────────────────────────────────
 
@@ -182,6 +183,23 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
         ctx.restore();
       }
 
+      // ── Camera zoom into dust cloud ──
+      let zoomScale = 1;
+      if (fizzleStart > 0) {
+        const fizzleAge = (now - fizzleStart) / 1000;
+        // Ease-in zoom: slow start, accelerates — 1.0 → 2.8 over ~2s
+        const zoomProgress = Math.min(fizzleAge / 2.0, 1);
+        const eased = zoomProgress * zoomProgress; // ease-in quadratic
+        zoomScale = 1 + eased * 1.8;
+      }
+
+      if (zoomScale > 1.001) {
+        ctx.save();
+        ctx.translate(w / 2, h * 0.46);
+        ctx.scale(zoomScale, zoomScale);
+        ctx.translate(-w / 2, -h * 0.46);
+      }
+
       // ── Draw particles ──
       const heavy = motes.current.length > 200;
       motes.current = motes.current.filter((m) => {
@@ -231,9 +249,14 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
         return true;
       });
 
+      if (zoomScale > 1.001) {
+        ctx.restore();
+      }
+
       // ── Logo poof: sample pixels, replace with exact-shape particle cloud ──
       if (t >= 2.4 && !fizzleDone) {
         fizzleDone = true;
+        fizzleStart = now;
 
         // Snap logo off instantly
         setLogoStyle({
