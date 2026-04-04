@@ -220,45 +220,51 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
         return true;
       });
 
-      // ── Logo dissolve + overlay fade — simultaneous at t=2.4 ──
-      if (t >= 2.4 && t < 2.47) {
-        setLogoStyle({
-          opacity: 0,
-          scale: 1.8,
-          transition: "opacity 0.8s ease-out, transform 1.2s cubic-bezier(0.05, 0, 0.15, 1)",
-        });
-        setOverlayOpacity(0);
-      }
-
-      // Fizzle: dense particles burst from logo area as it dissolves
+      // ── Logo poof: instantly hide logo, replace with dense particle cloud ──
       if (t >= 2.4 && !fizzleDone) {
         fizzleDone = true;
+
+        // Snap logo off — no transition
+        setLogoStyle({
+          opacity: 0,
+          scale: 1,
+          transition: "opacity 0.05s linear",
+        });
+
+        // Start overlay fade
+        setOverlayOpacity(0);
+
+        // Dense particle cloud filling the logo's footprint
         const cx = w / 2;
         const cy = h * 0.46;
-        const logoW = 380;
-        const logoH = 240;
-        for (let i = 0; i < 120; i++) {
-          // Scatter from random positions within the logo bounds
+        const logoW = 400;
+        const logoH = 260;
+        const count = 300;
+        const baseLife = 700; // all within 250ms of each other (700-950ms)
+
+        for (let i = 0; i < count; i++) {
           const px = cx + (Math.random() - 0.5) * logoW;
           const py = cy + (Math.random() - 0.5) * logoH;
-          const angle = Math.atan2(py - cy, px - cx) + (Math.random() - 0.5) * 0.8;
-          const spd = Math.random() * 2.5 + 0.8;
+          const angle = Math.atan2(py - cy, px - cx) + (Math.random() - 0.5) * 0.4;
+          const dist = Math.hypot(px - cx, py - cy);
+          // Particles further from center move faster outward
+          const spd = (dist / 200) * 1.8 + Math.random() * 1.2 + 0.3;
           motes.current.push({
             x: px,
             y: py,
-            vx: Math.cos(angle) * spd + (Math.random() - 0.5) * 0.5,
-            vy: Math.sin(angle) * spd - Math.random() * 0.6,
-            size: Math.random() * 2.5 + 0.8,
-            peak: Math.random() * 0.7 + 0.3,
+            vx: Math.cos(angle) * spd + (Math.random() - 0.5) * 0.4,
+            vy: Math.sin(angle) * spd - Math.random() * 0.4,
+            size: Math.random() * 2.2 + 0.6,
+            peak: Math.random() * 0.6 + 0.4,
             born: now,
-            lifespan: Math.random() * 800 + 400,
+            lifespan: baseLife + Math.random() * 250, // 700-950ms spread
             color: GOLD[Math.floor(Math.random() * GOLD.length)],
           });
         }
       }
 
-      // ── Complete: t=3.5 ──
-      if (t >= 3.5 && !completedRef.current) {
+      // ── Complete: t=3.8 ──
+      if (t >= 3.8 && !completedRef.current) {
         completedRef.current = true;
         setDone(true);
         onCompleteCb();
@@ -284,7 +290,7 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
       style={{
         backgroundColor: "#070709",
         opacity: overlayOpacity,
-        transition: "opacity 1s ease-out",
+        transition: "opacity 1.2s ease-out",
         pointerEvents: overlayOpacity === 0 ? "none" : "all",
       }}
     >
