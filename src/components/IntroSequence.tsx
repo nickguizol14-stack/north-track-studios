@@ -211,22 +211,22 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
     }, 3100);
     t(() => setThunderFlash(0), 3450);
 
-    // Phase 3: Zoom + fade
+    // Phase 3: Zoom + fade — slower, more cinematic
     t(() => {
       setPhase("zoom");
-      setLogoScale(2.8);
+      setLogoScale(3.2);
       setLogoOpacity(0);
-    }, 3600);
+    }, 3700);
 
-    // Phase 4: Remove overlay
+    // Phase 4: Remove overlay — give zoom time to breathe
     t(() => {
       setOverlayOpacity(0);
-    }, 4100);
+    }, 4800);
 
     t(() => {
       setPhase("done");
       onComplete();
-    }, 4600);
+    }, 5600);
 
     return () => timers.forEach(clearTimeout);
   }, [burstParticles, onComplete]);
@@ -242,7 +242,7 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
       style={{
         backgroundColor: "#070709",
         opacity: overlayOpacity,
-        transition: "opacity 0.5s ease-out",
+        transition: "opacity 0.8s ease-out",
         pointerEvents: overlayOpacity === 0 ? "none" : "all",
       }}
     >
@@ -284,7 +284,7 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
           opacity: logoOpacity,
           transform: `scale(${logoScale})`,
           transition: phase === "zoom"
-            ? "transform 0.5s cubic-bezier(0.2, 0, 0, 1), opacity 0.45s ease-out"
+            ? "transform 1s cubic-bezier(0.15, 0, 0.2, 1), opacity 0.9s ease-out"
             : "opacity 1s ease-out, transform 0.3s ease",
           willChange: "transform, opacity",
         }}
