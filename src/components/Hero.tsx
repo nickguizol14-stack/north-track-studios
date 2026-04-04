@@ -59,8 +59,8 @@ export function Hero() {
                   <GoldBrushText
                     as="span"
                     className="text-6xl md:text-8xl lg:text-[7rem] font-extralight tracking-tight"
-                    delay={100}
-                    speed={500}
+                    delay={0}
+                    speed={400}
                   >
                     North Track
                   </GoldBrushText>
