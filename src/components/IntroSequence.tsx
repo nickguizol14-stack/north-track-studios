@@ -113,6 +113,7 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
     };
 
     let burst1Done = false;
+    let fizzleDone = false;
 
     // ─── The single animation loop ────────────────────────────────────
 
@@ -219,14 +220,41 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
         return true;
       });
 
-      // ── Logo fade + overlay fade — simultaneous at t=2.4 ──
+      // ── Logo dissolve + overlay fade — simultaneous at t=2.4 ──
       if (t >= 2.4 && t < 2.47) {
         setLogoStyle({
           opacity: 0,
           scale: 1.8,
-          transition: "opacity 1s ease-out, transform 1.2s cubic-bezier(0.05, 0, 0.15, 1)",
+          transition: "opacity 0.8s ease-out, transform 1.2s cubic-bezier(0.05, 0, 0.15, 1)",
         });
         setOverlayOpacity(0);
+      }
+
+      // Fizzle: dense particles burst from logo area as it dissolves
+      if (t >= 2.4 && !fizzleDone) {
+        fizzleDone = true;
+        const cx = w / 2;
+        const cy = h * 0.46;
+        const logoW = 380;
+        const logoH = 240;
+        for (let i = 0; i < 120; i++) {
+          // Scatter from random positions within the logo bounds
+          const px = cx + (Math.random() - 0.5) * logoW;
+          const py = cy + (Math.random() - 0.5) * logoH;
+          const angle = Math.atan2(py - cy, px - cx) + (Math.random() - 0.5) * 0.8;
+          const spd = Math.random() * 2.5 + 0.8;
+          motes.current.push({
+            x: px,
+            y: py,
+            vx: Math.cos(angle) * spd + (Math.random() - 0.5) * 0.5,
+            vy: Math.sin(angle) * spd - Math.random() * 0.6,
+            size: Math.random() * 2.5 + 0.8,
+            peak: Math.random() * 0.7 + 0.3,
+            born: now,
+            lifespan: Math.random() * 800 + 400,
+            color: GOLD[Math.floor(Math.random() * GOLD.length)],
+          });
+        }
       }
 
       // ── Complete: t=3.5 ──
