@@ -189,52 +189,54 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
       setLogoOpacity(1);
     }, 300);
 
-    // Phase 2: Thunder shimmer #1
+    // Phase 2: Heartbeat pulses — slow fade in, slow fade out
+    // Pulse 1 — gentle
     t(() => {
       setPhase("thunder");
       setThunderFlash(1);
-      burstParticles(50);
-    }, 1500);
-    t(() => setThunderFlash(0), 1800); // flash off after 300ms
+      burstParticles(45);
+    }, 1800);
+    t(() => setThunderFlash(0), 2800); // 1s pulse
 
-    // Thunder shimmer #2
+    // Pulse 2 — stronger
     t(() => {
       setThunderFlash(2);
-      burstParticles(65);
-    }, 2300);
-    t(() => setThunderFlash(0), 2600);
+      burstParticles(60);
+    }, 3400);
+    t(() => setThunderFlash(0), 4500); // 1.1s pulse
 
-    // Thunder shimmer #3 — biggest
+    // Pulse 3 — strongest, final heartbeat
     t(() => {
       setThunderFlash(3);
       burstParticles(80);
-    }, 3100);
-    t(() => setThunderFlash(0), 3450);
+    }, 5100);
+    t(() => setThunderFlash(0), 6300); // 1.2s pulse
 
     // Phase 3: Zoom + fade — slower, more cinematic
     t(() => {
       setPhase("zoom");
       setLogoScale(3.2);
       setLogoOpacity(0);
-    }, 3700);
+    }, 6500);
 
-    // Phase 4: Remove overlay — give zoom time to breathe
+    // Phase 4: Remove overlay
     t(() => {
       setOverlayOpacity(0);
-    }, 4800);
+    }, 7500);
 
     t(() => {
       setPhase("done");
       onComplete();
-    }, 5600);
+    }, 8300);
 
     return () => timers.forEach(clearTimeout);
   }, [burstParticles, onComplete]);
 
   if (phase === "done") return null;
 
-  // Thunder glow intensity increases with each flash
-  const thunderIntensity = thunderFlash === 0 ? 0 : thunderFlash === 1 ? 0.3 : thunderFlash === 2 ? 0.45 : 0.6;
+  // Heartbeat intensity — escalates with each pulse
+  const pulseIntensity = thunderFlash === 0 ? 0 : thunderFlash === 1 ? 0.25 : thunderFlash === 2 ? 0.4 : 0.55;
+  const isActive = thunderFlash > 0;
 
   return (
     <div
@@ -252,28 +254,29 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
         className="absolute inset-0 pointer-events-none"
       />
 
-      {/* Thunder area glow — full screen diffuse radial from center */}
+      {/* Heartbeat glow ring — surrounds the logo, not on top of it.
+          Uses a hollow radial: transparent center, gold ring, fade out */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: `radial-gradient(ellipse at 50% 45%, rgba(200,168,78,${thunderIntensity}) 0%, rgba(200,168,78,${thunderIntensity * 0.2}) 25%, rgba(200,168,78,${thunderIntensity * 0.05}) 50%, transparent 70%)`,
-          opacity: thunderFlash > 0 ? 1 : 0,
-          transition: thunderFlash > 0
-            ? "opacity 0.08s ease-in"
-            : "opacity 0.6s ease-out",
+          background: `radial-gradient(ellipse at 50% 46%, transparent 12%, rgba(200,168,78,${pulseIntensity * 0.6}) 18%, rgba(200,168,78,${pulseIntensity}) 28%, rgba(200,168,78,${pulseIntensity * 0.4}) 40%, rgba(200,168,78,${pulseIntensity * 0.08}) 55%, transparent 70%)`,
+          opacity: isActive ? 1 : 0,
+          transition: isActive
+            ? "opacity 0.6s ease-in"
+            : "opacity 1s ease-out",
         }}
       />
 
-      {/* Secondary thunder glow — bigger, softer, fills unused black */}
+      {/* Wider ambient fill — subtle wash across the black */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: `radial-gradient(circle at 50% 50%, rgba(200,168,78,${thunderIntensity * 0.15}) 0%, rgba(200,168,78,${thunderIntensity * 0.05}) 40%, transparent 80%)`,
-          opacity: thunderFlash > 0 ? 1 : 0,
-          transition: thunderFlash > 0
-            ? "opacity 0.1s ease-in"
-            : "opacity 0.8s ease-out",
-          filter: "blur(40px)",
+          background: `radial-gradient(ellipse at 50% 46%, transparent 20%, rgba(200,168,78,${pulseIntensity * 0.08}) 35%, rgba(200,168,78,${pulseIntensity * 0.04}) 55%, transparent 80%)`,
+          opacity: isActive ? 1 : 0,
+          transition: isActive
+            ? "opacity 0.8s ease-in"
+            : "opacity 1.2s ease-out",
+          filter: "blur(30px)",
         }}
       />
 
@@ -299,14 +302,15 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
           style={{ filter: "drop-shadow(0 0 30px rgba(200,168,78,0.15))" }}
         />
 
-        {/* Logo glow ring that pulses with thunder */}
+        {/* Tight glow halo right around the logo edges — not center fill */}
         <div
-          className="absolute inset-0 -inset-x-16 -inset-y-12 pointer-events-none rounded-full"
+          className="absolute pointer-events-none"
           style={{
-            background: `radial-gradient(ellipse at 50% 50%, rgba(200,168,78,${thunderFlash > 0 ? 0.2 : 0.05}) 0%, transparent 60%)`,
-            transition: thunderFlash > 0
-              ? "background 0.1s ease-in"
-              : "background 0.8s ease-out",
+            inset: "-40px -50px",
+            background: `radial-gradient(ellipse at 50% 50%, transparent 35%, rgba(200,168,78,${isActive ? pulseIntensity * 0.3 : 0.03}) 50%, rgba(200,168,78,${isActive ? pulseIntensity * 0.15 : 0.01}) 65%, transparent 80%)`,
+            transition: isActive
+              ? "background 0.6s ease-in"
+              : "background 1s ease-out",
           }}
         />
       </div>
