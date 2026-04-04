@@ -71,6 +71,11 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
     resize();
     window.addEventListener("resize", resize);
 
+    // Preload logo image for pixel sampling during fizzle
+    const logoImg = new window.Image();
+    logoImg.crossOrigin = "anonymous";
+    logoImg.src = "/logo.png";
+
     startTime.current = performance.now();
 
     // Spawn a cluster of particles
@@ -178,93 +183,124 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
       }
 
       // ── Draw particles ──
+      const heavy = motes.current.length > 200;
       motes.current = motes.current.filter((m) => {
         const age = now - m.born;
         if (age > m.lifespan) return false;
 
         m.x += m.vx;
         m.y += m.vy;
-        // Gentle drift deceleration
-        m.vx *= 0.998;
-        m.vy *= 0.998;
+        m.vx *= 0.997;
+        m.vy *= 0.997;
 
         const lifeP = age / m.lifespan;
-        // Smooth fade in/out
         let alpha: number;
-        if (lifeP < 0.2) alpha = (lifeP / 0.2) * m.peak;
-        else if (lifeP > 0.65) alpha = ((1 - lifeP) / 0.35) * m.peak;
+        if (lifeP < 0.1) alpha = (lifeP / 0.1) * m.peak;
+        else if (lifeP > 0.5) alpha = ((1 - lifeP) / 0.5) * m.peak;
         else alpha = m.peak;
 
         const [r, g, b] = m.color;
 
-        // Glow halo
-        const haloR = m.size * 5;
-        const halo = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, haloR);
-        halo.addColorStop(0, `rgba(${r},${g},${b},${alpha * 0.2})`);
-        halo.addColorStop(0.5, `rgba(${r},${g},${b},${alpha * 0.05})`);
-        halo.addColorStop(1, `rgba(${r},${g},${b},0)`);
-        ctx.beginPath();
-        ctx.arc(m.x, m.y, haloR, 0, Math.PI * 2);
-        ctx.fillStyle = halo;
-        ctx.fill();
+        if (heavy) {
+          // Fast path: simple filled circle, no gradients
+          ctx.beginPath();
+          ctx.arc(m.x, m.y, m.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${r},${g},${b},${alpha})`;
+          ctx.fill();
+        } else {
+          // Full quality: glow halo + core gradient
+          const haloR = m.size * 5;
+          const halo = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, haloR);
+          halo.addColorStop(0, `rgba(${r},${g},${b},${alpha * 0.2})`);
+          halo.addColorStop(0.5, `rgba(${r},${g},${b},${alpha * 0.05})`);
+          halo.addColorStop(1, `rgba(${r},${g},${b},0)`);
+          ctx.beginPath();
+          ctx.arc(m.x, m.y, haloR, 0, Math.PI * 2);
+          ctx.fillStyle = halo;
+          ctx.fill();
 
-        // Core
-        const core = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, m.size);
-        core.addColorStop(0, `rgba(${Math.min(r + 50, 255)},${Math.min(g + 50, 255)},${Math.min(b + 40, 255)},${alpha})`);
-        core.addColorStop(1, `rgba(${r},${g},${b},0)`);
-        ctx.beginPath();
-        ctx.arc(m.x, m.y, m.size, 0, Math.PI * 2);
-        ctx.fillStyle = core;
-        ctx.fill();
+          const core = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, m.size);
+          core.addColorStop(0, `rgba(${Math.min(r + 50, 255)},${Math.min(g + 50, 255)},${Math.min(b + 40, 255)},${alpha})`);
+          core.addColorStop(1, `rgba(${r},${g},${b},0)`);
+          ctx.beginPath();
+          ctx.arc(m.x, m.y, m.size, 0, Math.PI * 2);
+          ctx.fillStyle = core;
+          ctx.fill();
+        }
 
         return true;
       });
 
-      // ── Logo poof: instantly hide logo, replace with dense particle cloud ──
+      // ── Logo poof: sample pixels, replace with exact-shape particle cloud ──
       if (t >= 2.4 && !fizzleDone) {
         fizzleDone = true;
 
-        // Snap logo off — no transition
+        // Snap logo off instantly
         setLogoStyle({
           opacity: 0,
           scale: 1,
-          transition: "opacity 0.05s linear",
+          transition: "opacity 0.01s linear",
         });
 
         // Start overlay fade
         setOverlayOpacity(0);
 
-        // Dense particle cloud filling the logo's footprint
+        // Sample the logo image pixels to spawn particles in its exact shape
         const cx = w / 2;
         const cy = h * 0.46;
-        const logoW = 400;
-        const logoH = 260;
-        const count = 300;
-        const baseLife = 700; // all within 250ms of each other (700-950ms)
+        const displayW = 420;
+        const displayH = 280;
 
-        for (let i = 0; i < count; i++) {
-          const px = cx + (Math.random() - 0.5) * logoW;
-          const py = cy + (Math.random() - 0.5) * logoH;
-          const angle = Math.atan2(py - cy, px - cx) + (Math.random() - 0.5) * 0.4;
-          const dist = Math.hypot(px - cx, py - cy);
-          // Particles further from center move faster outward
-          const spd = (dist / 200) * 1.8 + Math.random() * 1.2 + 0.3;
-          motes.current.push({
-            x: px,
-            y: py,
-            vx: Math.cos(angle) * spd + (Math.random() - 0.5) * 0.4,
-            vy: Math.sin(angle) * spd - Math.random() * 0.4,
-            size: Math.random() * 2.2 + 0.6,
-            peak: Math.random() * 0.6 + 0.4,
-            born: now,
-            lifespan: baseLife + Math.random() * 250, // 700-950ms spread
-            color: GOLD[Math.floor(Math.random() * GOLD.length)],
-          });
+        if (logoImg.complete && logoImg.naturalWidth > 0) {
+          const offscreen = document.createElement("canvas");
+          const sampleW = displayW;
+          const sampleH = displayH;
+          offscreen.width = sampleW;
+          offscreen.height = sampleH;
+          const offCtx = offscreen.getContext("2d");
+          if (offCtx) {
+            offCtx.drawImage(logoImg, 0, 0, sampleW, sampleH);
+            const imageData = offCtx.getImageData(0, 0, sampleW, sampleH);
+            const pixels = imageData.data;
+
+            // Sample every 3px for dense coverage
+            const step = 3;
+            const baseLife = 800;
+            const originX = cx - displayW / 2;
+            const originY = cy - displayH / 2;
+
+            for (let sy = 0; sy < sampleH; sy += step) {
+              for (let sx = 0; sx < sampleW; sx += step) {
+                const idx = (sy * sampleW + sx) * 4;
+                const alpha = pixels[idx + 3];
+                // Only spawn where logo has visible pixels
+                if (alpha < 40) continue;
+
+                const px = originX + sx;
+                const py = originY + sy;
+                const angle = Math.atan2(py - cy, px - cx) + (Math.random() - 0.5) * 0.3;
+                const dist = Math.hypot(px - cx, py - cy);
+                const spd = (dist / 150) * 2.0 + Math.random() * 1.5 + 0.5;
+
+                motes.current.push({
+                  x: px,
+                  y: py,
+                  vx: Math.cos(angle) * spd + (Math.random() - 0.5) * 0.3,
+                  vy: Math.sin(angle) * spd - Math.random() * 0.3,
+                  size: Math.random() * 2.0 + 1.2,
+                  peak: (alpha / 255) * 0.8 + 0.2,
+                  born: now,
+                  lifespan: baseLife + Math.random() * 250, // 800-1050ms, ≤250ms spread
+                  color: GOLD[Math.floor(Math.random() * GOLD.length)],
+                });
+              }
+            }
+          }
         }
       }
 
-      // ── Complete: t=3.8 ──
-      if (t >= 3.8 && !completedRef.current) {
+      // ── Complete: t=4.0 ──
+      if (t >= 4.0 && !completedRef.current) {
         completedRef.current = true;
         setDone(true);
         onCompleteCb();
