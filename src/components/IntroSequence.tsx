@@ -263,36 +263,52 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
             const imageData = offCtx.getImageData(0, 0, sampleW, sampleH);
             const pixels = imageData.data;
 
-            // Sample every 3px for dense coverage
             const step = 3;
-            const baseLife = 800;
             const originX = cx - displayW / 2;
             const originY = cy - displayH / 2;
+            // Max distance a particle needs to travel to reach screen edge
+            const maxReach = Math.hypot(w, h) / 2;
 
             for (let sy = 0; sy < sampleH; sy += step) {
               for (let sx = 0; sx < sampleW; sx += step) {
                 const idx = (sy * sampleW + sx) * 4;
-                const alpha = pixels[idx + 3];
-                // Only spawn where logo has visible pixels
-                if (alpha < 40) continue;
+                const a = pixels[idx + 3];
+                if (a < 40) continue;
 
                 const px = originX + sx;
                 const py = originY + sy;
                 const angle = Math.atan2(py - cy, px - cx) + (Math.random() - 0.5) * 0.3;
-                const dist = Math.hypot(px - cx, py - cy);
-                const spd = (dist / 150) * 2.0 + Math.random() * 1.5 + 0.5;
+                const peakAlpha = (a / 255) * 0.8 + 0.2;
 
-                motes.current.push({
-                  x: px,
-                  y: py,
-                  vx: Math.cos(angle) * spd + (Math.random() - 0.5) * 0.3,
-                  vy: Math.sin(angle) * spd - Math.random() * 0.3,
-                  size: Math.random() * 2.0 + 1.2,
-                  peak: (alpha / 255) * 0.8 + 0.2,
-                  born: now,
-                  lifespan: baseLife + Math.random() * 250, // 800-1050ms, ≤250ms spread
-                  color: GOLD[Math.floor(Math.random() * GOLD.length)],
-                });
+                if (Math.random() < 0.5) {
+                  // ── Fast fade: dissolves almost instantly in place ──
+                  motes.current.push({
+                    x: px,
+                    y: py,
+                    vx: (Math.random() - 0.5) * 0.8,
+                    vy: (Math.random() - 0.5) * 0.8,
+                    size: Math.random() * 1.8 + 1.0,
+                    peak: peakAlpha,
+                    born: now,
+                    lifespan: 200 + Math.random() * 250, // 200-450ms
+                    color: GOLD[Math.floor(Math.random() * GOLD.length)],
+                  });
+                } else {
+                  // ── Shooters: blast outward to screen edges ──
+                  // Speed calculated so particle reaches edge in ~0.8s
+                  const spd = (maxReach / 50) + Math.random() * 3;
+                  motes.current.push({
+                    x: px,
+                    y: py,
+                    vx: Math.cos(angle) * spd + (Math.random() - 0.5) * 0.5,
+                    vy: Math.sin(angle) * spd + (Math.random() - 0.5) * 0.5,
+                    size: Math.random() * 1.6 + 0.8,
+                    peak: peakAlpha * 0.7,
+                    born: now,
+                    lifespan: 800 + Math.random() * 250, // 800-1050ms
+                    color: GOLD[Math.floor(Math.random() * GOLD.length)],
+                  });
+                }
               }
             }
           }
