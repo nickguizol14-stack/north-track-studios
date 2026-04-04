@@ -219,22 +219,18 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
         return true;
       });
 
-      // ── Logo zoom: starts at t=2.7 ──
-      if (t >= 2.7 && t < 2.77) {
+      // ── Logo fade + overlay fade — simultaneous at t=2.4 ──
+      if (t >= 2.4 && t < 2.47) {
         setLogoStyle({
           opacity: 0,
-          scale: 3,
-          transition: "opacity 1.05s ease-out, transform 1.2s cubic-bezier(0.05, 0, 0.15, 1)",
+          scale: 1.8,
+          transition: "opacity 1s ease-out, transform 1.2s cubic-bezier(0.05, 0, 0.15, 1)",
         });
-      }
-
-      // ── Overlay fade: t=3.43 ──
-      if (t >= 3.43 && t < 3.5) {
         setOverlayOpacity(0);
       }
 
-      // ── Complete: t=4.0 ──
-      if (t >= 4.0 && !completedRef.current) {
+      // ── Complete: t=3.5 ──
+      if (t >= 3.5 && !completedRef.current) {
         completedRef.current = true;
         setDone(true);
         onCompleteCb();
@@ -260,7 +256,7 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
       style={{
         backgroundColor: "#070709",
         opacity: overlayOpacity,
-        transition: "opacity 0.5s ease-out",
+        transition: "opacity 1s ease-out",
         pointerEvents: overlayOpacity === 0 ? "none" : "all",
       }}
     >
