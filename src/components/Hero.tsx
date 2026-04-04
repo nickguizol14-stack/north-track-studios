@@ -49,15 +49,6 @@ export function Hero() {
 
       {/* Content */}
       <div className="relative z-10 mx-auto max-w-5xl px-6 text-center">
-        {/* Tag */}
-        <div className="animate-fade-in-up">
-          <ThunderShimmer interval={10000} intensity={0.3}>
-            <span className="inline-block border border-gold/20 bg-gold/[0.03] px-5 py-2 text-[10px] tracking-[0.5em] uppercase text-gold font-mono mb-10">
-              Artificial Intelligence &middot; Engineering &middot; Design
-            </span>
-          </ThunderShimmer>
-        </div>
-
         {/* Main headline — painted in */}
         <div className="animate-fade-in-up delay-200">
           <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-extralight tracking-tight leading-[0.95]">

@@ -224,7 +224,7 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
         setLogoStyle({
           opacity: 0,
           scale: 3,
-          transition: "opacity 2.8s ease-out, transform 3s cubic-bezier(0.05, 0, 0.15, 1)",
+          transition: "opacity 2.2s ease-out, transform 2.4s cubic-bezier(0.05, 0, 0.15, 1)",
         });
       }
 
