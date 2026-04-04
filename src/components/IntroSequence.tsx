@@ -113,7 +113,6 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
     };
 
     let burst1Done = false;
-    let burst2Done = false;
 
     // ─── The single animation loop ────────────────────────────────────
 
@@ -132,62 +131,58 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
         });
       }
 
-      // ── Pulse glow: two smooth sine-based pulses ──
-      // Pulse 1: peaks around t=2.5s
-      // Pulse 2: peaks around t=4.5s
       let glow = 0;
 
-      // Pulse 1: t=1.5 to t=3.5 (2s window)
-      if (t >= 1.5 && t <= 3.8) {
-        const p = (t - 1.5) / 2.3;
-        glow += Math.sin(p * Math.PI) * 0.35;
+      // Single pulse: t=1.5 to t=4.2
+      if (t >= 1.5 && t <= 4.2) {
+        const p = (t - 1.5) / 2.7;
+        glow = Math.sin(p * Math.PI) * 0.55;
       }
-
-      // Pulse 2: t=3.5 to t=6.0 (2.5s window, stronger)
-      if (t >= 3.5 && t <= 6.2) {
-        const p = (t - 3.5) / 2.7;
-        glow += Math.sin(p * Math.PI) * 0.50;
-      }
-
-      glow = Math.min(glow, 0.7);
 
       // ── Spawn particles with pulses ──
       if (t >= 1.8 && !burst1Done) {
         burst1Done = true;
-        spawnBurst(now, 40, 100, 1.2);
-        spawnAmbient(now, 25);
-      }
-      if (t >= 3.8 && !burst2Done) {
-        burst2Done = true;
-        spawnBurst(now, 55, 130, 1.5);
-        spawnAmbient(now, 35);
+        spawnBurst(now, 60, 120, 1.4);
+        spawnAmbient(now, 40);
       }
 
-      // ── Draw glow ring behind logo (hollow — transparent center) ──
+      // ── Draw glow ring fitted to logo perimeter ──
       if (glow > 0.01) {
         const cx = w / 2;
         const cy = h * 0.46;
+        const logoHalfW = 210;
+        const logoHalfH = 140;
+        const baseRadius = 24;
 
-        // Inner ring — the main pulse halo
-        const ringGrad = ctx.createRadialGradient(cx, cy, 80, cx, cy, 350);
-        ringGrad.addColorStop(0, `rgba(200,168,78,0)`);
-        ringGrad.addColorStop(0.15, `rgba(200,168,78,0)`);
-        ringGrad.addColorStop(0.25, `rgba(200,168,78,${glow * 0.5})`);
-        ringGrad.addColorStop(0.4, `rgba(200,168,78,${glow * 0.8})`);
-        ringGrad.addColorStop(0.55, `rgba(200,168,78,${glow * 0.35})`);
-        ringGrad.addColorStop(0.75, `rgba(200,168,78,${glow * 0.08})`);
-        ringGrad.addColorStop(1, `rgba(200,168,78,0)`);
+        // Concentric rounded rects expanding outward from logo edge
+        const layers = [
+          { expand: 0, lineWidth: 2, alpha: glow * 0.7 },
+          { expand: 8, lineWidth: 4, alpha: glow * 0.5 },
+          { expand: 20, lineWidth: 8, alpha: glow * 0.3 },
+          { expand: 40, lineWidth: 14, alpha: glow * 0.15 },
+          { expand: 70, lineWidth: 22, alpha: glow * 0.06 },
+          { expand: 110, lineWidth: 35, alpha: glow * 0.02 },
+        ];
 
-        ctx.fillStyle = ringGrad;
-        ctx.fillRect(0, 0, w, h);
+        for (const layer of layers) {
+          const lx = cx - logoHalfW - layer.expand;
+          const ly = cy - logoHalfH - layer.expand;
+          const pw = (logoHalfW + layer.expand) * 2;
+          const ph = (logoHalfH + layer.expand) * 2;
+          const cr = baseRadius + layer.expand * 0.2;
 
-        // Wider ambient wash
-        const ambGrad = ctx.createRadialGradient(cx, cy, 150, cx, cy, Math.max(w, h) * 0.6);
-        ambGrad.addColorStop(0, `rgba(200,168,78,0)`);
-        ambGrad.addColorStop(0.2, `rgba(200,168,78,${glow * 0.06})`);
-        ambGrad.addColorStop(0.5, `rgba(200,168,78,${glow * 0.03})`);
+          ctx.beginPath();
+          ctx.roundRect(lx, ly, pw, ph, cr);
+          ctx.strokeStyle = `rgba(200,168,78,${layer.alpha})`;
+          ctx.lineWidth = layer.lineWidth;
+          ctx.stroke();
+        }
+
+        // Subtle ambient wash
+        const ambGrad = ctx.createRadialGradient(cx, cy, 150, cx, cy, Math.max(w, h) * 0.5);
+        ambGrad.addColorStop(0, `rgba(200,168,78,${glow * 0.04})`);
+        ambGrad.addColorStop(0.5, `rgba(200,168,78,${glow * 0.02})`);
         ambGrad.addColorStop(1, `rgba(200,168,78,0)`);
-
         ctx.fillStyle = ambGrad;
         ctx.fillRect(0, 0, w, h);
       }
@@ -235,8 +230,8 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
         return true;
       });
 
-      // ── Logo zoom: starts at t=6.5 ──
-      if (t >= 6.5 && t < 6.6) {
+      // ── Logo zoom: starts at t=5.5 ──
+      if (t >= 5.5 && t < 5.6) {
         setLogoStyle({
           opacity: 0,
           scale: 3,
@@ -244,13 +239,13 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
         });
       }
 
-      // ── Overlay fade: t=8.5 ──
-      if (t >= 8.5 && t < 8.6) {
+      // ── Overlay fade: t=7.0 ──
+      if (t >= 7.0 && t < 7.1) {
         setOverlayOpacity(0);
       }
 
-      // ── Complete: t=9.8 ──
-      if (t >= 9.8 && !completedRef.current) {
+      // ── Complete: t=8.2 ──
+      if (t >= 8.2 && !completedRef.current) {
         completedRef.current = true;
         setDone(true);
         onCompleteCb();
