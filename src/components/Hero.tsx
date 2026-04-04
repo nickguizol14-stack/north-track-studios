@@ -57,8 +57,8 @@ export function Hero() {
               <GoldBrushText
                 as="span"
                 className="text-5xl md:text-7xl lg:text-[5.5rem] font-extralight tracking-tight"
-                delay={600}
-                speed={1000}
+                delay={200}
+                speed={600}
               >
                 meets craft.
               </GoldBrushText>

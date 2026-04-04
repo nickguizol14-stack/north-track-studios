@@ -49,7 +49,7 @@ export function GoldBrushText({
   as: Tag = "h2",
   className = "",
   delay = 0,
-  speed = 1200,
+  speed = 700,
 }: GoldBrushTextProps) {
   const { ref, isVisible } = useScrollReveal(0.2);
   const textRef = useRef<HTMLElement>(null);

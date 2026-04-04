@@ -25,8 +25,8 @@ export function Contact() {
                 <GoldBrushText
                   as="h2"
                   className="text-4xl md:text-5xl font-extralight tracking-tight"
-                  delay={200}
-                  speed={1100}
+                  delay={50}
+                  speed={650}
                 >
                   Let&apos;s build something
                 </GoldBrushText>

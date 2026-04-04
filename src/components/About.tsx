@@ -62,8 +62,8 @@ export function About() {
               <GoldBrushText
                 as="h2"
                 className="text-4xl md:text-5xl lg:text-6xl font-extralight tracking-tight"
-                delay={200}
-                speed={1300}
+                delay={50}
+                speed={750}
               >
                 Built different. By design.
               </GoldBrushText>
@@ -162,8 +162,8 @@ export function About() {
               <GoldBrushText
                 as="h3"
                 className="text-2xl md:text-3xl font-extralight tracking-tight"
-                delay={100}
-                speed={800}
+                delay={50}
+                speed={500}
               >
                 Our stack
               </GoldBrushText>
