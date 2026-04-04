@@ -146,45 +146,34 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
         spawnAmbient(now, 40);
       }
 
-      // ── Draw glow ring fitted to logo perimeter ──
+      // ── Backlight glow behind logo ──
       if (glow > 0.01) {
         const cx = w / 2;
         const cy = h * 0.46;
-        const logoHalfW = 210;
-        const logoHalfH = 140;
-        const baseRadius = 24;
 
-        // Concentric rounded rects expanding outward from logo edge
-        const layers = [
-          { expand: 0, lineWidth: 2, alpha: glow * 0.7 },
-          { expand: 8, lineWidth: 4, alpha: glow * 0.5 },
-          { expand: 20, lineWidth: 8, alpha: glow * 0.3 },
-          { expand: 40, lineWidth: 14, alpha: glow * 0.15 },
-          { expand: 70, lineWidth: 22, alpha: glow * 0.06 },
-          { expand: 110, lineWidth: 35, alpha: glow * 0.02 },
-        ];
+        // Elliptical backlight — scale context to stretch a circle into logo proportions
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.scale(1.5, 1); // wider than tall, matching logo shape
 
-        for (const layer of layers) {
-          const lx = cx - logoHalfW - layer.expand;
-          const ly = cy - logoHalfH - layer.expand;
-          const pw = (logoHalfW + layer.expand) * 2;
-          const ph = (logoHalfH + layer.expand) * 2;
-          const cr = baseRadius + layer.expand * 0.2;
+        // Core backlight — tight, bright center sitting right behind the logo
+        const core = ctx.createRadialGradient(0, 0, 0, 0, 0, 180);
+        core.addColorStop(0, `rgba(200,168,78,${glow * 0.45})`);
+        core.addColorStop(0.4, `rgba(200,168,78,${glow * 0.25})`);
+        core.addColorStop(0.7, `rgba(200,168,78,${glow * 0.08})`);
+        core.addColorStop(1, `rgba(200,168,78,0)`);
+        ctx.fillStyle = core;
+        ctx.fillRect(-300, -300, 600, 600);
 
-          ctx.beginPath();
-          ctx.roundRect(lx, ly, pw, ph, cr);
-          ctx.strokeStyle = `rgba(200,168,78,${layer.alpha})`;
-          ctx.lineWidth = layer.lineWidth;
-          ctx.stroke();
-        }
+        // Wider bloom that spills past the logo edges
+        const bloom = ctx.createRadialGradient(0, 0, 80, 0, 0, 350);
+        bloom.addColorStop(0, `rgba(200,168,78,${glow * 0.12})`);
+        bloom.addColorStop(0.5, `rgba(200,168,78,${glow * 0.04})`);
+        bloom.addColorStop(1, `rgba(200,168,78,0)`);
+        ctx.fillStyle = bloom;
+        ctx.fillRect(-500, -500, 1000, 1000);
 
-        // Subtle ambient wash
-        const ambGrad = ctx.createRadialGradient(cx, cy, 150, cx, cy, Math.max(w, h) * 0.5);
-        ambGrad.addColorStop(0, `rgba(200,168,78,${glow * 0.04})`);
-        ambGrad.addColorStop(0.5, `rgba(200,168,78,${glow * 0.02})`);
-        ambGrad.addColorStop(1, `rgba(200,168,78,0)`);
-        ctx.fillStyle = ambGrad;
-        ctx.fillRect(0, 0, w, h);
+        ctx.restore();
       }
 
       // ── Draw particles ──
