@@ -9,8 +9,8 @@ export function CompassLogo({ size = 40, className = "" }: { size?: number; clas
       className={className}
     >
       {/* Outer ring */}
-      <circle cx="50" cy="50" r="47" stroke="#c8a84e" strokeWidth="1.5" opacity="0.6" />
-      <circle cx="50" cy="50" r="42" stroke="#c8a84e" strokeWidth="0.5" opacity="0.3" />
+      <circle cx="50" cy="50" r="47" stroke="var(--gold)" strokeWidth="1.5" opacity="0.6" />
+      <circle cx="50" cy="50" r="42" stroke="var(--gold)" strokeWidth="0.5" opacity="0.3" />
 
       {/* Cardinal tick marks */}
       {[0, 90, 180, 270].map((angle) => (
@@ -20,7 +20,7 @@ export function CompassLogo({ size = 40, className = "" }: { size?: number; clas
           y1="6"
           x2="50"
           y2="14"
-          stroke="#c8a84e"
+          stroke="var(--gold)"
           strokeWidth="1.5"
           transform={`rotate(${angle} 50 50)`}
         />
@@ -34,7 +34,7 @@ export function CompassLogo({ size = 40, className = "" }: { size?: number; clas
           y1="8"
           x2="50"
           y2="12"
-          stroke="#c8a84e"
+          stroke="var(--gold)"
           strokeWidth="0.75"
           opacity="0.5"
           transform={`rotate(${angle} 50 50)`}
@@ -42,19 +42,19 @@ export function CompassLogo({ size = 40, className = "" }: { size?: number; clas
       ))}
 
       {/* North pointer — gold */}
-      <polygon points="50,16 44,50 50,44 56,50" fill="#c8a84e" />
+      <polygon points="50,16 44,50 50,44 56,50" fill="var(--gold)" />
 
       {/* South pointer — dark */}
       <polygon points="50,84 44,50 50,56 56,50" fill="#3a3a3a" />
 
       {/* East pointer — muted gold */}
-      <polygon points="84,50 50,44 56,50 50,56" fill="#a08535" opacity="0.5" />
+      <polygon points="84,50 50,44 56,50 50,56" fill="var(--gold-deep)" opacity="0.5" />
 
       {/* West pointer — muted dark */}
       <polygon points="16,50 50,44 44,50 50,56" fill="#3a3a3a" opacity="0.5" />
 
       {/* Center dot */}
-      <circle cx="50" cy="50" r="3" fill="#c8a84e" />
+      <circle cx="50" cy="50" r="3" fill="var(--gold)" />
       <circle cx="50" cy="50" r="1.5" fill="#0a0a0a" />
 
       {/* N label */}
@@ -62,7 +62,7 @@ export function CompassLogo({ size = 40, className = "" }: { size?: number; clas
         x="50"
         y="30"
         textAnchor="middle"
-        fill="#c8a84e"
+        fill="var(--gold)"
         fontSize="7"
         fontFamily="monospace"
         fontWeight="bold"
@@ -84,16 +84,16 @@ export function CompassLogoLarge({ className = "" }: { className?: string }) {
       className={className}
     >
       {/* Outer decorative rings */}
-      <circle cx="160" cy="160" r="155" stroke="#c8a84e" strokeWidth="0.5" opacity="0.15" />
-      <circle cx="160" cy="160" r="148" stroke="#c8a84e" strokeWidth="1" opacity="0.25" />
-      <circle cx="160" cy="160" r="140" stroke="#c8a84e" strokeWidth="0.5" opacity="0.15" />
+      <circle cx="160" cy="160" r="155" stroke="var(--gold)" strokeWidth="0.5" opacity="0.15" />
+      <circle cx="160" cy="160" r="148" stroke="var(--gold)" strokeWidth="1" opacity="0.25" />
+      <circle cx="160" cy="160" r="140" stroke="var(--gold)" strokeWidth="0.5" opacity="0.15" />
 
       {/* Rotating ring with dashes */}
       <circle
         cx="160"
         cy="160"
         r="135"
-        stroke="#c8a84e"
+        stroke="var(--gold)"
         strokeWidth="0.5"
         strokeDasharray="4 8"
         opacity="0.3"
@@ -109,7 +109,7 @@ export function CompassLogoLarge({ className = "" }: { className?: string }) {
           y1={angle % 90 === 0 ? "18" : angle % 30 === 0 ? "22" : "26"}
           x2="160"
           y2="32"
-          stroke="#c8a84e"
+          stroke="var(--gold)"
           strokeWidth={angle % 90 === 0 ? "1.5" : "0.5"}
           opacity={angle % 90 === 0 ? "0.8" : "0.3"}
           transform={`rotate(${angle} 160 160)`}
@@ -130,7 +130,7 @@ export function CompassLogoLarge({ className = "" }: { className?: string }) {
           x="160"
           y="50"
           textAnchor="middle"
-          fill={letter === "N" ? "#c8a84e" : "#6b6b6b"}
+          fill={letter === "N" ? "var(--gold)" : "#6b6b6b"}
           fontSize={letter === "N" ? "14" : "10"}
           fontFamily="monospace"
           fontWeight={letter === "N" ? "bold" : "normal"}
@@ -146,7 +146,7 @@ export function CompassLogoLarge({ className = "" }: { className?: string }) {
         y="90"
         width="140"
         height="140"
-        stroke="#c8a84e"
+        stroke="var(--gold)"
         strokeWidth="0.5"
         opacity="0.1"
         fill="none"
@@ -154,28 +154,28 @@ export function CompassLogoLarge({ className = "" }: { className?: string }) {
       />
 
       {/* North pointer — gold, sharp */}
-      <polygon points="160,55 148,160 160,145 172,160" fill="#c8a84e" />
+      <polygon points="160,55 148,160 160,145 172,160" fill="var(--gold)" />
 
       {/* South pointer */}
       <polygon points="160,265 148,160 160,175 172,160" fill="#2a2a2a" />
 
       {/* East pointer */}
-      <polygon points="265,160 160,148 175,160 160,172" fill="#a08535" opacity="0.4" />
+      <polygon points="265,160 160,148 175,160 160,172" fill="var(--gold-deep)" opacity="0.4" />
 
       {/* West pointer */}
       <polygon points="55,160 160,148 145,160 160,172" fill="#2a2a2a" opacity="0.4" />
 
       {/* Center mechanism */}
-      <circle cx="160" cy="160" r="8" fill="#c8a84e" opacity="0.9" />
+      <circle cx="160" cy="160" r="8" fill="var(--gold)" opacity="0.9" />
       <circle cx="160" cy="160" r="4" fill="#0a0a0a" />
-      <circle cx="160" cy="160" r="2" fill="#c8a84e" opacity="0.6" />
+      <circle cx="160" cy="160" r="2" fill="var(--gold)" opacity="0.6" />
 
       {/* Glow effect */}
       <circle cx="160" cy="160" r="60" fill="url(#centerGlow)" className="pulse-glow" />
       <defs>
         <radialGradient id="centerGlow">
-          <stop offset="0%" stopColor="#c8a84e" stopOpacity="0.08" />
-          <stop offset="100%" stopColor="#c8a84e" stopOpacity="0" />
+          <stop offset="0%" stopColor="var(--gold)" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="var(--gold)" stopOpacity="0" />
         </radialGradient>
       </defs>
     </svg>

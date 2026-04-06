@@ -108,7 +108,7 @@ export function Hero() {
               >
                 {/* Bullet dot */}
                 <div className="mt-2.5 shrink-0">
-                  <div className="w-1.5 h-1.5 rounded-full bg-gold/40 group-hover:bg-gold group-hover:shadow-[0_0_8px_rgba(200,168,78,0.5)] transition-all duration-500" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-gold/40 group-hover:bg-gold group-hover:shadow-[0_0_8px_var(--gold-glow-strong)] transition-all duration-500" />
                 </div>
 
                 <div>

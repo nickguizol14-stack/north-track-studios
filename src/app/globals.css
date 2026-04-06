@@ -24,6 +24,11 @@
   --gold-glow: rgba(200, 168, 78, 0.12);
   --gold-glow-strong: rgba(200, 168, 78, 0.25);
 
+  /* Glow RGB components — used by JS for dynamic effects */
+  --glow-r: 200;
+  --glow-g: 168;
+  --glow-b: 78;
+
   /* Text */
   --white: #ede8df;
   --white-warm: #f5f0e6;
@@ -54,6 +59,50 @@
   box-sizing: border-box;
 }
 
+/* ─── Smooth color scheme transitions ────────────────────────────────── */
+
+:root {
+  transition: --gold 0.6s ease, --gold-bright 0.6s ease, --gold-deep 0.6s ease,
+    --gold-warm 0.6s ease, --gold-dim 0.6s ease, --gold-glow 0.6s ease,
+    --gold-glow-strong 0.6s ease;
+}
+
+@property --gold {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #c8a84e;
+}
+@property --gold-bright {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #e8d48a;
+}
+@property --gold-deep {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #a08535;
+}
+@property --gold-warm {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #dab856;
+}
+@property --gold-dim {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #7a6428;
+}
+@property --gold-glow {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(200, 168, 78, 0.12);
+}
+@property --gold-glow-strong {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(200, 168, 78, 0.25);
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -75,15 +124,15 @@ body {
 
 .grid-overlay {
   background-image:
-    linear-gradient(rgba(200, 168, 78, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(200, 168, 78, 0.02) 1px, transparent 1px);
+    linear-gradient(color-mix(in srgb, var(--gold) 2%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--gold) 2%, transparent) 1px, transparent 1px);
   background-size: 80px 80px;
 }
 
 /* ─── Gold gradient text ──────────────────────────────────────────── */
 
 .text-gradient-gold {
-  background: linear-gradient(135deg, #c8a84e 0%, #e8d48a 30%, #dab856 50%, #c8a84e 70%, #a08535 100%);
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 30%, var(--gold-warm) 50%, var(--gold) 70%, var(--gold-deep) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -154,15 +203,15 @@ body {
 
 @keyframes radiateSettle {
   0% {
-    box-shadow: 0 0 0px rgba(200, 168, 78, 0);
+    box-shadow: 0 0 0px var(--gold-glow);
     opacity: 0;
   }
   40% {
-    box-shadow: 0 0 40px rgba(200, 168, 78, 0.3), 0 0 80px rgba(200, 168, 78, 0.1);
+    box-shadow: 0 0 40px var(--gold-glow-strong), 0 0 80px var(--gold-glow);
     opacity: 1;
   }
   100% {
-    box-shadow: 0 0 20px rgba(200, 168, 78, 0.15), 0 0 60px rgba(200, 168, 78, 0.05);
+    box-shadow: 0 0 20px var(--gold-glow), 0 0 60px color-mix(in srgb, var(--gold) 5%, transparent);
     opacity: 1;
   }
 }
@@ -184,11 +233,11 @@ body {
   height: 1px;
   background: linear-gradient(90deg,
     transparent 0%,
-    rgba(200, 168, 78, 0.1) 15%,
-    rgba(200, 168, 78, 0.4) 40%,
-    rgba(200, 168, 78, 0.5) 50%,
-    rgba(200, 168, 78, 0.4) 60%,
-    rgba(200, 168, 78, 0.1) 85%,
+    color-mix(in srgb, var(--gold) 10%, transparent) 15%,
+    color-mix(in srgb, var(--gold) 40%, transparent) 40%,
+    color-mix(in srgb, var(--gold) 50%, transparent) 50%,
+    color-mix(in srgb, var(--gold) 40%, transparent) 60%,
+    color-mix(in srgb, var(--gold) 10%, transparent) 85%,
     transparent 100%
   );
 }
@@ -197,7 +246,7 @@ body {
   content: "";
   position: absolute;
   inset: -4px 10%;
-  background: radial-gradient(ellipse at center, rgba(200, 168, 78, 0.08) 0%, transparent 70%);
+  background: radial-gradient(ellipse at center, color-mix(in srgb, var(--gold) 8%, transparent) 0%, transparent 70%);
 }
 
 /* ─── Card sway — gentle idle breathing motion ───────────────────── */
@@ -219,7 +268,7 @@ body {
 .card-alive:hover {
   animation-play-state: paused;
   transform: translateY(-6px) scale(1.008);
-  box-shadow: 0 8px 30px rgba(200, 168, 78, 0.08),
+  box-shadow: 0 8px 30px var(--gold-glow),
               0 2px 8px rgba(0, 0, 0, 0.3);
 }
 

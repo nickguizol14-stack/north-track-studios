@@ -137,7 +137,7 @@ export function GoldBrushText({
         className={`relative z-10 ${className}`}
         style={{
           background:
-            "linear-gradient(135deg, #b89a42 0%, #c8a84e 18%, #e8d48a 35%, #f0e0a0 48%, #dab856 55%, #c8a84e 72%, #a08535 100%)",
+            "linear-gradient(135deg, var(--gold-deep) 0%, var(--gold) 18%, var(--gold-bright) 35%, var(--gold-bright) 48%, var(--gold-warm) 55%, var(--gold) 72%, var(--gold-deep) 100%)",
           WebkitBackgroundClip: "text",
           WebkitTextFillColor: "transparent",
           backgroundClip: "text",
@@ -153,7 +153,7 @@ export function GoldBrushText({
         className="absolute -inset-x-8 -inset-y-4 z-0 rounded-xl pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse at center, rgba(200,168,78,0.12) 0%, rgba(200,168,78,0.05) 40%, transparent 70%)",
+            "radial-gradient(ellipse at center, var(--gold-glow) 0%, color-mix(in srgb, var(--gold) 5%, transparent) 40%, transparent 70%)",
           opacity: settled ? 1 : 0,
           transition: "opacity 1.2s ease-out",
         }}
@@ -227,6 +227,12 @@ export function GoldBrushStroke({
         ctx.clearRect(0, 0, cw, ch);
         frameCount++;
 
+        // Read current theme colors from CSS variables
+        const cs = getComputedStyle(document.documentElement);
+        const gr = parseInt(cs.getPropertyValue("--glow-r")) || 200;
+        const gg = parseInt(cs.getPropertyValue("--glow-g")) || 168;
+        const gb = parseInt(cs.getPropertyValue("--glow-b")) || 78;
+
         // Trickle new particles
         if (frameCount % 8 === 0 && particlesRef.current.length < 30) {
           particlesRef.current.push({
@@ -256,8 +262,8 @@ export function GoldBrushStroke({
 
           // Tiny glow
           const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 3);
-          grad.addColorStop(0, `rgba(218,190,110,${a})`);
-          grad.addColorStop(1, `rgba(200,168,78,0)`);
+          grad.addColorStop(0, `rgba(${Math.min(gr+18,255)},${Math.min(gg+22,255)},${Math.min(gb+32,255)},${a})`);
+          grad.addColorStop(1, `rgba(${gr},${gg},${gb},0)`);
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
           ctx.fillStyle = grad;
@@ -266,7 +272,7 @@ export function GoldBrushStroke({
           // Core dot
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.size * 0.6, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(232,212,138,${a * 1.2})`;
+          ctx.fillStyle = `rgba(${Math.min(gr+32,255)},${Math.min(gg+44,255)},${Math.min(gb+60,255)},${a * 1.2})`;
           ctx.fill();
 
           return true;
@@ -291,12 +297,12 @@ export function GoldBrushStroke({
         className="relative"
         style={{
           height: "3px",
-          background: "linear-gradient(90deg, transparent 0%, #c8a84e 15%, #e8d48a 50%, #c8a84e 85%, transparent 100%)",
+          background: "linear-gradient(90deg, transparent 0%, var(--gold) 15%, var(--gold-bright) 50%, var(--gold) 85%, transparent 100%)",
           opacity: isVisible ? 1 : 0,
           transform: isVisible ? "scaleX(1)" : "scaleX(0)",
           transition: `opacity 0.4s ease ${delay}ms, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1) ${delay}ms`,
           transformOrigin: "left center",
-          boxShadow: "0 0 8px rgba(200,168,78,0.3), 0 0 20px rgba(200,168,78,0.1)",
+          boxShadow: "0 0 8px var(--gold-glow-strong), 0 0 20px var(--gold-glow)",
         }}
       />
       {/* Particle canvas — contained, no overflow */}
@@ -354,10 +360,10 @@ export function GoldReveal({
         style={{
           background:
             direction === "up"
-              ? "linear-gradient(to top, rgba(200,168,78,0.15), transparent)"
+              ? "linear-gradient(to top, color-mix(in srgb, var(--gold) 15%, transparent), transparent)"
               : direction === "right"
-                ? "linear-gradient(to left, rgba(200,168,78,0.15), transparent)"
-                : "linear-gradient(to right, rgba(200,168,78,0.15), transparent)",
+                ? "linear-gradient(to left, color-mix(in srgb, var(--gold) 15%, transparent), transparent)"
+                : "linear-gradient(to right, color-mix(in srgb, var(--gold) 15%, transparent), transparent)",
           opacity: isVisible ? 0 : 1,
           transition: `opacity 1.5s ease ${delay}ms`,
         }}
@@ -413,7 +419,7 @@ export function ThunderShimmer({
         className="absolute pointer-events-none rounded-3xl"
         style={{
           inset: "-8px -20px",
-          background: `radial-gradient(ellipse at 50% 50%, rgba(200,168,78,${intensity}) 0%, rgba(200,168,78,${intensity * 0.25}) 35%, transparent 70%)`,
+          background: `radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--gold) ${Math.round(intensity * 100)}%, transparent) 0%, color-mix(in srgb, var(--gold) ${Math.round(intensity * 25)}%, transparent) 35%, transparent 70%)`,
           opacity: flash ? 1 : 0,
           transition: flash
             ? "opacity 0.2s ease-in"

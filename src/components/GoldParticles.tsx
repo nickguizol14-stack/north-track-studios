@@ -22,13 +22,20 @@ interface GoldParticlesProps {
   speed?: number;
 }
 
-const GOLD_COLORS = [
-  [200, 168, 78],   // base gold
-  [218, 190, 110],  // warm light gold
-  [232, 212, 138],  // bright highlight
-  [180, 148, 58],   // deeper amber
-  [160, 133, 53],   // rich dark gold
-];
+// Derive particle colors from CSS variables at runtime
+function getThemeColors(): number[][] {
+  const cs = getComputedStyle(document.documentElement);
+  const r = parseInt(cs.getPropertyValue("--glow-r")) || 200;
+  const g = parseInt(cs.getPropertyValue("--glow-g")) || 168;
+  const b = parseInt(cs.getPropertyValue("--glow-b")) || 78;
+  return [
+    [r, g, b],                                               // base
+    [Math.min(r + 18, 255), Math.min(g + 22, 255), Math.min(b + 32, 255)], // warm light
+    [Math.min(r + 32, 255), Math.min(g + 44, 255), Math.min(b + 60, 255)], // bright
+    [Math.max(r - 20, 0), Math.max(g - 20, 0), Math.max(b - 20, 0)],       // deeper
+    [Math.max(r - 40, 0), Math.max(g - 35, 0), Math.max(b - 25, 0)],       // dark
+  ];
+}
 
 export function GoldParticles({
   density = 60,
@@ -73,10 +80,13 @@ export function GoldParticles({
       opacity: 0,
       life: 0,
       maxLife: Math.random() * 250 + 120,
-      colorIndex: Math.floor(Math.random() * GOLD_COLORS.length),
+      colorIndex: Math.floor(Math.random() * 5),
       wobbleSpeed: Math.random() * 0.02 + 0.005,
       wobbleAmp: Math.random() * 1.5 + 0.5,
     });
+
+    let themeColors = getThemeColors();
+    let colorRefreshCounter = 0;
 
     particlesRef.current = Array.from({ length: density }, () => {
       const p = createParticle();
@@ -86,6 +96,13 @@ export function GoldParticles({
 
     const animate = () => {
       ctx.clearRect(0, 0, w, h);
+
+      // Refresh theme colors every 30 frames (~0.5s) for smooth transitions
+      colorRefreshCounter++;
+      if (colorRefreshCounter >= 30) {
+        themeColors = getThemeColors();
+        colorRefreshCounter = 0;
+      }
 
       for (const p of particlesRef.current) {
         p.life++;
@@ -111,7 +128,7 @@ export function GoldParticles({
           p.life = 0;
         }
 
-        const [r, g, b] = GOLD_COLORS[p.colorIndex];
+        const [r, g, b] = themeColors[p.colorIndex % themeColors.length];
 
         // Outer glow halo
         const glowRadius = p.size * 4;

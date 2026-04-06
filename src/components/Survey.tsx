@@ -161,8 +161,8 @@ export function Survey({ embedded = false }: { embedded?: boolean }) {
                       className="absolute top-0 left-0 w-[2px] h-full transition-all duration-500"
                       style={{
                         background: isSelected || isHovered
-                          ? "linear-gradient(to bottom, rgba(200,168,78,0.6), rgba(200,168,78,0.2))"
-                          : "linear-gradient(to bottom, rgba(200,168,78,0.1), transparent)",
+                          ? "linear-gradient(to bottom, color-mix(in srgb, var(--gold) 60%, transparent), color-mix(in srgb, var(--gold) 20%, transparent))"
+                          : "linear-gradient(to bottom, color-mix(in srgb, var(--gold) 10%, transparent), transparent)",
                       }}
                     />
 
@@ -203,7 +203,7 @@ export function Survey({ embedded = false }: { embedded?: boolean }) {
                       className="absolute bottom-0 inset-x-4 h-px transition-all duration-500"
                       style={{
                         background: isHovered
-                          ? "linear-gradient(90deg, transparent, rgba(200,168,78,0.3), transparent)"
+                          ? "linear-gradient(90deg, transparent, color-mix(in srgb, var(--gold) 30%, transparent), transparent)"
                           : "transparent",
                       }}
                     />
@@ -236,7 +236,7 @@ export function Survey({ embedded = false }: { embedded?: boolean }) {
               >
                 <path
                   d="M4 10L8.5 14.5L16 5.5"
-                  stroke="#c8a84e"
+                  stroke="var(--gold)"
                   strokeWidth="1.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
