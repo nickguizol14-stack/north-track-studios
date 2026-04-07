@@ -653,3 +653,417 @@ body {
   height: 2px !important;
   filter: blur(1px);
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   STYLE: Claymorphism
+   ─────────────────────────────────────────────────────────────────────
+   Soft, inflated 3D surfaces like molded clay. Inner shadows create
+   pillowy depth, large border-radius for organic shapes, warm muted
+   backgrounds, tactile puffy feel on every element.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Clay: Root variables ───────────────────────────────────────────── */
+
+[data-style="claymorphism"] {
+  --clay-bg: #16141e;
+  --clay-card: #1e1b28;
+  --clay-card-raised: #241f30;
+  --clay-radius: 24px;
+  --clay-radius-sm: 16px;
+  --clay-radius-pill: 999px;
+  /* The signature clay shadow: outer soft + inner pillow highlight + inner bottom shadow */
+  --clay-shadow:
+    8px 8px 24px rgba(0, 0, 0, 0.45),
+    -4px -4px 16px rgba(255, 255, 255, 0.03),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.06),
+    inset -2px -2px 6px rgba(0, 0, 0, 0.3);
+  --clay-shadow-hover:
+    10px 10px 32px rgba(0, 0, 0, 0.5),
+    -6px -6px 20px rgba(255, 255, 255, 0.04),
+    inset 2px 2px 6px rgba(255, 255, 255, 0.08),
+    inset -2px -3px 8px rgba(0, 0, 0, 0.35);
+  --clay-shadow-inset:
+    inset 3px 3px 6px rgba(255, 255, 255, 0.06),
+    inset -3px -3px 8px rgba(0, 0, 0, 0.35);
+  --clay-shadow-button:
+    6px 6px 16px rgba(0, 0, 0, 0.4),
+    -3px -3px 10px rgba(255, 255, 255, 0.03),
+    inset 1px 1px 3px rgba(255, 255, 255, 0.1),
+    inset -1px -2px 4px rgba(0, 0, 0, 0.25);
+  --clay-shadow-pressed:
+    inset 4px 4px 10px rgba(0, 0, 0, 0.4),
+    inset -2px -2px 6px rgba(255, 255, 255, 0.04);
+}
+
+/* ── Clay: Body background ──────────────────────────────────────────── */
+
+[data-style="claymorphism"] body {
+  background: var(--clay-bg) !important;
+}
+
+/* ── Clay: Navigation ───────────────────────────────────────────────── */
+
+[data-style="claymorphism"] nav {
+  background: var(--clay-card) !important;
+  border-bottom: none !important;
+  border-radius: 0 0 var(--clay-radius) var(--clay-radius);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.4),
+    inset 0 1px 2px rgba(255, 255, 255, 0.05),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.2) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* ── Clay: All cards — the signature puffy clay look ────────────────── */
+
+[data-style="claymorphism"] .card-alive,
+[data-style="claymorphism"] [class*="bg-card"] {
+  background: var(--clay-card) !important;
+  border: none !important;
+  border-radius: var(--clay-radius) !important;
+  box-shadow: var(--clay-shadow) !important;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Remove sharp corner accents — clay has no sharp edges */
+[data-style="claymorphism"] .card-alive .absolute[class*="w-6"],
+[data-style="claymorphism"] .card-alive .absolute[class*="w-4"],
+[data-style="claymorphism"] .card-alive .absolute[class*="w-5"],
+[data-style="claymorphism"] [class*="bg-card"] .absolute[class*="w-6"],
+[data-style="claymorphism"] [class*="bg-card"] .absolute[class*="w-4"],
+[data-style="claymorphism"] [class*="bg-card"] .absolute[class*="w-5"] {
+  display: none !important;
+}
+
+/* Remove sharp top accent lines — replaced by soft inner shadow */
+[data-style="claymorphism"] .card-alive > .absolute[class*="top-0"][class*="h-px"],
+[data-style="claymorphism"] [class*="bg-card"] > .absolute[class*="top-0"][class*="h-px"] {
+  display: none !important;
+}
+
+/* Remove bottom hover lines */
+[data-style="claymorphism"] .card-alive > .absolute[class*="bottom-0"][class*="h-px"],
+[data-style="claymorphism"] [class*="bg-card"] > .absolute[class*="bottom-0"][class*="h-px"] {
+  display: none !important;
+}
+
+/* Remove left accent bars — clay doesn't have sharp accents */
+[data-style="claymorphism"] .absolute[class*="w-\\[2px\\]"] {
+  display: none !important;
+}
+
+/* Clay hover: puffier, slightly lifted */
+[data-style="claymorphism"] .card-alive:hover {
+  background: var(--clay-card-raised) !important;
+  box-shadow: var(--clay-shadow-hover) !important;
+  transform: translateY(-4px) scale(1.01);
+}
+
+/* ── Clay: Section backgrounds ──────────────────────────────────────── */
+
+[data-style="claymorphism"] section[class*="bg-surface"] {
+  background: var(--clay-bg) !important;
+}
+
+/* ── Clay: Buttons — puffy pill shapes ──────────────────────────────── */
+
+[data-style="claymorphism"] a[class*="border"][class*="text-gold"],
+[data-style="claymorphism"] button[type="submit"],
+[data-style="claymorphism"] a[class*="border"][class*="uppercase"] {
+  background: var(--clay-card) !important;
+  border: none !important;
+  border-radius: var(--clay-radius-sm) !important;
+  box-shadow: var(--clay-shadow-button) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+[data-style="claymorphism"] a[class*="border"][class*="text-gold"]:hover,
+[data-style="claymorphism"] button[type="submit"]:hover {
+  background: var(--clay-card-raised) !important;
+  box-shadow:
+    8px 8px 20px rgba(0, 0, 0, 0.45),
+    -4px -4px 14px rgba(255, 255, 255, 0.04),
+    inset 1px 1px 4px rgba(255, 255, 255, 0.12),
+    inset -1px -2px 5px rgba(0, 0, 0, 0.2) !important;
+  transform: translateY(-2px);
+}
+
+[data-style="claymorphism"] a[class*="border"][class*="text-gold"]:active,
+[data-style="claymorphism"] button[type="submit"]:active {
+  box-shadow: var(--clay-shadow-pressed) !important;
+  transform: translateY(1px) scale(0.98);
+}
+
+/* ── Clay: Form inputs — recessed clay channels ─────────────────────── */
+
+[data-style="claymorphism"] input,
+[data-style="claymorphism"] textarea,
+[data-style="claymorphism"] select {
+  background: rgba(0, 0, 0, 0.15) !important;
+  border: none !important;
+  border-bottom: none !important;
+  border-radius: var(--clay-radius-sm) !important;
+  padding: 14px 16px !important;
+  box-shadow: var(--clay-shadow-inset) !important;
+}
+
+[data-style="claymorphism"] input:focus,
+[data-style="claymorphism"] textarea:focus,
+[data-style="claymorphism"] select:focus {
+  box-shadow:
+    inset 3px 3px 6px rgba(0, 0, 0, 0.4),
+    inset -3px -3px 8px rgba(255, 255, 255, 0.04),
+    0 0 0 2px rgba(var(--glow-r), var(--glow-g), var(--glow-b), 0.2) !important;
+}
+
+/* ── Clay: Tags — tiny puffy pills ──────────────────────────────────── */
+
+[data-style="claymorphism"] span[class*="border"][class*="tracking-wider"][class*="uppercase"][class*="text-muted"] {
+  border: none !important;
+  border-radius: var(--clay-radius-pill) !important;
+  background: var(--clay-card-raised) !important;
+  box-shadow:
+    4px 4px 10px rgba(0, 0, 0, 0.35),
+    -2px -2px 6px rgba(255, 255, 255, 0.03),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.06),
+    inset -1px -1px 3px rgba(0, 0, 0, 0.25) !important;
+  padding: 6px 14px !important;
+}
+
+/* ── Clay: Painted dividers → soft recessed groove ──────────────────── */
+
+[data-style="claymorphism"] .painted-divider {
+  height: 4px !important;
+  border-radius: 2px;
+  background: var(--clay-bg) !important;
+  box-shadow:
+    inset 1px 1px 3px rgba(0, 0, 0, 0.4),
+    inset -1px -1px 2px rgba(255, 255, 255, 0.04),
+    0 1px 1px rgba(255, 255, 255, 0.03) !important;
+}
+
+[data-style="claymorphism"] .painted-divider::after {
+  display: none !important;
+}
+
+/* ── Clay: Gold line → soft groove ──────────────────────────────────── */
+
+[data-style="claymorphism"] .gold-line {
+  height: 3px !important;
+  border-radius: 2px;
+  background: var(--clay-bg) !important;
+  box-shadow:
+    inset 1px 1px 3px rgba(0, 0, 0, 0.4),
+    inset -1px -1px 2px rgba(255, 255, 255, 0.04) !important;
+  animation: none !important;
+}
+
+/* ── Clay: Grid overlay → hidden (clay is smooth) ───────────────────── */
+
+[data-style="claymorphism"] .grid-overlay {
+  background-image: none !important;
+}
+
+/* ── Clay: Stats border-left → recessed pill ────────────────────────── */
+
+[data-style="claymorphism"] div[class*="border-l"][class*="border-gold"] {
+  border-left: none !important;
+  background: var(--clay-card) !important;
+  border-radius: var(--clay-radius-sm) !important;
+  padding: 12px 16px !important;
+  box-shadow:
+    4px 4px 12px rgba(0, 0, 0, 0.35),
+    -2px -2px 8px rgba(255, 255, 255, 0.03),
+    inset 1px 1px 3px rgba(255, 255, 255, 0.05),
+    inset -1px -2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* ── Clay: Timeline line → thick soft rod ───────────────────────────── */
+
+[data-style="claymorphism"] #process .absolute[class*="w-px"] {
+  width: 4px !important;
+  border-radius: 2px;
+  background: var(--clay-card) !important;
+  box-shadow:
+    inset 1px 1px 3px rgba(0, 0, 0, 0.4),
+    inset -1px -1px 2px rgba(255, 255, 255, 0.04),
+    2px 2px 6px rgba(0, 0, 0, 0.3) !important;
+  margin-left: -1.5px;
+}
+
+/* ── Clay: Timeline dots → puffy clay balls ─────────────────────────── */
+
+[data-style="claymorphism"] #process .absolute[class*="rotate-45"] {
+  width: 14px !important;
+  height: 14px !important;
+  border-radius: 50% !important;
+  transform: rotate(0deg) !important;
+  background: linear-gradient(
+    145deg,
+    rgba(var(--glow-r), var(--glow-g), var(--glow-b), 0.5),
+    rgba(var(--glow-r), var(--glow-g), var(--glow-b), 0.25)
+  ) !important;
+  box-shadow:
+    3px 3px 8px rgba(0, 0, 0, 0.4),
+    -2px -2px 5px rgba(255, 255, 255, 0.04),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.2),
+    inset -1px -1px 3px rgba(0, 0, 0, 0.3) !important;
+  margin-left: -3px;
+  margin-top: -3px;
+}
+
+/* ── Clay: Footer ───────────────────────────────────────────────────── */
+
+[data-style="claymorphism"] footer {
+  background: var(--clay-card) !important;
+  border-top: none !important;
+  border-radius: var(--clay-radius) var(--clay-radius) 0 0;
+  box-shadow:
+    0 -8px 24px rgba(0, 0, 0, 0.3),
+    inset 0 2px 4px rgba(255, 255, 255, 0.04),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* ── Clay: Mobile menu ──────────────────────────────────────────────── */
+
+[data-style="claymorphism"] nav > div[class*="border-t"] {
+  background: var(--clay-card) !important;
+  border-top: none !important;
+  border-radius: 0 0 var(--clay-radius) var(--clay-radius);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.4),
+    inset 0 1px 2px rgba(255, 255, 255, 0.04) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* ── Clay: Hero corner accents → hidden ─────────────────────────────── */
+
+[data-style="claymorphism"] .absolute[class*="w-40"][class*="h-40"] div[class*="h-px"],
+[data-style="claymorphism"] .absolute[class*="w-40"][class*="h-40"] div[class*="w-px"] {
+  display: none !important;
+}
+
+/* ── Clay: Metric diamonds → puffy dots ─────────────────────────────── */
+
+[data-style="claymorphism"] div[class*="rotate-45"][class*="w-1.5"] {
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 50% !important;
+  transform: rotate(0deg) !important;
+  background: linear-gradient(
+    145deg,
+    rgba(var(--glow-r), var(--glow-g), var(--glow-b), 0.4),
+    rgba(var(--glow-r), var(--glow-g), var(--glow-b), 0.2)
+  ) !important;
+  box-shadow:
+    2px 2px 5px rgba(0, 0, 0, 0.35),
+    -1px -1px 3px rgba(255, 255, 255, 0.04),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.15),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* ── Clay: Bullet dots in hero → puffy orbs ─────────────────────────── */
+
+[data-style="claymorphism"] div[class*="rounded-full"][class*="bg-gold"] {
+  width: 10px !important;
+  height: 10px !important;
+  box-shadow:
+    2px 2px 5px rgba(0, 0, 0, 0.35),
+    -1px -1px 3px rgba(255, 255, 255, 0.04),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.15),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* ── Clay: Vignette → soft warm gradient ────────────────────────────── */
+
+[data-style="claymorphism"] .vignette {
+  box-shadow: inset 0 0 200px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* ── Clay: Survey option cards ──────────────────────────────────────── */
+
+[data-style="claymorphism"] button[class*="card-alive"][class*="text-left"] {
+  border: none !important;
+  border-radius: var(--clay-radius) !important;
+  background: var(--clay-card) !important;
+  box-shadow: var(--clay-shadow) !important;
+}
+
+[data-style="claymorphism"] button[class*="card-alive"][class*="text-left"][class*="border-gold"] {
+  box-shadow: var(--clay-shadow-hover) !important;
+  background: var(--clay-card-raised) !important;
+}
+
+/* Clay: Selection diamonds → puffy circles */
+[data-style="claymorphism"] button[class*="card-alive"] div[class*="rotate-45"][class*="w-3"] {
+  border-radius: 50% !important;
+  transform: rotate(0deg) !important;
+  width: 16px !important;
+  height: 16px !important;
+  box-shadow:
+    inset 2px 2px 4px rgba(0, 0, 0, 0.3),
+    inset -1px -1px 3px rgba(255, 255, 255, 0.05) !important;
+}
+
+[data-style="claymorphism"] button[class*="card-alive"] div[class*="rotate-45"][class*="bg-gold"] {
+  box-shadow:
+    2px 2px 5px rgba(0, 0, 0, 0.3),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.2),
+    inset -1px -1px 3px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* ── Clay: Progress bar → recessed clay trough ──────────────────────── */
+
+[data-style="claymorphism"] .h-px[class*="bg-gold"] {
+  height: 6px !important;
+  border-radius: 3px;
+  box-shadow:
+    inset 1px 1px 3px rgba(0, 0, 0, 0.4),
+    inset -1px -1px 2px rgba(255, 255, 255, 0.04);
+}
+
+/* ── Clay: Success diamond → puffy check orb ────────────────────────── */
+
+[data-style="claymorphism"] .rotate-45[class*="border"][class*="w-12"] {
+  border-radius: 50% !important;
+  transform: rotate(0deg) !important;
+  border: none !important;
+  background: var(--clay-card-raised) !important;
+  box-shadow: var(--clay-shadow) !important;
+}
+
+/* ── Clay: Switcher panels ──────────────────────────────────────────── */
+
+[data-style="claymorphism"] .fixed[class*="bottom"] > div[class*="border"] {
+  border: none !important;
+  border-radius: var(--clay-radius) !important;
+  background: var(--clay-card) !important;
+  box-shadow: var(--clay-shadow) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* ── Clay: Switcher toggle buttons → puffy clay orbs ────────────────── */
+
+[data-style="claymorphism"] .fixed[class*="bottom"] > button[class*="rounded-full"] {
+  box-shadow:
+    6px 6px 16px rgba(0, 0, 0, 0.45),
+    -3px -3px 10px rgba(255, 255, 255, 0.04),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.1),
+    inset -2px -2px 5px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* ── Clay: Number labels get slightly raised look ───────────────────── */
+
+[data-style="claymorphism"] span[class*="font-mono"][class*="text-gold\\/30"] {
+  background: var(--clay-card-raised);
+  padding: 2px 8px;
+  border-radius: 8px;
+  box-shadow:
+    2px 2px 5px rgba(0, 0, 0, 0.25),
+    -1px -1px 3px rgba(255, 255, 255, 0.03),
+    inset 1px 1px 1px rgba(255, 255, 255, 0.05);
+}
