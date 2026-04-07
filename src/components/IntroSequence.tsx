@@ -220,43 +220,56 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
         m.appendChild(clone);
       }
 
-      // ── Sample particle targets using per-character DOM rects ──
-      // This avoids canvas fillText rendering differences
+      // ── Sample particle targets via canvas fillText for letter outlines ──
+      // We use the forced-final-state rect for correct positioning,
+      // but canvas fillText for actual letter-shape pixel sampling.
+      const style = getComputedStyle(el);
+      const fontFamily = style.fontFamily;
+      const fontSize = style.fontSize;
+      const fontWeight = style.fontWeight;
+      const letterSpacing = style.letterSpacing;
+      const text = "North Track";
+
+      const offscreen = document.createElement("canvas");
+      const padding = 40;
+      offscreen.width = rect.width + padding * 2;
+      offscreen.height = rect.height + padding * 2;
+      const offCtx = offscreen.getContext("2d");
+
       textTargets = [];
 
-      // Get the text node inside the element
-      const textNode = el.querySelector("span, h1, h2, h3, p") || el;
-      const firstChild = textNode.childNodes[0];
-      if (firstChild && firstChild.nodeType === Node.TEXT_NODE) {
-        const range = document.createRange();
-        const text = firstChild.textContent || "";
-
-        for (let i = 0; i < text.length; i++) {
-          if (text[i] === " ") continue; // skip spaces
-          range.setStart(firstChild, i);
-          range.setEnd(firstChild, i + 1);
-          const charRects = range.getClientRects();
-
-          for (let r = 0; r < charRects.length; r++) {
-            const cr = charRects[r];
-            // Fill each character rect with target points (every ~3px)
-            const step = 3;
-            for (let py = cr.top; py < cr.bottom; py += step) {
-              for (let px = cr.left; px < cr.right; px += step) {
-                textTargets.push({ x: px, y: py });
-              }
-            }
-          }
+      if (offCtx) {
+        offCtx.fillStyle = "#ffffff";
+        offCtx.font = `${fontWeight} ${fontSize} ${fontFamily}`;
+        if (letterSpacing && letterSpacing !== "normal") {
+          offCtx.letterSpacing = letterSpacing;
         }
-      }
+        offCtx.textBaseline = "top";
+        offCtx.fillText(text, padding, padding);
 
-      // Also sample the underline stroke
-      if (strokeEl) {
-        const sr = strokeEl.getBoundingClientRect();
+        // Also render the underline stroke
+        if (strokeEl) {
+          const strokeRect = strokeEl.getBoundingClientRect();
+          const strokeY = strokeRect.top - rect.top + padding;
+          const strokeX = strokeRect.left - rect.left + padding;
+          offCtx.fillRect(strokeX, strokeY, strokeRect.width, 3);
+        }
+
+        // Sample opaque pixels — these give actual letter outlines
+        const imageData = offCtx.getImageData(0, 0, offscreen.width, offscreen.height);
+        const pixels = imageData.data;
         const step = 3;
-        for (let py = sr.top; py < sr.bottom; py += step) {
-          for (let px = sr.left; px < sr.right; px += step) {
-            textTargets.push({ x: px, y: py });
+
+        for (let sy = 0; sy < offscreen.height; sy += step) {
+          for (let sx = 0; sx < offscreen.width; sx += step) {
+            const idx = (sy * offscreen.width + sx) * 4;
+            if (pixels[idx + 3] > 40) {
+              // Map offscreen coords back to viewport using the forced-state rect
+              textTargets.push({
+                x: rect.left + sx - padding,
+                y: rect.top + sy - padding,
+              });
+            }
           }
         }
       }
