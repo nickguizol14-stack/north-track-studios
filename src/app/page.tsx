@@ -9,6 +9,7 @@ import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
 import { PageWithIntro } from "@/components/PageWithIntro";
 import { ColorSchemeSwitcher } from "@/components/ColorSchemeSwitcher";
+import { StyleSwitcher } from "@/components/StyleSwitcher";
 
 export default function Home() {
   return (
@@ -24,6 +25,7 @@ export default function Home() {
         <Contact />
       </main>
       <Footer />
+      <StyleSwitcher />
       <ColorSchemeSwitcher />
     </PageWithIntro>
   );
