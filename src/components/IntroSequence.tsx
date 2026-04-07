@@ -4,12 +4,14 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
 
 /**
- * IntroSequence v2 — single continuous animation, no choppy state toggles.
+ * IntroSequence v3 — Breath-of-the-Wild shrine explosion
  *
- * Everything is driven by one requestAnimationFrame loop that calculates
- * smooth glow, particles, and timing as a fluid motion. Two warm pulses
- * breathe outward from behind the logo, particles drift with them, then
- * the logo drifts toward the viewer and the page fades in underneath.
+ * Logo fades in, gentle glow pulse builds, then at the climax:
+ * a blinding core flash and hundreds of elongated gold streaks
+ * explode radially outward from center. Streaks are velocity-
+ * proportional — fast ones are long bright lines, slow ones are
+ * short sparks. Friction decelerates them into a slow fizzle,
+ * streaks shorten as speed drops, and lingering embers fade out.
  */
 
 const GOLD = [
@@ -18,6 +20,13 @@ const GOLD = [
   [232, 212, 138],
   [180, 148, 58],
   [245, 225, 160],
+];
+
+const GOLD_BRIGHT = [
+  [255, 240, 200],
+  [255, 230, 180],
+  [250, 225, 170],
+  [255, 245, 210],
 ];
 
 interface Mote {
@@ -30,6 +39,10 @@ interface Mote {
   born: number;
   lifespan: number;
   color: number[];
+  // Streak explosion properties
+  streak: boolean;
+  friction: number;
+  initialSpeed: number;
 }
 
 export function IntroSequence({ onComplete }: { onComplete: () => void }) {
@@ -46,6 +59,9 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
   });
   const [overlayOpacity, setOverlayOpacity] = useState(1);
   const [done, setDone] = useState(false);
+
+  // Flash state for the core explosion
+  const flashRef = useRef(0); // 0-1 intensity
 
   const onCompleteCb = useCallback(onComplete, [onComplete]);
 
@@ -71,36 +87,9 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
     resize();
     window.addEventListener("resize", resize);
 
-    // Preload logo image for pixel sampling during fizzle
-    const logoImg = new window.Image();
-    logoImg.crossOrigin = "anonymous";
-    logoImg.src = "/logo.png";
-
     startTime.current = performance.now();
 
-    // Spawn a cluster of particles
-    const spawnBurst = (now: number, count: number, spread: number, speed: number) => {
-      const cx = w / 2;
-      const cy = h * 0.46;
-      for (let i = 0; i < count; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const dist = Math.random() * spread + 30;
-        const spd = Math.random() * speed + 0.2;
-        motes.current.push({
-          x: cx + Math.cos(angle) * dist,
-          y: cy + Math.sin(angle) * dist,
-          vx: Math.cos(angle) * spd + (Math.random() - 0.5) * 0.3,
-          vy: Math.sin(angle) * spd - Math.random() * 0.3,
-          size: Math.random() * 3 + 1,
-          peak: Math.random() * 0.6 + 0.3,
-          born: now,
-          lifespan: Math.random() * 980 + 735,
-          color: GOLD[Math.floor(Math.random() * GOLD.length)],
-        });
-      }
-    };
-
-    // Ambient drifters across the whole screen
+    // ─── Spawn ambient drifters (gentle atmosphere) ─────────────────────
     const spawnAmbient = (now: number, count: number) => {
       for (let i = 0; i < count; i++) {
         motes.current.push({
@@ -113,19 +102,109 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
           born: now,
           lifespan: Math.random() * 1225 + 735,
           color: GOLD[Math.floor(Math.random() * GOLD.length)],
+          streak: false,
+          friction: 0.999,
+          initialSpeed: 0,
         });
       }
     };
 
-    let burst1Done = false;
-    let fizzleDone = false;
-    let fizzleStart = 0;
+    // ─── BotW-style radial streak explosion ─────────────────────────────
+    const spawnExplosion = (now: number) => {
+      const cx = w / 2;
+      const cy = h * 0.46;
 
-    // ─── The single animation loop ────────────────────────────────────
+      // === Layer 1: Ultra-fast long streaks (the "boom" lines) ===
+      for (let i = 0; i < 120; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 12 + Math.random() * 20; // very fast
+        const jitter = (Math.random() - 0.5) * 2;
+        motes.current.push({
+          x: cx + (Math.random() - 0.5) * 10,
+          y: cy + (Math.random() - 0.5) * 10,
+          vx: Math.cos(angle) * speed + jitter,
+          vy: Math.sin(angle) * speed + jitter,
+          size: Math.random() * 2 + 1.5,
+          peak: Math.random() * 0.5 + 0.5,
+          born: now,
+          lifespan: 600 + Math.random() * 500,
+          color: GOLD_BRIGHT[Math.floor(Math.random() * GOLD_BRIGHT.length)],
+          streak: true,
+          friction: 0.955 + Math.random() * 0.02,
+          initialSpeed: speed,
+        });
+      }
+
+      // === Layer 2: Fast streaks (medium range) ===
+      for (let i = 0; i < 200; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 5 + Math.random() * 12;
+        motes.current.push({
+          x: cx + (Math.random() - 0.5) * 15,
+          y: cy + (Math.random() - 0.5) * 15,
+          vx: Math.cos(angle) * speed + (Math.random() - 0.5) * 1.5,
+          vy: Math.sin(angle) * speed + (Math.random() - 0.5) * 1.5,
+          size: Math.random() * 1.8 + 1,
+          peak: Math.random() * 0.6 + 0.3,
+          born: now,
+          lifespan: 800 + Math.random() * 700,
+          color: GOLD[Math.floor(Math.random() * GOLD.length)],
+          streak: true,
+          friction: 0.965 + Math.random() * 0.015,
+          initialSpeed: speed,
+        });
+      }
+
+      // === Layer 3: Slow sparks (the fizzle / lingerers) ===
+      for (let i = 0; i < 150; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 1 + Math.random() * 5;
+        motes.current.push({
+          x: cx + (Math.random() - 0.5) * 20,
+          y: cy + (Math.random() - 0.5) * 20,
+          vx: Math.cos(angle) * speed + (Math.random() - 0.5) * 0.8,
+          vy: Math.sin(angle) * speed + (Math.random() - 0.5) * 0.8,
+          size: Math.random() * 1.5 + 0.5,
+          peak: Math.random() * 0.4 + 0.2,
+          born: now,
+          lifespan: 1200 + Math.random() * 1200,
+          color: GOLD[Math.floor(Math.random() * GOLD.length)],
+          streak: true,
+          friction: 0.975 + Math.random() * 0.015,
+          initialSpeed: speed,
+        });
+      }
+
+      // === Layer 4: Tiny ember dust (stays near center, fades slowly) ===
+      for (let i = 0; i < 80; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 0.2 + Math.random() * 1.5;
+        motes.current.push({
+          x: cx + (Math.random() - 0.5) * 30,
+          y: cy + (Math.random() - 0.5) * 30,
+          vx: Math.cos(angle) * speed + (Math.random() - 0.5) * 0.3,
+          vy: Math.sin(angle) * speed - Math.random() * 0.2,
+          size: Math.random() * 1.2 + 0.4,
+          peak: Math.random() * 0.35 + 0.15,
+          born: now,
+          lifespan: 1800 + Math.random() * 1500,
+          color: GOLD[Math.floor(Math.random() * GOLD.length)],
+          streak: false, // embers are dots, not streaks
+          friction: 0.992,
+          initialSpeed: speed,
+        });
+      }
+    };
+
+    let ambientDone = false;
+    let explosionDone = false;
+    let explosionTime = 0;
+
+    // ─── The animation loop ─────────────────────────────────────────────
 
     const frame = (now: number) => {
       const elapsed = now - startTime.current;
-      const t = elapsed / 1000; // seconds
+      const t = elapsed / 1000;
 
       ctx.clearRect(0, 0, w, h);
 
@@ -138,19 +217,23 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
         });
       }
 
+      // ── Building glow pulse: stronger and longer, building tension ──
       let glow = 0;
-
-      // Single pulse: t=0.74 to t=2.06
-      if (t >= 0.74 && t <= 2.06) {
-        const p = (t - 0.74) / 1.32;
-        glow = Math.sin(p * Math.PI) * 0.55;
+      if (t >= 0.6 && t <= 2.3) {
+        const p = (t - 0.6) / 1.7;
+        // Builds up steadily, peaks right before explosion
+        glow = Math.pow(Math.sin(p * Math.PI * 0.5), 0.7) * 0.65;
+      }
+      // Intensity spike right before explosion
+      if (t >= 2.0 && t < 2.4) {
+        const ramp = (t - 2.0) / 0.4;
+        glow = Math.max(glow, 0.65 + ramp * 0.35);
       }
 
-      // ── Spawn particles with pulse ──
-      if (t >= 0.88 && !burst1Done) {
-        burst1Done = true;
-        spawnBurst(now, 60, 120, 1.4);
-        spawnAmbient(now, 40);
+      // ── Spawn ambient particles ──
+      if (t >= 0.8 && !ambientDone) {
+        ambientDone = true;
+        spawnAmbient(now, 35);
       }
 
       // ── Backlight glow behind logo ──
@@ -158,24 +241,21 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
         const cx = w / 2;
         const cy = h * 0.46;
 
-        // Elliptical backlight — scale context to stretch a circle into logo proportions
         ctx.save();
         ctx.translate(cx, cy);
-        ctx.scale(1.5, 1); // wider than tall, matching logo shape
+        ctx.scale(1.5, 1);
 
-        // Core backlight — tight, bright center sitting right behind the logo
         const core = ctx.createRadialGradient(0, 0, 0, 0, 0, 180);
-        core.addColorStop(0, `rgba(200,168,78,${glow * 0.45})`);
-        core.addColorStop(0.4, `rgba(200,168,78,${glow * 0.25})`);
-        core.addColorStop(0.7, `rgba(200,168,78,${glow * 0.08})`);
+        core.addColorStop(0, `rgba(200,168,78,${glow * 0.5})`);
+        core.addColorStop(0.4, `rgba(200,168,78,${glow * 0.3})`);
+        core.addColorStop(0.7, `rgba(200,168,78,${glow * 0.1})`);
         core.addColorStop(1, `rgba(200,168,78,0)`);
         ctx.fillStyle = core;
         ctx.fillRect(-300, -300, 600, 600);
 
-        // Wider bloom that spills past the logo edges
         const bloom = ctx.createRadialGradient(0, 0, 80, 0, 0, 350);
-        bloom.addColorStop(0, `rgba(200,168,78,${glow * 0.12})`);
-        bloom.addColorStop(0.5, `rgba(200,168,78,${glow * 0.04})`);
+        bloom.addColorStop(0, `rgba(200,168,78,${glow * 0.15})`);
+        bloom.addColorStop(0.5, `rgba(200,168,78,${glow * 0.05})`);
         bloom.addColorStop(1, `rgba(200,168,78,0)`);
         ctx.fillStyle = bloom;
         ctx.fillRect(-500, -500, 1000, 1000);
@@ -183,50 +263,148 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
         ctx.restore();
       }
 
-      // ── Camera zoom into dust cloud ──
-      let zoomScale = 1;
-      if (fizzleStart > 0) {
-        const fizzleAge = (now - fizzleStart) / 1000;
-        // Ease-in zoom: slow start, accelerates — 1.0 → 2.8 over ~2s
-        const zoomProgress = Math.min(fizzleAge / 2.0, 1);
-        const eased = zoomProgress * zoomProgress; // ease-in quadratic
-        zoomScale = 1 + eased * 1.8;
+      // ── THE EXPLOSION ──
+      if (t >= 2.4 && !explosionDone) {
+        explosionDone = true;
+        explosionTime = now;
+        flashRef.current = 1.0;
+
+        // Kill logo instantly
+        setLogoStyle({
+          opacity: 0,
+          scale: 1.05,
+          transition: "opacity 0.01s linear, transform 0.01s linear",
+        });
+
+        // Start overlay fade (delayed slightly so explosion is visible)
+        setTimeout(() => setOverlayOpacity(0), 600);
+
+        // Spawn the BotW streak explosion
+        spawnExplosion(now);
       }
 
-      if (zoomScale > 1.001) {
+      // ── Core flash — bright white-gold blast that fades ──
+      if (flashRef.current > 0.01) {
+        const cx = w / 2;
+        const cy = h * 0.46;
+        const fi = flashRef.current;
+
+        // Decay flash
+        flashRef.current *= 0.92;
+
+        // White-hot center
         ctx.save();
-        ctx.translate(w / 2, h * 0.46);
-        ctx.scale(zoomScale, zoomScale);
-        ctx.translate(-w / 2, -h * 0.46);
+        ctx.globalCompositeOperation = "lighter";
+
+        // Inner core — almost white
+        const inner = ctx.createRadialGradient(cx, cy, 0, cx, cy, 100 * fi);
+        inner.addColorStop(0, `rgba(255,250,230,${fi * 0.9})`);
+        inner.addColorStop(0.3, `rgba(255,235,180,${fi * 0.6})`);
+        inner.addColorStop(0.6, `rgba(200,168,78,${fi * 0.3})`);
+        inner.addColorStop(1, `rgba(200,168,78,0)`);
+        ctx.fillStyle = inner;
+        ctx.fillRect(cx - 200, cy - 200, 400, 400);
+
+        // Wide bloom
+        const wide = ctx.createRadialGradient(cx, cy, 0, cx, cy, 400 * fi);
+        wide.addColorStop(0, `rgba(200,168,78,${fi * 0.25})`);
+        wide.addColorStop(0.5, `rgba(200,168,78,${fi * 0.08})`);
+        wide.addColorStop(1, `rgba(200,168,78,0)`);
+        ctx.fillStyle = wide;
+        ctx.fillRect(cx - 500, cy - 500, 1000, 1000);
+
+        ctx.restore();
       }
 
       // ── Draw particles ──
-      const heavy = motes.current.length > 200;
       motes.current = motes.current.filter((m) => {
         const age = now - m.born;
         if (age > m.lifespan) return false;
 
+        // Apply friction
+        m.vx *= m.friction;
+        m.vy *= m.friction;
+
+        // Slight gravity for embers
+        if (!m.streak) {
+          m.vy += 0.003;
+        }
+
         m.x += m.vx;
         m.y += m.vy;
-        m.vx *= 0.997;
-        m.vy *= 0.997;
 
+        // Alpha: fade in fast, sustain, fade out slow
         const lifeP = age / m.lifespan;
         let alpha: number;
-        if (lifeP < 0.1) alpha = (lifeP / 0.1) * m.peak;
-        else if (lifeP > 0.5) alpha = ((1 - lifeP) / 0.5) * m.peak;
+        if (lifeP < 0.05) alpha = (lifeP / 0.05) * m.peak;
+        else if (lifeP > 0.4) alpha = ((1 - lifeP) / 0.6) * m.peak;
         else alpha = m.peak;
 
         const [r, g, b] = m.color;
 
-        if (heavy) {
-          // Fast path: simple filled circle, no gradients
+        if (m.streak) {
+          // ── Draw as elongated streak ──
+          const speed = Math.sqrt(m.vx * m.vx + m.vy * m.vy);
+          // Streak length proportional to current speed
+          const streakLen = Math.min(speed * 4, 60);
+
+          if (streakLen < 0.5) {
+            // Slowed to a crawl — draw as dot
+            ctx.beginPath();
+            ctx.arc(m.x, m.y, m.size * 0.8, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${r},${g},${b},${alpha * 0.7})`;
+            ctx.fill();
+            return true;
+          }
+
+          // Direction of travel (normalized)
+          const nx = m.vx / speed;
+          const ny = m.vy / speed;
+
+          // Tail position (behind the head)
+          const tailX = m.x - nx * streakLen;
+          const tailY = m.y - ny * streakLen;
+
+          // Draw streak as a tapered line
+          ctx.save();
+          ctx.lineCap = "round";
+
+          // Glow halo around the streak
+          if (speed > 3) {
+            ctx.beginPath();
+            ctx.moveTo(tailX, tailY);
+            ctx.lineTo(m.x, m.y);
+            ctx.strokeStyle = `rgba(${r},${g},${b},${alpha * 0.08})`;
+            ctx.lineWidth = m.size * 6;
+            ctx.stroke();
+          }
+
+          // Main streak body — gradient from dim tail to bright head
+          const grad = ctx.createLinearGradient(tailX, tailY, m.x, m.y);
+          grad.addColorStop(0, `rgba(${r},${g},${b},0)`);
+          grad.addColorStop(0.3, `rgba(${r},${g},${b},${alpha * 0.3})`);
+          grad.addColorStop(0.7, `rgba(${r},${g},${b},${alpha * 0.7})`);
+          grad.addColorStop(1, `rgba(${Math.min(r + 40, 255)},${Math.min(g + 40, 255)},${Math.min(b + 30, 255)},${alpha})`);
+
           ctx.beginPath();
-          ctx.arc(m.x, m.y, m.size, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(${r},${g},${b},${alpha})`;
-          ctx.fill();
+          ctx.moveTo(tailX, tailY);
+          ctx.lineTo(m.x, m.y);
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = m.size;
+          ctx.stroke();
+
+          // Bright head dot
+          if (alpha > 0.2) {
+            ctx.beginPath();
+            ctx.arc(m.x, m.y, m.size * 0.8, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${Math.min(r + 50, 255)},${Math.min(g + 50, 255)},${Math.min(b + 40, 255)},${alpha * 0.9})`;
+            ctx.fill();
+          }
+
+          ctx.restore();
         } else {
-          // Full quality: glow halo + core gradient
+          // ── Draw as regular particle (embers / ambient) ──
+          // Glow halo
           const haloR = m.size * 5;
           const halo = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, haloR);
           halo.addColorStop(0, `rgba(${r},${g},${b},${alpha * 0.2})`);
@@ -237,6 +415,7 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
           ctx.fillStyle = halo;
           ctx.fill();
 
+          // Core
           const core = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, m.size);
           core.addColorStop(0, `rgba(${Math.min(r + 50, 255)},${Math.min(g + 50, 255)},${Math.min(b + 40, 255)},${alpha})`);
           core.addColorStop(1, `rgba(${r},${g},${b},0)`);
@@ -249,110 +428,19 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
         return true;
       });
 
-      if (zoomScale > 1.001) {
-        ctx.restore();
-      }
-
-      // ── Logo poof: sample pixels, replace with exact-shape particle cloud ──
-      if (t >= 2.4 && !fizzleDone) {
-        fizzleDone = true;
-        fizzleStart = now;
-
-        // Snap logo off instantly
-        setLogoStyle({
-          opacity: 0,
-          scale: 1,
-          transition: "opacity 0.01s linear",
-        });
-
-        // Start overlay fade
-        setOverlayOpacity(0);
-
-        // Sample the logo image pixels to spawn particles in its exact shape
-        const cx = w / 2;
-        const cy = h * 0.46;
-        const displayW = 420;
-        const displayH = 280;
-
-        if (logoImg.complete && logoImg.naturalWidth > 0) {
-          const offscreen = document.createElement("canvas");
-          const sampleW = displayW;
-          const sampleH = displayH;
-          offscreen.width = sampleW;
-          offscreen.height = sampleH;
-          const offCtx = offscreen.getContext("2d");
-          if (offCtx) {
-            offCtx.drawImage(logoImg, 0, 0, sampleW, sampleH);
-            const imageData = offCtx.getImageData(0, 0, sampleW, sampleH);
-            const pixels = imageData.data;
-
-            const step = 3;
-            const originX = cx - displayW / 2;
-            const originY = cy - displayH / 2;
-
-            // 20 speed tiers × 8 lifespan sub-levels = 160 combos
-            // Wind-blown: each particle gets a random direction (not radial)
-            // with varying drift speeds from "barely floating" to "swept away"
-            const TIERS = 20;
-            const SUBS = 8;
-            const minSpd = 0.1;
-            const maxSpd = 18;  // fast enough to clear the screen
-            const minLife = 100;
-            const maxLife = 1500;
-
-            for (let sy = 0; sy < sampleH; sy += step) {
-              for (let sx = 0; sx < sampleW; sx += step) {
-                const idx = (sy * sampleW + sx) * 4;
-                const a = pixels[idx + 3];
-                if (a < 40) continue;
-
-                const px = originX + sx;
-                const py = originY + sy;
-                const peakAlpha = (a / 255) * 0.8 + 0.2;
-
-                // Random tier and sub-level
-                const tier = Math.floor(Math.random() * TIERS);
-                const sub = Math.floor(Math.random() * SUBS);
-                const tN = tier / (TIERS - 1); // 0..1
-                const sN = sub / (SUBS - 1);   // 0..1
-
-                // Wind direction: random for each particle, not radial from center
-                const windAngle = Math.random() * Math.PI * 2;
-
-                // Speed: exponential curve so low tiers cluster near still,
-                // high tiers spread far apart — bigger gaps between fast layers
-                const spd = minSpd + (maxSpd - minSpd) * (tN * tN);
-                const jitteredSpd = spd * (0.8 + Math.random() * 0.4);
-
-                // Life: slow particles die fast, fast ones live longer to travel far
-                // Sub-levels spread within each tier
-                const tierLife = minLife + (maxLife - minLife) * tN;
-                const subSpread = 60 * tN; // more spread for faster tiers
-                const life = tierLife + (sN - 0.5) * subSpread;
-
-                // Perpendicular wobble for organic wind feel
-                const perpAngle = windAngle + Math.PI / 2;
-                const wobble = (Math.random() - 0.5) * 1.5 * tN;
-
-                motes.current.push({
-                  x: px,
-                  y: py,
-                  vx: Math.cos(windAngle) * jitteredSpd + Math.cos(perpAngle) * wobble,
-                  vy: Math.sin(windAngle) * jitteredSpd + Math.sin(perpAngle) * wobble,
-                  size: Math.random() * 1.4 + 0.6 + (1 - tN) * 0.8,
-                  peak: peakAlpha * (0.5 + (1 - tN) * 0.5),
-                  born: now,
-                  lifespan: life,
-                  color: GOLD[Math.floor(Math.random() * GOLD.length)],
-                });
-              }
-            }
-          }
+      // ── Complete after explosion has fizzled ──
+      if (explosionDone) {
+        const timeSinceExplosion = (now - explosionTime) / 1000;
+        if (timeSinceExplosion >= 2.5 && !completedRef.current) {
+          completedRef.current = true;
+          setDone(true);
+          onCompleteCb();
+          return;
         }
       }
 
-      // ── Complete: t=4.5 ──
-      if (t >= 4.5 && !completedRef.current) {
+      // Fallback timeout
+      if (t >= 6 && !completedRef.current) {
         completedRef.current = true;
         setDone(true);
         onCompleteCb();
@@ -378,11 +466,11 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
       style={{
         backgroundColor: "#070709",
         opacity: overlayOpacity,
-        transition: "opacity 1.2s ease-out",
+        transition: "opacity 1.4s ease-out",
         pointerEvents: overlayOpacity === 0 ? "none" : "all",
       }}
     >
-      {/* Canvas: glow + particles — all in one */}
+      {/* Canvas: glow + particles + flash */}
       <canvas
         ref={canvasRef}
         className="absolute inset-0 pointer-events-none"
