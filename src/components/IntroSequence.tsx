@@ -265,10 +265,10 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
             const idx = (sy * offscreen.width + sx) * 4;
             if (pixels[idx + 3] > 40) {
               // Map offscreen coords back to viewport using the forced-state rect
-              // Shift down by 20% of text height
+              // Shift down by 15% of text height
               textTargets.push({
                 x: rect.left + sx - padding,
-                y: rect.top + sy - padding + rect.height * 0.2,
+                y: rect.top + sy - padding + rect.height * 0.15,
               });
             }
           }
