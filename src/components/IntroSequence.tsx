@@ -189,7 +189,7 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
 
       const rect = el.getBoundingClientRect();
       textCenterX = rect.left + rect.width / 2;
-      textCenterY = rect.top + rect.height / 2 + rect.height * 0.5;
+      textCenterY = rect.top + rect.height / 2 + rect.height * 0.2;
 
       // ── Position the metallic DOM clone at the exact spot ──
       if (metallicRef.current && wrapper) {
@@ -260,7 +260,7 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
         const pixels = imageData.data;
         const step = 3;
 
-        const yOffset = rect.height * 0.5; // nudge particle targets down 20% of text height
+        const yOffset = rect.height * 0.2; // nudge particle targets down 20% of text height
         for (let sy = 0; sy < offscreen.height; sy += step) {
           for (let sx = 0; sx < offscreen.width; sx += step) {
             const idx = (sy * offscreen.width + sx) * 4;
