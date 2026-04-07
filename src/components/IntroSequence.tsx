@@ -77,6 +77,14 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
 
   const flashRef = useRef(0);
   const waveRef = useRef({ active: false, radius: 0, cx: 0, cy: 0, startTime: 0 });
+  // Cached text rendering info for metallic solidify
+  const textRenderRef = useRef<{
+    text: string;
+    fontStyle: string;
+    letterSpacing: string;
+    rect: DOMRect;
+    strokeRect: DOMRect | null;
+  } | null>(null);
 
   const onCompleteCb = useCallback(onComplete, [onComplete]);
 
@@ -125,6 +133,15 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
 
       textCenterX = rect.left + rect.width / 2;
       textCenterY = rect.top + rect.height / 2;
+
+      // Cache for metallic rendering
+      textRenderRef.current = {
+        text,
+        fontStyle: `${fontWeight} ${fontSize} ${fontFamily}`,
+        letterSpacing: letterSpacing || "normal",
+        rect,
+        strokeRect: strokeEl ? strokeEl.getBoundingClientRect() : null,
+      };
 
       // Render text to offscreen canvas
       const offscreen = document.createElement("canvas");
@@ -286,8 +303,66 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
     let targetsAssigned = false;
     let convergeStartTime = 0;
     let allArrived = false;
-    let shimmerStartTime = 0;
+    let solidifyStartTime = 0;
+    let solidifyProgress = 0; // 0 = particles, 1 = full metallic text
+    let solidifyComplete = false;
+    let holdStartTime = 0;
     let waveFired = false;
+
+    // ─── Draw metallic gradient text on canvas ──────────────────────────
+    const drawMetallicText = (opacity: number) => {
+      const info = textRenderRef.current;
+      if (!info || opacity < 0.01) return;
+
+      ctx.save();
+      ctx.globalAlpha = opacity;
+
+      // Create the same gradient as GoldBrushText CSS:
+      // linear-gradient(135deg, gold-deep, gold, gold-bright, gold-bright, gold-warm, gold, gold-deep)
+      const r = info.rect;
+      // 135deg gradient: top-left to bottom-right
+      const grad = ctx.createLinearGradient(
+        r.left, r.top,
+        r.right, r.bottom
+      );
+      grad.addColorStop(0, "#a08535");    // gold-deep
+      grad.addColorStop(0.18, "#c8a84e"); // gold
+      grad.addColorStop(0.35, "#e8d48a"); // gold-bright
+      grad.addColorStop(0.48, "#e8d48a"); // gold-bright
+      grad.addColorStop(0.55, "#dab856"); // gold-warm
+      grad.addColorStop(0.72, "#c8a84e"); // gold
+      grad.addColorStop(1, "#a08535");    // gold-deep
+
+      ctx.fillStyle = grad;
+      ctx.font = info.fontStyle;
+      if (info.letterSpacing !== "normal") {
+        ctx.letterSpacing = info.letterSpacing;
+      }
+      ctx.textBaseline = "top";
+      ctx.fillText(info.text, r.left, r.top);
+
+      // Underline stroke
+      if (info.strokeRect) {
+        const sr = info.strokeRect;
+        const strokeGrad = ctx.createLinearGradient(sr.left, sr.top, sr.right, sr.top);
+        strokeGrad.addColorStop(0, "transparent");
+        strokeGrad.addColorStop(0.15, "#c8a84e");
+        strokeGrad.addColorStop(0.50, "#e8d48a");
+        strokeGrad.addColorStop(0.85, "#c8a84e");
+        strokeGrad.addColorStop(1, "transparent");
+        ctx.fillStyle = strokeGrad;
+        ctx.fillRect(sr.left, sr.top, sr.width, 3);
+
+        // Glow under the stroke
+        ctx.shadowColor = "rgba(200, 168, 78, 0.4)";
+        ctx.shadowBlur = 12;
+        ctx.fillRect(sr.left, sr.top, sr.width, 3);
+        ctx.shadowColor = "transparent";
+        ctx.shadowBlur = 0;
+      }
+
+      ctx.restore();
+    };
 
     // ─── The animation loop ─────────────────────────────────────────────
 
@@ -450,7 +525,6 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
 
         if (totalWithTarget > 0 && arrivedCount >= totalWithTarget * 0.95) {
           allArrived = true;
-          shimmerStartTime = now;
           // Snap any stragglers
           for (const m of motes.current) {
             if (m.hasTarget && !m.arrived) {
@@ -464,27 +538,32 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
         }
       }
 
-      // ── PHASE 5: SHIMMER + METALLIC SOLIDIFY ──
-      if (allArrived && !waveFired) {
-        const shimmerAge = (now - shimmerStartTime) / 1000;
+      // ── PHASE 5: GRADUAL METALLIC SOLIDIFY ──
+      // Particles are in place → gradually crossfade to real metallic gradient text
+      if (allArrived && !solidifyComplete) {
+        if (solidifyStartTime === 0) solidifyStartTime = now;
+        const solidifyAge = (now - solidifyStartTime) / 1000;
 
-        // Shimmer: a bright wave sweeps left→right across the text
-        const shimmerProgress = Math.min(shimmerAge / 0.6, 1);
-        const shimmerX = textCenterX - 400 + shimmerProgress * 800;
+        // Ease-in-out over 0.8s: particles fade, metallic text appears
+        const raw = Math.min(solidifyAge / 0.8, 1);
+        solidifyProgress = raw * raw * (3 - 2 * raw); // smoothstep
 
-        for (const m of motes.current) {
-          if (!m.arrived) continue;
-          // Particles near the shimmer line get brighter
-          const distToShimmer = Math.abs(m.x - shimmerX);
-          if (distToShimmer < 40) {
-            const brightness = 1 - distToShimmer / 40;
-            m.peak = Math.min(m.peak + brightness * 0.3, 1.0);
-            m.color = GOLD_BRIGHT[Math.floor(Math.random() * GOLD_BRIGHT.length)];
-          }
+        // Draw the metallic text at current solidify opacity
+        drawMetallicText(solidifyProgress);
+
+        if (raw >= 1) {
+          solidifyComplete = true;
+          holdStartTime = now;
         }
+      }
 
-        // After shimmer completes + brief hold, fire the wave
-        if (shimmerAge >= 1.0) {
+      // ── PHASE 5b: HOLD — fully metallic text sits for 250ms ──
+      if (solidifyComplete && !waveFired) {
+        // Keep drawing the solid metallic text
+        drawMetallicText(1);
+
+        const holdAge = (now - holdStartTime) / 1000;
+        if (holdAge >= 0.25) {
           waveFired = true;
           waveRef.current = {
             active: true,
@@ -496,13 +575,14 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
         }
       }
 
-      // ── PHASE 6: GOLD WAVE REVEAL ──
+      // ── PHASE 6: GOLD WAVE REVEAL (slower) ──
       if (waveRef.current.active) {
         const wave = waveRef.current;
         const waveAge = (now - wave.startTime) / 1000;
-        // Ease-out: fast start, graceful slow
-        const waveProgress = Math.min(waveAge / 1.3, 1);
-        const eased = 1 - Math.pow(1 - waveProgress, 2.5);
+        // Slower wave: 2.2s duration (was 1.3s)
+        const waveProgress = Math.min(waveAge / 2.2, 1);
+        // Ease-out cubic: fast initial sweep, graceful deceleration
+        const eased = 1 - Math.pow(1 - waveProgress, 3);
         // Max radius = distance from center to farthest corner
         const maxR = Math.sqrt(
           Math.max(wave.cx, w - wave.cx) ** 2 +
@@ -510,19 +590,23 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
         ) + 100;
         wave.radius = eased * maxR;
 
+        // Draw metallic text (fades as wave passes over it)
+        const textDistFromWave = wave.radius - 50;
+        const textFade = textDistFromWave > 0 ? Math.max(0, 1 - textDistFromWave / 200) : 1;
+        drawMetallicText(textFade);
+
         // Apply mask to overlay — cut a circular hole
         if (overlayRef.current) {
-          overlayRef.current.style.maskImage =
-            `radial-gradient(circle ${wave.radius}px at ${wave.cx}px ${wave.cy}px, transparent ${wave.radius - 30}px, black ${wave.radius + 10}px)`;
-          overlayRef.current.style.webkitMaskImage =
-            `radial-gradient(circle ${wave.radius}px at ${wave.cx}px ${wave.cy}px, transparent ${wave.radius - 30}px, black ${wave.radius + 10}px)`;
+          const maskStr = `radial-gradient(circle ${wave.radius}px at ${wave.cx}px ${wave.cy}px, transparent ${Math.max(wave.radius - 40, 0)}px, black ${wave.radius + 15}px)`;
+          overlayRef.current.style.maskImage = maskStr;
+          overlayRef.current.style.webkitMaskImage = maskStr;
         }
 
         // Draw the gold wave ring on canvas
-        const ringWidth = 60;
+        const ringWidth = 80;
         const innerR = Math.max(wave.radius - ringWidth, 0);
         const outerR = wave.radius;
-        const ringAlpha = 0.35 * (1 - waveProgress * 0.7);
+        const ringAlpha = 0.3 * (1 - waveProgress * 0.6);
 
         if (ringAlpha > 0.01) {
           const grad = ctx.createRadialGradient(
@@ -530,9 +614,10 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
             wave.cx, wave.cy, outerR
           );
           grad.addColorStop(0, `rgba(200,168,78,0)`);
-          grad.addColorStop(0.3, `rgba(232,212,138,${ringAlpha * 0.4})`);
-          grad.addColorStop(0.5, `rgba(255,240,200,${ringAlpha})`);
-          grad.addColorStop(0.7, `rgba(232,212,138,${ringAlpha * 0.4})`);
+          grad.addColorStop(0.25, `rgba(232,212,138,${ringAlpha * 0.3})`);
+          grad.addColorStop(0.45, `rgba(255,240,200,${ringAlpha * 0.8})`);
+          grad.addColorStop(0.55, `rgba(255,240,200,${ringAlpha})`);
+          grad.addColorStop(0.75, `rgba(232,212,138,${ringAlpha * 0.3})`);
           grad.addColorStop(1, `rgba(200,168,78,0)`);
           ctx.beginPath();
           ctx.arc(wave.cx, wave.cy, outerR, 0, Math.PI * 2);
@@ -571,9 +656,11 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
         const lifeP = m.hasTarget ? 1 : Math.min(age / m.lifespan, 1);
         let alpha: number;
         if (m.arrived) {
-          // Arrived particles: full brightness, with sparkle
+          // Arrived particles: sparkle, but fade out as metallic text solidifies
           const sparkle = Math.sin(now * 0.008 + m.shimmerPhase) * 0.15 + 0.85;
-          alpha = m.peak * sparkle;
+          const particleFade = 1 - solidifyProgress; // fade as metallic takes over
+          alpha = m.peak * sparkle * particleFade;
+          if (alpha < 0.005) return true; // skip drawing but keep alive
         } else if (m.hasTarget && m.converging) {
           // Converging: brightens as it approaches
           const dist = Math.sqrt((m.x - m.targetX) ** 2 + (m.y - m.targetY) ** 2);
