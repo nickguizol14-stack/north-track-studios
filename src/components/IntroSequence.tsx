@@ -112,104 +112,158 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
     let textCenterX = w / 2;
     let textCenterY = h * 0.4;
 
-    const sampleTextTargets = () => {
-      const el = document.getElementById("hero-north-track");
-      const strokeEl = document.getElementById("hero-north-track-stroke");
-      if (!el) return;
+    // Force the hero text elements into their final resting state
+    // (stop CSS animations, remove transforms) so getBoundingClientRect
+    // returns the REAL final positions — then restore originals.
+    const forceHeroFinalState = () => {
+      const wrapper = document.getElementById("hero-north-track-wrapper");
+      if (!wrapper) return [];
 
-      const rect = el.getBoundingClientRect();
-      const style = getComputedStyle(el);
-      const fontFamily = style.fontFamily;
-      const fontSize = style.fontSize;
-      const fontWeight = style.fontWeight;
-      const letterSpacing = style.letterSpacing;
-      const text = "North Track";
-
-      textCenterX = rect.left + rect.width / 2;
-      textCenterY = rect.top + rect.height / 2;
-
-      // Position the metallic DOM clone at the exact same spot
-      if (metallicRef.current) {
-        const wrapper = document.getElementById("hero-north-track-wrapper");
-        const m = metallicRef.current;
-        // Clear any old content
-        m.innerHTML = "";
-
-        if (wrapper) {
-          // Clone the entire wrapper (text + underline stroke) for pixel-perfect match
-          const clone = wrapper.cloneNode(true) as HTMLElement;
-          // Remove the id to avoid duplicates
-          clone.removeAttribute("id");
-          // Strip scroll-reveal wrapper opacity/transform — we want it fully visible
-          clone.style.opacity = "1";
-          clone.style.transform = "none";
-          clone.style.clipPath = "none";
-          // Force all children visible and un-clipped
-          const allEls = clone.querySelectorAll("*");
-          allEls.forEach((child) => {
-            const el = child as HTMLElement;
-            el.style.clipPath = "none";
-            el.style.opacity = "1";
-            el.style.transform = "none";
-            el.style.animation = "none";
+      // Walk up from wrapper and collect all animated ancestors up to the section
+      const ancestors: { el: HTMLElement; orig: { animation: string; transform: string; opacity: string; clipPath: string } }[] = [];
+      let node: HTMLElement | null = wrapper;
+      while (node && node !== document.body) {
+        const cs = getComputedStyle(node);
+        if (cs.animationName !== "none" || cs.transform !== "none" || cs.opacity !== "1" || cs.clipPath !== "none") {
+          ancestors.push({
+            el: node,
+            orig: {
+              animation: node.style.animation,
+              transform: node.style.transform,
+              opacity: node.style.opacity,
+              clipPath: node.style.clipPath,
+            },
           });
-          // Position the metallic clone exactly
-          const wrapperRect = wrapper.getBoundingClientRect();
-          m.style.position = "absolute";
-          m.style.left = `${wrapperRect.left}px`;
-          m.style.top = `${wrapperRect.top}px`;
-          m.style.width = `${wrapperRect.width}px`;
-          m.style.height = `${wrapperRect.height}px`;
-          m.style.pointerEvents = "none";
-          m.appendChild(clone);
+          node.style.animation = "none";
+          node.style.transform = "none";
+          node.style.opacity = "1";
+          node.style.clipPath = "none";
         }
+        node = node.parentElement;
       }
-
-      // Render text to offscreen canvas
-      const offscreen = document.createElement("canvas");
-      const padding = 40;
-      offscreen.width = rect.width + padding * 2;
-      offscreen.height = rect.height + padding * 2;
-      const offCtx = offscreen.getContext("2d");
-      if (!offCtx) return;
-
-      offCtx.fillStyle = "#ffffff";
-      offCtx.font = `${fontWeight} ${fontSize} ${fontFamily}`;
-      if (letterSpacing && letterSpacing !== "normal") {
-        offCtx.letterSpacing = letterSpacing;
-      }
-      offCtx.textBaseline = "top";
-      offCtx.fillText(text, padding, padding);
-
-      // Also render the underline stroke if it exists
-      if (strokeEl) {
-        const strokeRect = strokeEl.getBoundingClientRect();
-        const strokeY = strokeRect.top - rect.top + padding;
-        const strokeX = strokeRect.left - rect.left + padding;
-        offCtx.fillRect(strokeX, strokeY, strokeRect.width, 3);
-      }
-
-      // Sample opaque pixels
-      const imageData = offCtx.getImageData(0, 0, offscreen.width, offscreen.height);
-      const pixels = imageData.data;
-      const step = 3; // sample every 3 pixels
-
-      textTargets = [];
-      for (let sy = 0; sy < offscreen.height; sy += step) {
-        for (let sx = 0; sx < offscreen.width; sx += step) {
-          const idx = (sy * offscreen.width + sx) * 4;
-          if (pixels[idx + 3] > 40) {
-            textTargets.push({
-              x: rect.left + sx - padding,
-              y: rect.top + sy - padding,
-            });
-          }
+      // Also force the wrapper and its children
+      const allInner = wrapper.querySelectorAll("*");
+      allInner.forEach((child) => {
+        const el = child as HTMLElement;
+        const cs = getComputedStyle(el);
+        if (cs.animationName !== "none" || cs.transform !== "none" || cs.clipPath !== "none") {
+          ancestors.push({
+            el,
+            orig: {
+              animation: el.style.animation,
+              transform: el.style.transform,
+              opacity: el.style.opacity,
+              clipPath: el.style.clipPath,
+            },
+          });
+          el.style.animation = "none";
+          el.style.transform = "none";
+          el.style.opacity = "1";
+          el.style.clipPath = "none";
         }
+      });
+
+      // Force layout reflow so getBoundingClientRect sees the forced state
+      wrapper.getBoundingClientRect();
+
+      return ancestors;
+    };
+
+    const restoreHeroState = (saved: { el: HTMLElement; orig: { animation: string; transform: string; opacity: string; clipPath: string } }[]) => {
+      for (const { el, orig } of saved) {
+        el.style.animation = orig.animation;
+        el.style.transform = orig.transform;
+        el.style.opacity = orig.opacity;
+        el.style.clipPath = orig.clipPath;
       }
     };
 
-    // Try sampling after a short delay to let fonts load
-    setTimeout(sampleTextTargets, 300);
+    const sampleTextTargets = () => {
+      const el = document.getElementById("hero-north-track");
+      const strokeEl = document.getElementById("hero-north-track-stroke");
+      const wrapper = document.getElementById("hero-north-track-wrapper");
+      if (!el) return;
+
+      // Force all ancestors to final state so positions are accurate
+      const saved = forceHeroFinalState();
+
+      const rect = el.getBoundingClientRect();
+      textCenterX = rect.left + rect.width / 2;
+      textCenterY = rect.top + rect.height / 2;
+
+      // ── Position the metallic DOM clone at the exact spot ──
+      if (metallicRef.current && wrapper) {
+        const m = metallicRef.current;
+        m.innerHTML = "";
+
+        const clone = wrapper.cloneNode(true) as HTMLElement;
+        clone.removeAttribute("id");
+        clone.style.opacity = "1";
+        clone.style.transform = "none";
+        clone.style.clipPath = "none";
+        clone.style.animation = "none";
+        const allEls = clone.querySelectorAll("*");
+        allEls.forEach((child) => {
+          const c = child as HTMLElement;
+          c.style.clipPath = "none";
+          c.style.opacity = "1";
+          c.style.transform = "none";
+          c.style.animation = "none";
+        });
+        const wrapperRect = wrapper.getBoundingClientRect();
+        m.style.position = "absolute";
+        m.style.left = `${wrapperRect.left}px`;
+        m.style.top = `${wrapperRect.top}px`;
+        m.style.width = `${wrapperRect.width}px`;
+        m.style.height = `${wrapperRect.height}px`;
+        m.style.pointerEvents = "none";
+        m.appendChild(clone);
+      }
+
+      // ── Sample particle targets using per-character DOM rects ──
+      // This avoids canvas fillText rendering differences
+      textTargets = [];
+
+      // Get the text node inside the element
+      const textNode = el.querySelector("span, h1, h2, h3, p") || el;
+      const firstChild = textNode.childNodes[0];
+      if (firstChild && firstChild.nodeType === Node.TEXT_NODE) {
+        const range = document.createRange();
+        const text = firstChild.textContent || "";
+
+        for (let i = 0; i < text.length; i++) {
+          if (text[i] === " ") continue; // skip spaces
+          range.setStart(firstChild, i);
+          range.setEnd(firstChild, i + 1);
+          const charRects = range.getClientRects();
+
+          for (let r = 0; r < charRects.length; r++) {
+            const cr = charRects[r];
+            // Fill each character rect with target points (every ~3px)
+            const step = 3;
+            for (let py = cr.top; py < cr.bottom; py += step) {
+              for (let px = cr.left; px < cr.right; px += step) {
+                textTargets.push({ x: px, y: py });
+              }
+            }
+          }
+        }
+      }
+
+      // Also sample the underline stroke
+      if (strokeEl) {
+        const sr = strokeEl.getBoundingClientRect();
+        const step = 3;
+        for (let py = sr.top; py < sr.bottom; py += step) {
+          for (let px = sr.left; px < sr.right; px += step) {
+            textTargets.push({ x: px, y: py });
+          }
+        }
+      }
+
+      // Restore original styles
+      restoreHeroState(saved);
+    };
 
     // ─── Spawn BotW-style radial streak explosion ─────────────────────
 
@@ -275,11 +329,9 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
     // ─── Assign convergence targets to particles ────────────────────────
 
     const assignTargets = (now: number) => {
-      if (textTargets.length === 0) {
-        // Fallback: re-sample
-        sampleTextTargets();
-        if (textTargets.length === 0) return;
-      }
+      // Always sample fresh — ensures we get final positions after all CSS animations settle
+      sampleTextTargets();
+      if (textTargets.length === 0) return;
 
       const particles = motes.current;
       const targets = [...textTargets];
