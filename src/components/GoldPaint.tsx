@@ -42,6 +42,7 @@ interface GoldBrushTextProps {
   className?: string;
   delay?: number;
   speed?: number; // ms for the paint sweep, default 1200
+  id?: string;
 }
 
 export function GoldBrushText({
@@ -50,6 +51,7 @@ export function GoldBrushText({
   className = "",
   delay = 0,
   speed = 200,
+  id,
 }: GoldBrushTextProps) {
   const { ref, isVisible } = useScrollReveal(0.2);
   const textRef = useRef<HTMLElement>(null);
@@ -130,10 +132,11 @@ export function GoldBrushText({
   }, [isVisible, delay, speed]);
 
   return (
-    <div ref={ref} className="relative inline-block">
+    <div ref={ref} className="relative inline-block" id={id ? `${id}-wrapper` : undefined}>
       {/* The painted text */}
       <Tag
         ref={textRef as React.Ref<never>}
+        id={id}
         className={`relative z-10 ${className}`}
         style={{
           background:
@@ -160,7 +163,7 @@ export function GoldBrushText({
       />
 
       {/* Gold underline — full text width */}
-      <GoldBrushStroke width="100%" delay={delay + speed * 0.6} className="mt-3" />
+      <GoldBrushStroke width="100%" delay={delay + speed * 0.6} className="mt-3" id={id ? `${id}-stroke` : undefined} />
     </div>
   );
 }
@@ -172,12 +175,14 @@ interface GoldBrushStrokeProps {
   delay?: number;
   width?: string;
   brushIndex?: number;
+  id?: string;
 }
 
 export function GoldBrushStroke({
   className = "",
   delay = 0,
   width = "120px",
+  id,
 }: GoldBrushStrokeProps) {
   const { ref, isVisible } = useScrollReveal(0.3);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -291,7 +296,7 @@ export function GoldBrushStroke({
   }, [isVisible, delay]);
 
   return (
-    <div ref={ref} className={`relative ${className}`} style={{ width }}>
+    <div ref={ref} className={`relative ${className}`} style={{ width }} id={id}>
       {/* The solid gold line */}
       <div
         className="relative"

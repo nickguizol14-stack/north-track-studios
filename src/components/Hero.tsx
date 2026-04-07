@@ -58,6 +58,7 @@ export function Hero() {
                 <ThunderShimmer interval={10000} intensity={0.35}>
                   <GoldBrushText
                     as="span"
+                    id="hero-north-track"
                     className="text-6xl md:text-8xl lg:text-[7rem] font-extralight tracking-tight"
                     delay={0}
                     speed={200}
