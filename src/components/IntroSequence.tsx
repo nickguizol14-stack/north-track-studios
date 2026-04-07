@@ -77,14 +77,8 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
 
   const flashRef = useRef(0);
   const waveRef = useRef({ active: false, radius: 0, cx: 0, cy: 0, startTime: 0 });
-  // Cached text rendering info for metallic solidify
-  const textRenderRef = useRef<{
-    text: string;
-    fontStyle: string;
-    letterSpacing: string;
-    rect: DOMRect;
-    strokeRect: DOMRect | null;
-  } | null>(null);
+  const metallicRef = useRef<HTMLDivElement>(null);
+  const [metallicOpacity, setMetallicOpacity] = useState(0);
 
   const onCompleteCb = useCallback(onComplete, [onComplete]);
 
@@ -134,14 +128,42 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
       textCenterX = rect.left + rect.width / 2;
       textCenterY = rect.top + rect.height / 2;
 
-      // Cache for metallic rendering
-      textRenderRef.current = {
-        text,
-        fontStyle: `${fontWeight} ${fontSize} ${fontFamily}`,
-        letterSpacing: letterSpacing || "normal",
-        rect,
-        strokeRect: strokeEl ? strokeEl.getBoundingClientRect() : null,
-      };
+      // Position the metallic DOM clone at the exact same spot
+      if (metallicRef.current) {
+        const wrapper = document.getElementById("hero-north-track-wrapper");
+        const m = metallicRef.current;
+        // Clear any old content
+        m.innerHTML = "";
+
+        if (wrapper) {
+          // Clone the entire wrapper (text + underline stroke) for pixel-perfect match
+          const clone = wrapper.cloneNode(true) as HTMLElement;
+          // Remove the id to avoid duplicates
+          clone.removeAttribute("id");
+          // Strip scroll-reveal wrapper opacity/transform — we want it fully visible
+          clone.style.opacity = "1";
+          clone.style.transform = "none";
+          clone.style.clipPath = "none";
+          // Force all children visible and un-clipped
+          const allEls = clone.querySelectorAll("*");
+          allEls.forEach((child) => {
+            const el = child as HTMLElement;
+            el.style.clipPath = "none";
+            el.style.opacity = "1";
+            el.style.transform = "none";
+            el.style.animation = "none";
+          });
+          // Position the metallic clone exactly
+          const wrapperRect = wrapper.getBoundingClientRect();
+          m.style.position = "absolute";
+          m.style.left = `${wrapperRect.left}px`;
+          m.style.top = `${wrapperRect.top}px`;
+          m.style.width = `${wrapperRect.width}px`;
+          m.style.height = `${wrapperRect.height}px`;
+          m.style.pointerEvents = "none";
+          m.appendChild(clone);
+        }
+      }
 
       // Render text to offscreen canvas
       const offscreen = document.createElement("canvas");
@@ -309,60 +331,7 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
     let holdStartTime = 0;
     let waveFired = false;
 
-    // ─── Draw metallic gradient text on canvas ──────────────────────────
-    const drawMetallicText = (opacity: number) => {
-      const info = textRenderRef.current;
-      if (!info || opacity < 0.01) return;
-
-      ctx.save();
-      ctx.globalAlpha = opacity;
-
-      // Create the same gradient as GoldBrushText CSS:
-      // linear-gradient(135deg, gold-deep, gold, gold-bright, gold-bright, gold-warm, gold, gold-deep)
-      const r = info.rect;
-      // 135deg gradient: top-left to bottom-right
-      const grad = ctx.createLinearGradient(
-        r.left, r.top,
-        r.right, r.bottom
-      );
-      grad.addColorStop(0, "#a08535");    // gold-deep
-      grad.addColorStop(0.18, "#c8a84e"); // gold
-      grad.addColorStop(0.35, "#e8d48a"); // gold-bright
-      grad.addColorStop(0.48, "#e8d48a"); // gold-bright
-      grad.addColorStop(0.55, "#dab856"); // gold-warm
-      grad.addColorStop(0.72, "#c8a84e"); // gold
-      grad.addColorStop(1, "#a08535");    // gold-deep
-
-      ctx.fillStyle = grad;
-      ctx.font = info.fontStyle;
-      if (info.letterSpacing !== "normal") {
-        ctx.letterSpacing = info.letterSpacing;
-      }
-      ctx.textBaseline = "top";
-      ctx.fillText(info.text, r.left, r.top);
-
-      // Underline stroke
-      if (info.strokeRect) {
-        const sr = info.strokeRect;
-        const strokeGrad = ctx.createLinearGradient(sr.left, sr.top, sr.right, sr.top);
-        strokeGrad.addColorStop(0, "transparent");
-        strokeGrad.addColorStop(0.15, "#c8a84e");
-        strokeGrad.addColorStop(0.50, "#e8d48a");
-        strokeGrad.addColorStop(0.85, "#c8a84e");
-        strokeGrad.addColorStop(1, "transparent");
-        ctx.fillStyle = strokeGrad;
-        ctx.fillRect(sr.left, sr.top, sr.width, 3);
-
-        // Glow under the stroke
-        ctx.shadowColor = "rgba(200, 168, 78, 0.4)";
-        ctx.shadowBlur = 12;
-        ctx.fillRect(sr.left, sr.top, sr.width, 3);
-        ctx.shadowColor = "transparent";
-        ctx.shadowBlur = 0;
-      }
-
-      ctx.restore();
-    };
+    // Metallic text is now rendered via DOM clone (metallicRef) — no canvas text drawing needed
 
     // ─── The animation loop ─────────────────────────────────────────────
 
@@ -548,8 +517,8 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
         const raw = Math.min(solidifyAge / 0.8, 1);
         solidifyProgress = raw * raw * (3 - 2 * raw); // smoothstep
 
-        // Draw the metallic text at current solidify opacity
-        drawMetallicText(solidifyProgress);
+        // Fade in the DOM-cloned metallic text
+        setMetallicOpacity(solidifyProgress);
 
         if (raw >= 1) {
           solidifyComplete = true;
@@ -559,8 +528,8 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
 
       // ── PHASE 5b: HOLD — fully metallic text sits for 250ms ──
       if (solidifyComplete && !waveFired) {
-        // Keep drawing the solid metallic text
-        drawMetallicText(1);
+        // Keep the DOM-cloned metallic text fully visible
+        setMetallicOpacity(1);
 
         const holdAge = (now - holdStartTime) / 1000;
         if (holdAge >= 0.25) {
@@ -620,10 +589,10 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
           ctx.fill();
         }
 
-        // Draw metallic text ON TOP of the wave — text is the topmost layer
+        // Metallic DOM text stays on top of the wave — topmost layer
         // It stays solid until the wave has fully passed, then fades
         const textFade = waveProgress < 0.85 ? 1 : Math.max(0, 1 - (waveProgress - 0.85) / 0.15);
-        drawMetallicText(textFade);
+        setMetallicOpacity(textFade);
 
         // Complete
         if (waveProgress >= 1 && !completedRef.current) {
@@ -819,6 +788,17 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
       <canvas
         ref={canvasRef}
         className="absolute inset-0 pointer-events-none"
+      />
+
+      {/* Pixel-perfect metallic text clone — sits ABOVE canvas and wave */}
+      <div
+        ref={metallicRef}
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          zIndex: 30,
+          opacity: metallicOpacity,
+          willChange: "opacity",
+        }}
       />
 
       {/* Logo */}
