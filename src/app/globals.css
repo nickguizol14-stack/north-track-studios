@@ -1067,3 +1067,392 @@ body {
     -1px -1px 3px rgba(255, 255, 255, 0.03),
     inset 1px 1px 1px rgba(255, 255, 255, 0.05);
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   STYLE: Minimalism
+   ─────────────────────────────────────────────────────────────────────
+   Radical reduction. Strip away all ornament — no particles, no
+   shimmer, no glow, no gradients on text. Pure typography, hairline
+   borders, flat color, generous whitespace. Every element earns its
+   place or gets removed.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Min: Root overrides ────────────────────────────────────────────── */
+
+[data-style="minimalism"] {
+  --min-bg: #0a0a0a;
+  --min-surface: #0e0e0e;
+  --min-card: #111111;
+  --min-border: rgba(255, 255, 255, 0.08);
+  --min-border-hover: rgba(255, 255, 255, 0.15);
+  --min-text: #e5e5e5;
+  --min-text-muted: #666666;
+  --min-text-dim: #444444;
+  --min-accent: var(--gold);
+}
+
+[data-style="minimalism"] body {
+  background: var(--min-bg) !important;
+  color: var(--min-text) !important;
+}
+
+/* ── Min: Kill all decorative effects ───────────────────────────────── */
+
+/* Particles canvas */
+[data-style="minimalism"] canvas {
+  opacity: 0 !important;
+}
+
+/* Grid overlay */
+[data-style="minimalism"] .grid-overlay {
+  background-image: none !important;
+}
+
+/* Vignette */
+[data-style="minimalism"] .vignette {
+  box-shadow: none !important;
+}
+
+/* Gold shimmer lines */
+[data-style="minimalism"] .gold-line {
+  animation: none !important;
+  background: var(--min-border) !important;
+}
+
+/* Compass behind hero */
+[data-style="minimalism"] .compass-ring {
+  animation: none !important;
+}
+
+/* Thunder shimmer glow overlays */
+[data-style="minimalism"] span[class*="absolute"][class*="pointer-events-none"][class*="rounded-3xl"] {
+  display: none !important;
+}
+
+/* Pulse ring on color switcher */
+[data-style="minimalism"] .animate-ping {
+  display: none !important;
+}
+
+/* Radiate glow behind text */
+[data-style="minimalism"] .radiate-gold,
+[data-style="minimalism"] div[class*="-inset-x-8"][class*="-inset-y-4"] {
+  display: none !important;
+}
+
+/* Card sway animation — stillness */
+[data-style="minimalism"] .card-alive {
+  animation: none !important;
+}
+
+/* Hero corner accents */
+[data-style="minimalism"] .absolute[class*="w-40"][class*="h-40"] {
+  display: none !important;
+}
+
+/* Painted divider glow trail */
+[data-style="minimalism"] .painted-divider::after {
+  display: none !important;
+}
+
+/* ── Min: Navigation — invisible until scrolled ─────────────────────── */
+
+[data-style="minimalism"] nav {
+  background: transparent !important;
+  border-bottom: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+
+[data-style="minimalism"] nav[class*="border-b"] {
+  background: rgba(10, 10, 10, 0.95) !important;
+  border-bottom: 1px solid var(--min-border) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+}
+
+/* Nav links — clean, no uppercase fuss */
+[data-style="minimalism"] nav a {
+  letter-spacing: 0.05em !important;
+}
+
+/* Nav CTA button — minimal outline */
+[data-style="minimalism"] nav a[class*="border"][class*="uppercase"] {
+  border-color: var(--min-border) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+[data-style="minimalism"] nav a[class*="border"][class*="uppercase"]:hover {
+  border-color: var(--min-accent) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* ── Min: All cards — flat, hairline border, no shadow ──────────────── */
+
+[data-style="minimalism"] .card-alive,
+[data-style="minimalism"] [class*="bg-card"] {
+  background: var(--min-card) !important;
+  border: 1px solid var(--min-border) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Remove all card decorative elements */
+[data-style="minimalism"] .card-alive .absolute[class*="w-6"],
+[data-style="minimalism"] .card-alive .absolute[class*="w-4"],
+[data-style="minimalism"] .card-alive .absolute[class*="w-5"],
+[data-style="minimalism"] [class*="bg-card"] .absolute[class*="w-6"],
+[data-style="minimalism"] [class*="bg-card"] .absolute[class*="w-4"],
+[data-style="minimalism"] [class*="bg-card"] .absolute[class*="w-5"] {
+  display: none !important;
+}
+
+/* Top accent lines on cards — gone */
+[data-style="minimalism"] .card-alive > .absolute[class*="top-0"][class*="h-px"],
+[data-style="minimalism"] [class*="bg-card"] > .absolute[class*="top-0"][class*="h-px"] {
+  display: none !important;
+}
+
+/* Bottom hover glow lines — gone */
+[data-style="minimalism"] .card-alive > .absolute[class*="bottom-0"][class*="h-px"],
+[data-style="minimalism"] [class*="bg-card"] > .absolute[class*="bottom-0"][class*="h-px"] {
+  display: none !important;
+}
+
+/* Left accent bars — gone */
+[data-style="minimalism"] .absolute[class*="w-\\[2px\\]"] {
+  display: none !important;
+}
+
+/* Card hover — just a border shift, nothing more */
+[data-style="minimalism"] .card-alive:hover {
+  border-color: var(--min-border-hover) !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* ── Min: Section backgrounds — flat, barely distinct ───────────────── */
+
+[data-style="minimalism"] section[class*="bg-surface"] {
+  background: var(--min-surface) !important;
+}
+
+/* ── Min: Gold gradient text → flat accent color ────────────────────── */
+
+[data-style="minimalism"] .text-gradient-gold {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: var(--min-accent) !important;
+  background-clip: unset !important;
+}
+
+/* GoldBrushText painted headers → flat accent, no clip animation */
+[data-style="minimalism"] h1[style],
+[data-style="minimalism"] h2[style],
+[data-style="minimalism"] h3[style],
+[data-style="minimalism"] span[style] {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: var(--min-accent) !important;
+  background-clip: unset !important;
+  clip-path: none !important;
+}
+
+/* GoldBrushStroke underlines — thin hairline only */
+[data-style="minimalism"] div[class*="relative"] > div[style*="height: 3px"] {
+  height: 1px !important;
+  background: var(--min-border) !important;
+  box-shadow: none !important;
+}
+
+/* ── Min: Buttons — ultra clean ─────────────────────────────────────── */
+
+[data-style="minimalism"] a[class*="border"][class*="text-gold"],
+[data-style="minimalism"] button[type="submit"],
+[data-style="minimalism"] a[class*="border"][class*="uppercase"] {
+  background: transparent !important;
+  border: 1px solid var(--min-border) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+[data-style="minimalism"] a[class*="border"][class*="text-gold"]:hover,
+[data-style="minimalism"] button[type="submit"]:hover {
+  background: transparent !important;
+  border-color: var(--min-accent) !important;
+  box-shadow: none !important;
+}
+
+/* Button inner gradient overlay — gone */
+[data-style="minimalism"] a[class*="border"] > div[class*="absolute"][class*="bg-gradient"] {
+  display: none !important;
+}
+
+/* ── Min: Form inputs — bottom border only ──────────────────────────── */
+
+[data-style="minimalism"] input,
+[data-style="minimalism"] textarea,
+[data-style="minimalism"] select {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid var(--min-border) !important;
+  border-radius: 0 !important;
+  padding: 12px 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+[data-style="minimalism"] input:focus,
+[data-style="minimalism"] textarea:focus,
+[data-style="minimalism"] select:focus {
+  border-bottom-color: var(--min-accent) !important;
+  box-shadow: none !important;
+}
+
+/* ── Min: Tags — just text with a subtle border ─────────────────────── */
+
+[data-style="minimalism"] span[class*="border"][class*="tracking-wider"][class*="uppercase"][class*="text-muted"] {
+  border: 1px solid var(--min-border) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* ── Min: Painted dividers → single hairline ────────────────────────── */
+
+[data-style="minimalism"] .painted-divider {
+  height: 1px !important;
+  background: var(--min-border) !important;
+}
+
+/* ── Min: Stats border-left — thin, clean ───────────────────────────── */
+
+[data-style="minimalism"] div[class*="border-l"][class*="border-gold"] {
+  border-left-color: var(--min-border) !important;
+  padding: 0 0 0 16px !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+
+/* ── Min: Timeline — thin line, small dots ──────────────────────────── */
+
+[data-style="minimalism"] #process .absolute[class*="w-px"] {
+  background: var(--min-border) !important;
+}
+
+[data-style="minimalism"] #process .absolute[class*="rotate-45"] {
+  width: 5px !important;
+  height: 5px !important;
+  border-radius: 50% !important;
+  transform: rotate(0deg) !important;
+  background: var(--min-accent) !important;
+  box-shadow: none !important;
+}
+
+/* ── Min: Metric diamonds → tiny circles ────────────────────────────── */
+
+[data-style="minimalism"] div[class*="rotate-45"][class*="w-1.5"] {
+  border-radius: 50% !important;
+  transform: rotate(0deg) !important;
+  background: var(--min-text-dim) !important;
+  box-shadow: none !important;
+}
+
+/* ── Min: Hero bullet dots — tiny and muted ─────────────────────────── */
+
+[data-style="minimalism"] div[class*="rounded-full"][class*="bg-gold"] {
+  opacity: 0.3 !important;
+  box-shadow: none !important;
+}
+
+/* ── Min: Footer — flat, barely there ───────────────────────────────── */
+
+[data-style="minimalism"] footer {
+  background: var(--min-bg) !important;
+  border-top: 1px solid var(--min-border) !important;
+  box-shadow: none !important;
+}
+
+/* ── Min: Mobile menu ───────────────────────────────────────────────── */
+
+[data-style="minimalism"] nav > div[class*="border-t"] {
+  background: var(--min-bg) !important;
+  border-top: 1px solid var(--min-border) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+
+/* ── Min: Scroll indicator — subtle ─────────────────────────────────── */
+
+[data-style="minimalism"] div[class*="w-px"][class*="h-10"][class*="bg-gradient"] {
+  background: var(--min-border) !important;
+}
+
+/* ── Min: Survey option cards ───────────────────────────────────────── */
+
+[data-style="minimalism"] button[class*="card-alive"][class*="text-left"] {
+  border: 1px solid var(--min-border) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Selection diamonds → simple circles */
+[data-style="minimalism"] button[class*="card-alive"] div[class*="rotate-45"][class*="w-3"] {
+  border-radius: 50% !important;
+  transform: rotate(0deg) !important;
+}
+
+/* ── Min: Survey left accent bar → hidden ───────────────────────────── */
+
+[data-style="minimalism"] button[class*="card-alive"] > .absolute[class*="w-\\[2px\\]"] {
+  display: none !important;
+}
+
+/* ── Min: Success diamond → simple circle ───────────────────────────── */
+
+[data-style="minimalism"] .rotate-45[class*="border"][class*="w-12"] {
+  border-radius: 50% !important;
+  transform: rotate(0deg) !important;
+}
+
+/* ── Min: Switcher panels ───────────────────────────────────────────── */
+
+[data-style="minimalism"] .fixed[class*="bottom"] > div[class*="border"] {
+  border: 1px solid var(--min-border) !important;
+  border-radius: 0 !important;
+  background: var(--min-bg) !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+}
+
+/* ── Min: Switcher toggle button ────────────────────────────────────── */
+
+[data-style="minimalism"] .fixed[class*="bottom"] > button[class*="rounded-full"] {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border: 1px solid var(--min-border) !important;
+}
+
+/* ── Min: Compass opacity — completely hidden ───────────────────────── */
+
+[data-style="minimalism"] div[class*="opacity-\\[0.03\\]"] {
+  display: none !important;
+}
+
+/* ── Min: Contact form card — match minimal treatment ───────────────── */
+
+[data-style="minimalism"] form {
+  gap: 2rem !important;
+}
