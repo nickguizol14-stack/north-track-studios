@@ -590,11 +590,6 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
         ) + 100;
         wave.radius = eased * maxR;
 
-        // Draw metallic text (fades as wave passes over it)
-        const textDistFromWave = wave.radius - 50;
-        const textFade = textDistFromWave > 0 ? Math.max(0, 1 - textDistFromWave / 200) : 1;
-        drawMetallicText(textFade);
-
         // Apply mask to overlay — cut a circular hole
         if (overlayRef.current) {
           const maskStr = `radial-gradient(circle ${wave.radius}px at ${wave.cx}px ${wave.cy}px, transparent ${Math.max(wave.radius - 40, 0)}px, black ${wave.radius + 15}px)`;
@@ -602,7 +597,7 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
           overlayRef.current.style.webkitMaskImage = maskStr;
         }
 
-        // Draw the gold wave ring on canvas
+        // Draw the gold wave ring FIRST (behind text)
         const ringWidth = 80;
         const innerR = Math.max(wave.radius - ringWidth, 0);
         const outerR = wave.radius;
@@ -624,6 +619,11 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
           ctx.fillStyle = grad;
           ctx.fill();
         }
+
+        // Draw metallic text ON TOP of the wave — text is the topmost layer
+        // It stays solid until the wave has fully passed, then fades
+        const textFade = waveProgress < 0.85 ? 1 : Math.max(0, 1 - (waveProgress - 0.85) / 0.15);
+        drawMetallicText(textFade);
 
         // Complete
         if (waveProgress >= 1 && !completedRef.current) {
