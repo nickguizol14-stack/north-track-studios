@@ -1,6 +1,6 @@
 "use client";
 
-import { GoldBrushText, GoldReveal, ThunderShimmer } from "./GoldPaint";
+import { GoldBrushText, GoldReveal, ThunderShimmer, WordReveal } from "./GoldPaint";
 
 const projects = [
   {
@@ -57,10 +57,14 @@ export function Work() {
           </div>
 
           <GoldReveal delay={300}>
-            <p className="mt-8 max-w-xl text-base text-muted-light leading-relaxed font-light">
-              A selection of systems we&apos;ve engineered. Each one started as an
-              impossible brief and shipped as production infrastructure.
-            </p>
+            <WordReveal
+              as="p"
+              className="mt-8 max-w-xl text-base text-muted-light leading-relaxed font-light"
+              delay={100}
+              stagger={35}
+            >
+              A selection of systems we've engineered. Each one started as an impossible brief and shipped as production infrastructure.
+            </WordReveal>
           </GoldReveal>
         </div>
 
@@ -78,12 +82,22 @@ export function Work() {
                     <span className="text-[10px] tracking-[0.4em] uppercase text-gold/50 font-mono">
                       {project.label}
                     </span>
-                    <h3 className="mt-3 text-2xl md:text-3xl font-extralight tracking-tight text-foreground-warm group-hover:text-gold transition-colors duration-500">
+                    <WordReveal
+                      as="h3"
+                      className="mt-3 text-2xl md:text-3xl font-extralight tracking-tight text-foreground-warm group-hover:text-gold transition-colors duration-500"
+                      delay={i * 100}
+                      stagger={80}
+                    >
                       {project.title}
-                    </h3>
-                    <p className="mt-5 text-sm text-muted leading-relaxed max-w-2xl">
+                    </WordReveal>
+                    <WordReveal
+                      as="p"
+                      className="mt-5 text-sm text-muted leading-relaxed max-w-2xl"
+                      delay={i * 100 + 150}
+                      stagger={25}
+                    >
                       {project.description}
-                    </p>
+                    </WordReveal>
 
                     {/* Tags */}
                     <div className="mt-6 flex flex-wrap gap-2">
