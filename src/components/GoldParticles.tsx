@@ -157,11 +157,25 @@ export function GoldParticles({
       animRef.current = requestAnimationFrame(animate);
     };
 
-    animate();
+    // Only animate when canvas is visible
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          if (!animRef.current) animate();
+        } else {
+          cancelAnimationFrame(animRef.current);
+          animRef.current = 0;
+        }
+      },
+      { threshold: 0 }
+    );
+    observer.observe(canvas);
 
     window.addEventListener("resize", resize);
     return () => {
       cancelAnimationFrame(animRef.current);
+      animRef.current = 0;
+      observer.disconnect();
       window.removeEventListener("resize", resize);
     };
   }, [density, speed]);

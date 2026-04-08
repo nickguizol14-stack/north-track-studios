@@ -69,8 +69,8 @@ export function Hero() {
                 <br />
                 <WordReveal
                   className="text-foreground-warm opacity-60 text-5xl md:text-6xl lg:text-[4.5rem] font-thin tracking-[0.05em]"
-                  delay={200}
-                  stagger={100}
+                  delay={100}
+                  stagger={80}
                 >
                   Studios
                 </WordReveal>
