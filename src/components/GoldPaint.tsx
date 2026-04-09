@@ -469,42 +469,73 @@ export function ThunderShimmer({
   children,
   className = "",
   interval = 10000,
-  intensity = 0.4,
 }: ThunderShimmerProps) {
-  const [flash, setFlash] = useState(false);
+  const [shimmerPos, setShimmerPos] = useState(-100);
+  const [active, setActive] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const animRef = useRef<number>(0);
 
   useEffect(() => {
     const initialDelay = Math.random() * interval;
 
-    const triggerFlash = () => {
-      setFlash(true);
-      setTimeout(() => setFlash(false), 1500);
+    const triggerShimmer = () => {
+      setActive(true);
+      setShimmerPos(-100);
+
+      const start = performance.now();
+      const duration = 1200;
+
+      const animate = (now: number) => {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        // Ease in-out for smooth sweep
+        const eased = progress < 0.5
+          ? 2 * progress * progress
+          : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+        setShimmerPos(-100 + eased * 300);
+
+        if (progress < 1) {
+          animRef.current = requestAnimationFrame(animate);
+        } else {
+          setActive(false);
+        }
+      };
+
+      animRef.current = requestAnimationFrame(animate);
       timeoutRef.current = setTimeout(
-        triggerFlash,
+        triggerShimmer,
         interval + (Math.random() - 0.5) * 3000
       );
     };
 
-    timeoutRef.current = setTimeout(triggerFlash, initialDelay);
+    timeoutRef.current = setTimeout(triggerShimmer, initialDelay);
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      cancelAnimationFrame(animRef.current);
     };
   }, [interval]);
 
   return (
-    <span className={`relative inline-block ${className}`}>
+    <span className={`relative inline-block ${className}`} style={{ isolation: "isolate" }}>
       {children}
+      {/* Metallic shine sweep — blend mode ensures it only brightens the gold letters */}
       <span
-        className="absolute pointer-events-none rounded-3xl"
+        className="absolute inset-0 pointer-events-none z-20"
+        aria-hidden="true"
         style={{
-          inset: "-8px -20px",
-          background: `radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--gold) ${Math.round(intensity * 100)}%, transparent) 0%, color-mix(in srgb, var(--gold) ${Math.round(intensity * 25)}%, transparent) 35%, transparent 70%)`,
-          opacity: flash ? 1 : 0,
-          transition: flash
-            ? "opacity 0.2s ease-in"
-            : "opacity 1.3s ease-out",
-          filter: "blur(10px)",
+          background: `linear-gradient(
+            105deg,
+            transparent ${shimmerPos}%,
+            rgba(255,248,220,0.0) ${shimmerPos + 10}%,
+            rgba(255,248,220,0.08) ${shimmerPos + 18}%,
+            rgba(255,252,240,0.22) ${shimmerPos + 25}%,
+            rgba(255,248,220,0.08) ${shimmerPos + 32}%,
+            rgba(255,248,220,0.0) ${shimmerPos + 40}%,
+            transparent ${shimmerPos + 50}%
+          )`,
+          opacity: active ? 1 : 0,
+          transition: active ? "none" : "opacity 0.4s ease-out",
+          mixBlendMode: "overlay",
         }}
       />
     </span>
