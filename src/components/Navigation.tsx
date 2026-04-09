@@ -19,8 +19,10 @@ export function Navigation() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  // Morphing indicator state
-  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
+  // Morphing indicator state — uses left + right for directional stretch
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, right: 0, opacity: 0 });
+  const [movingLeft, setMovingLeft] = useState(false);
+  const prevIndexRef = useRef(-1);
   const navContainerRef = useRef<HTMLDivElement>(null);
   const linkRefs = useRef<(HTMLAnchorElement | null)[]>([]);
 
@@ -33,12 +35,18 @@ export function Navigation() {
     const container = navContainerRef.current;
     if (!el || !container) return;
 
+    // Track direction
+    if (prevIndexRef.current >= 0) {
+      setMovingLeft(idx < prevIndexRef.current);
+    }
+    prevIndexRef.current = idx;
+
     const elRect = el.getBoundingClientRect();
     const containerRect = container.getBoundingClientRect();
 
     setIndicatorStyle({
       left: elRect.left - containerRect.left,
-      width: elRect.width,
+      right: containerRect.right - elRect.right,
       opacity: 1,
     });
   }, [activeIndex]);
@@ -138,15 +146,23 @@ export function Navigation() {
               className="absolute pointer-events-none"
               style={{
                 left: `${indicatorStyle.left}px`,
-                width: `${indicatorStyle.width}px`,
+                right: `${indicatorStyle.right}px`,
                 top: "2px",
                 bottom: "2px",
                 opacity: indicatorStyle.opacity,
-                transition: [
-                  "left 0.55s cubic-bezier(0.34, 1.56, 0.64, 1)",
-                  "width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
-                  "opacity 0.3s ease",
-                ].join(", "),
+                transition: movingLeft
+                  ? [
+                      // Moving left: left edge (leading) moves fast, right edge (trailing) drags with overshoot
+                      "left 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+                      "right 0.55s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                      "opacity 0.3s ease",
+                    ].join(", ")
+                  : [
+                      // Moving right: right edge (leading) moves fast, left edge (trailing) drags with overshoot
+                      "left 0.55s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                      "right 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+                      "opacity 0.3s ease",
+                    ].join(", "),
                 borderRadius: "11px",
                 background: "linear-gradient(168deg, rgba(200,168,78,0.1) 0%, rgba(200,168,78,0.05) 50%, rgba(200,168,78,0.02) 100%)",
                 border: "1px solid rgba(200,168,78,0.15)",
