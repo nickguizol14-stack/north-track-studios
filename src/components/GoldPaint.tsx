@@ -354,7 +354,7 @@ export function GoldReveal({
         style={{
           opacity: isVisible ? 1 : 0,
           transform: isVisible ? "translate(0)" : transformMap[direction],
-          transition: `opacity 0.8s ease ${delay + 300}ms, transform 0.8s ease ${delay + 300}ms`,
+          transition: `opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${delay + 150}ms, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${delay + 150}ms`,
         }}
       >
         {children}
@@ -370,10 +370,80 @@ export function GoldReveal({
                 ? "linear-gradient(to left, color-mix(in srgb, var(--gold) 15%, transparent), transparent)"
                 : "linear-gradient(to right, color-mix(in srgb, var(--gold) 15%, transparent), transparent)",
           opacity: isVisible ? 0 : 1,
-          transition: `opacity 1.5s ease ${delay}ms`,
+          transition: `opacity 1s ease ${delay}ms`,
         }}
       />
     </div>
+  );
+}
+
+// ─── WordReveal — word-by-word staggered fade-in ──────────────────────
+
+interface WordRevealProps {
+  children: string;
+  className?: string;
+  delay?: number;
+  stagger?: number;
+  as?: "p" | "span" | "h1" | "h2" | "h3" | "div";
+}
+
+export function WordReveal({
+  children,
+  className = "",
+  delay = 0,
+  stagger = 80,
+  as: Tag = "span",
+}: WordRevealProps) {
+  const ref = useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const words = children.split(/\s+/);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const check = () => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.92) {
+        setIsVisible(true);
+      }
+    };
+
+    check();
+    if (!isVisible) {
+      const onScroll = () => check();
+      window.addEventListener("scroll", onScroll, { passive: true });
+      const timer = setTimeout(check, 800);
+      return () => {
+        window.removeEventListener("scroll", onScroll);
+        clearTimeout(timer);
+      };
+    }
+  }, [isVisible]);
+
+  // Cap total reveal time so long paragraphs don't drag
+  const maxTotalMs = 600;
+  const effectiveStagger = words.length > 1
+    ? Math.min(stagger, maxTotalMs / (words.length - 1))
+    : stagger;
+
+  return (
+    <Tag ref={ref as React.Ref<never>} className={className}>
+      {words.map((word, i) => (
+        <span
+          key={i}
+          style={{
+            display: "inline-block",
+            opacity: isVisible ? 1 : 0,
+            transform: isVisible ? "translateY(0)" : "translateY(8px)",
+            transition: `opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${delay + i * effectiveStagger}ms, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${delay + i * effectiveStagger}ms`,
+          }}
+        >
+          {word}
+          {i < words.length - 1 ? "\u00A0" : ""}
+        </span>
+      ))}
+    </Tag>
   );
 }
 
