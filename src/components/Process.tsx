@@ -84,9 +84,9 @@ export function Process() {
 
                   {/* Content */}
                   <div
-                    className={`pl-12 md:pl-0 border border-gold/[0.05] bg-card/30 p-6 rounded-2xl overflow-hidden card-alive sway-${(i % 5) + 1} ${
+                    className={`pl-12 md:pl-0 border border-gold/[0.05] bg-card/30 p-6 rounded-2xl overflow-hidden card-alive sway-${(i % 5) + 1} md:max-w-[85%] ${
                       i % 2 === 0
-                        ? "md:mr-8"
+                        ? "md:ml-auto md:mr-8"
                         : "md:col-start-2 md:ml-8"
                     }`}
                   >
