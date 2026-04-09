@@ -75,8 +75,8 @@ export function Navigation() {
           <Image
             src="/logo.png"
             alt="North Track Studios"
-            width={120}
-            height={80}
+            width={130}
+            height={74}
             className="select-none"
             priority
           />
