@@ -86,50 +86,77 @@ export function Navigation() {
         <div
           className="hidden lg:block relative ml-auto"
           style={{
-            padding: "4px",
-            background: "linear-gradient(180deg, rgba(22,21,28,0.85) 0%, rgba(14,13,18,0.9) 100%)",
-            border: "1px solid rgba(200,168,78,0.1)",
-            borderRadius: "2px",
-            boxShadow: scrolled
-              ? "0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.03)"
-              : "0 2px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.03)",
-            transition: "box-shadow 0.5s ease",
+            padding: "5px",
+            background: "linear-gradient(170deg, rgba(28,27,34,0.92) 0%, rgba(18,17,24,0.95) 40%, rgba(14,13,18,0.92) 100%)",
+            border: "1px solid rgba(200,168,78,0.08)",
+            borderRadius: "14px",
+            boxShadow: [
+              // Outer depth — dark drop shadow for 3D lift
+              "0 6px 24px rgba(0,0,0,0.55)",
+              "0 2px 8px rgba(0,0,0,0.4)",
+              // Bottom edge shadow for clay thickness
+              "0 3px 1px rgba(0,0,0,0.3)",
+              // Inner top highlight — lit from above
+              "inset 0 1px 1px rgba(255,255,255,0.06)",
+              // Inner bottom shadow — concave depth
+              "inset 0 -1px 2px rgba(0,0,0,0.25)",
+              // Subtle inner side highlights
+              "inset 1px 0 1px rgba(255,255,255,0.02)",
+              "inset -1px 0 1px rgba(255,255,255,0.02)",
+            ].join(", "),
+            transition: "box-shadow 0.5s ease, transform 0.5s ease",
+            transform: scrolled ? "translateY(0)" : "translateY(0)",
           }}
         >
-          {/* Top metallic edge */}
+          {/* Top rim highlight — rounded to match border */}
           <div
-            className="absolute top-0 left-6 right-6 h-px"
-            style={{ background: "linear-gradient(90deg, transparent, rgba(200,168,78,0.18), transparent)" }}
-          />
-          {/* Bottom metallic edge */}
-          <div
-            className="absolute bottom-0 left-6 right-6 h-px"
-            style={{ background: "linear-gradient(90deg, transparent, rgba(200,168,78,0.1), transparent)" }}
-          />
+            className="absolute top-0 left-0 right-0 h-[1px] overflow-hidden"
+            style={{ borderRadius: "14px 14px 0 0" }}
+          >
+            <div
+              className="h-full mx-8"
+              style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent)" }}
+            />
+          </div>
 
           <div ref={navContainerRef} className="relative flex items-center">
-            {/* Morphing active indicator */}
+            {/* Morphing active indicator — clay pill */}
             <div
               className="absolute pointer-events-none"
               style={{
                 left: `${indicatorStyle.left}px`,
                 width: `${indicatorStyle.width}px`,
-                top: "0px",
-                bottom: "0px",
+                top: "1px",
+                bottom: "1px",
                 opacity: indicatorStyle.opacity,
-                transition: "left 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease",
-                border: "1px solid rgba(200,168,78,0.25)",
-                borderRadius: "1px",
-                background: "linear-gradient(180deg, rgba(200,168,78,0.07) 0%, rgba(200,168,78,0.02) 100%)",
-                boxShadow: "0 0 16px rgba(200,168,78,0.04)",
+                transition: [
+                  "left 0.55s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                  "width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                  "opacity 0.3s ease",
+                ].join(", "),
+                borderRadius: "10px",
+                background: "linear-gradient(170deg, rgba(200,168,78,0.1) 0%, rgba(200,168,78,0.04) 60%, rgba(200,168,78,0.02) 100%)",
+                border: "1px solid rgba(200,168,78,0.18)",
+                boxShadow: [
+                  // Outer glow
+                  "0 2px 10px rgba(200,168,78,0.06)",
+                  // Depth — pressed into the banner surface
+                  "0 1px 3px rgba(0,0,0,0.3)",
+                  // Inner top light
+                  "inset 0 1px 1px rgba(255,255,255,0.05)",
+                  // Inner bottom depth
+                  "inset 0 -1px 1px rgba(0,0,0,0.15)",
+                ].join(", "),
               }}
             >
-              {/* Gold accent line under active tab */}
+              {/* Gold accent glow under active pill */}
               <div
-                className="absolute -bottom-[5px] left-[20%] right-[20%] h-px"
+                className="absolute -bottom-[4px] left-[25%] right-[25%] h-[2px]"
                 style={{
-                  background: "linear-gradient(90deg, transparent, var(--gold), transparent)",
-                  opacity: 0.5,
+                  background: "radial-gradient(ellipse at center, var(--gold) 0%, transparent 70%)",
+                  opacity: 0.35,
+                  filter: "blur(1px)",
+                  borderRadius: "1px",
                 }}
               />
             </div>
