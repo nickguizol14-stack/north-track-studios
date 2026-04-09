@@ -1,6 +1,6 @@
 "use client";
 
-import { GoldBrushText, GoldReveal, ThunderShimmer } from "./GoldPaint";
+import { GoldBrushText, GoldReveal, ThunderShimmer, WordReveal } from "./GoldPaint";
 
 const capabilities = [
   {
@@ -82,10 +82,14 @@ export function Services() {
           </div>
 
           <GoldReveal delay={300}>
-            <p className="mt-8 max-w-xl text-base text-muted-light leading-relaxed font-light">
-              Six core disciplines, unified by a single principle: build
-              intelligent systems that perform in production, not just in demos.
-            </p>
+            <WordReveal
+              as="p"
+              className="mt-8 max-w-xl text-base text-muted-light leading-relaxed font-light"
+              delay={0}
+              stagger={40}
+            >
+              Six core disciplines, unified by a single principle: build intelligent systems that perform in production, not just in demos.
+            </WordReveal>
           </GoldReveal>
         </div>
 
@@ -115,14 +119,24 @@ export function Services() {
                 </span>
 
                 {/* Title */}
-                <h3 className="mt-4 text-lg font-light tracking-tight text-foreground-warm group-hover:text-gold transition-colors duration-500">
+                <WordReveal
+                  as="h3"
+                  className="mt-4 text-lg font-light tracking-tight text-foreground-warm group-hover:text-gold transition-colors duration-500"
+                  delay={i * 60}
+                  stagger={70}
+                >
                   {cap.title}
-                </h3>
+                </WordReveal>
 
                 {/* Description */}
-                <p className="mt-4 text-sm text-muted leading-relaxed">
+                <WordReveal
+                  as="p"
+                  className="mt-4 text-sm text-muted leading-relaxed"
+                  delay={i * 60 + 100}
+                  stagger={30}
+                >
                   {cap.description}
-                </p>
+                </WordReveal>
 
                 {/* Tags */}
                 <div className="mt-6 flex flex-wrap gap-1.5">

@@ -1,6 +1,6 @@
 "use client";
 
-import { GoldBrushText, GoldReveal, ThunderShimmer } from "./GoldPaint";
+import { GoldBrushText, GoldReveal, ThunderShimmer, WordReveal } from "./GoldPaint";
 import { GoldParticles } from "./GoldParticles";
 
 export function Contact() {
@@ -37,11 +37,14 @@ export function Contact() {
             </h2>
 
             <GoldReveal delay={300}>
-              <p className="mt-8 text-base text-muted-light leading-relaxed max-w-md font-light">
-                We take on a carefully selected number of engagements each
-                quarter. If you&apos;re building at the intersection of AI and
-                ambition, we want to hear from you.
-              </p>
+              <WordReveal
+                as="p"
+                className="mt-8 text-base text-muted-light leading-relaxed max-w-md font-light"
+                delay={0}
+                stagger={40}
+              >
+                We take on a carefully selected number of engagements each quarter. If you&apos;re building at the intersection of AI and ambition, we want to hear from you.
+              </WordReveal>
             </GoldReveal>
 
             {/* Contact details */}
