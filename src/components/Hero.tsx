@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { CompassLogoLarge } from "./CompassLogo";
 import { GoldBrushText, ThunderShimmer } from "./GoldPaint";
 import { GoldParticles } from "./GoldParticles";
@@ -83,20 +84,20 @@ export function Hero() {
             {/* CTAs */}
             <div className="animate-fade-in-up delay-500 mt-10 flex flex-col sm:flex-row items-start gap-5">
               <ThunderShimmer interval={10000} intensity={0.3}>
-                <a
-                  href="#capabilities"
+                <Link
+                  href="/capabilities"
                   className="group relative border border-gold/40 px-9 py-4 text-[11px] tracking-[0.25em] uppercase text-gold hover:bg-gold hover:text-background transition-all duration-500 overflow-hidden"
                 >
                   <span className="relative z-10">View Capabilities</span>
                   <div className="absolute inset-0 bg-gradient-to-r from-gold/0 via-gold/10 to-gold/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                </a>
+                </Link>
               </ThunderShimmer>
-              <a
-                href="#contact"
+              <Link
+                href="/contact"
                 className="px-9 py-4 text-[11px] tracking-[0.25em] uppercase text-muted-light hover:text-gold transition-colors duration-300"
               >
                 Start a Conversation
-              </a>
+              </Link>
             </div>
           </div>
 

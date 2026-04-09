@@ -1,4 +1,13 @@
 import Image from "next/image";
+import Link from "next/link";
+
+const footerLinks = [
+  { href: "/capabilities", label: "Capabilities" },
+  { href: "/work", label: "Work" },
+  { href: "/about", label: "About" },
+  { href: "/process", label: "Process" },
+  { href: "/contact", label: "Contact" },
+];
 
 export function Footer() {
   return (
@@ -29,17 +38,15 @@ export function Footer() {
               Navigate
             </h4>
             <div className="flex flex-col gap-3">
-              {["Capabilities", "Work", "About", "Process", "Contact"].map(
-                (item) => (
-                  <a
-                    key={item}
-                    href={`#${item.toLowerCase()}`}
-                    className="text-sm text-muted hover:text-gold transition-colors font-light"
-                  >
-                    {item}
-                  </a>
-                )
-              )}
+              {footerLinks.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="text-sm text-muted hover:text-gold transition-colors font-light"
+                >
+                  {item.label}
+                </Link>
+              ))}
             </div>
           </div>
 
