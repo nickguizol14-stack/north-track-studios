@@ -73,8 +73,6 @@ export function Work() {
           {projects.map((project, i) => (
             <GoldReveal key={project.title} delay={i * 150} direction="up">
               <div className={`group border border-gold/[0.08] bg-card relative overflow-hidden hover:border-gold/20 rounded-2xl card-alive sway-${(i % 3) + 1}`}>
-                {/* Top accent */}
-                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
 
                 <div className="p-8 md:p-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
                   {/* Left — label + title */}
@@ -125,8 +123,6 @@ export function Work() {
                   </div>
                 </div>
 
-                {/* Bottom glow on hover */}
-                <div className="absolute bottom-0 inset-x-0 h-px bg-gold/0 group-hover:bg-gold/15 transition-all duration-700" />
               </div>
             </GoldReveal>
           ))}

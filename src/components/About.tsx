@@ -131,9 +131,6 @@ export function About() {
             {principles.map((principle, i) => (
               <GoldReveal key={principle.title} delay={200 + i * 150} direction="right">
                 <div className={`group border border-gold/[0.08] bg-card/50 p-7 relative hover:border-gold/20 rounded-2xl overflow-hidden card-alive sway-${(i % 4) + 1}`}>
-                  {/* Gold left accent bar */}
-                  <div className="absolute top-0 left-0 w-[2px] h-full bg-gradient-to-b from-gold/40 via-gold/20 to-transparent" />
-
                   <div className="flex items-start gap-5">
                     <span className="text-[11px] font-mono text-gold/30 mt-0.5 shrink-0">
                       0{i + 1}

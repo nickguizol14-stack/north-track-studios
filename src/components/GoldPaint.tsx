@@ -343,9 +343,9 @@ export function GoldReveal({
   const { ref, isVisible } = useScrollReveal(0.15);
 
   const transformMap = {
-    left: "translateX(-40px)",
-    right: "translateX(40px)",
-    up: "translateY(30px)",
+    left: "translateX(-24px)",
+    right: "translateX(24px)",
+    up: "translateY(20px)",
   };
 
   return (
@@ -435,7 +435,7 @@ export function WordReveal({
           style={{
             display: "inline-block",
             opacity: isVisible ? 1 : 0,
-            transform: isVisible ? "translateY(0)" : "translateY(8px)",
+            transform: isVisible ? "translateY(0)" : "translateY(5px)",
             transition: `opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${delay + i * effectiveStagger}ms, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${delay + i * effectiveStagger}ms`,
           }}
         >

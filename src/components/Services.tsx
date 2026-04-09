@@ -102,17 +102,6 @@ export function Services() {
               direction={i % 2 === 0 ? "left" : "right"}
             >
               <div className={`group relative border border-gold/[0.08] bg-card h-full p-8 hover:border-gold/25 rounded-2xl overflow-hidden card-alive sway-${(i % 6) + 1}`}>
-                {/* Top gradient accent */}
-                <div
-                  className={`absolute top-0 left-0 right-0 h-px bg-gradient-to-r ${cap.accent}`}
-                />
-
-                {/* Corner mark */}
-                <div className="absolute top-0 right-0 w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                  <div className="absolute top-0 right-0 w-full h-px bg-gold/40" />
-                  <div className="absolute top-0 right-0 w-px h-full bg-gold/40" />
-                </div>
-
                 {/* Number */}
                 <span className="text-[11px] font-mono text-gold/30 tracking-wider">
                   {cap.number}
@@ -150,8 +139,6 @@ export function Services() {
                   ))}
                 </div>
 
-                {/* Hover glow */}
-                <div className="absolute bottom-0 left-1/4 right-1/4 h-px bg-gold/0 group-hover:bg-gold/20 transition-all duration-700" />
               </div>
             </GoldReveal>
           ))}

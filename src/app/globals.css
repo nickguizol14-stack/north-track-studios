@@ -157,7 +157,7 @@ body {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -166,7 +166,7 @@ body {
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   opacity: 0;
 }
 
@@ -274,25 +274,25 @@ body {
     inset 0 -1.5px 3px rgba(0,0,0,0.25),
     /* Side rim lights */
     inset 1.5px 0 2px rgba(255,255,255,0.02),
-    inset -1.5px 0 2px rgba(255,255,255,0.02);
-  transition: transform 0.5s cubic-bezier(0.2, 0, 0, 1),
-              box-shadow 0.5s ease,
-              border-color 0.5s ease;
+    inset -1.5px 0 2px rgba(255,255,255,0.02),
+    /* Gold backlight — starts at 0, eases in on hover */
+    0 0 0 rgba(200,168,78,0),
+    0 0 0 rgba(200,168,78,0);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.4s ease;
 }
 
 .card-alive:hover {
   animation-play-state: paused;
-  transform: translateY(-6px) scale(1.008);
+  transform: translateY(-4px) scale(1.005);
   box-shadow:
-    /* Backlight gold glow — spreads from behind the elevated card */
-    0 12px 40px rgba(200,168,78,0.12),
-    0 6px 20px rgba(200,168,78,0.06),
-    /* Lift shadow */
+    /* Lift shadow — deepens */
     0 10px 32px rgba(0,0,0,0.5),
     0 4px 12px rgba(0,0,0,0.3),
     /* Clay bevel */
     0 4px 2px -1px rgba(0,0,0,0.3),
-    /* Inner highlights — slightly stronger on hover */
+    /* Inner highlights — slightly stronger */
     inset 0 2px 2px rgba(255,255,255,0.07),
     inset 0 1px 0 rgba(255,255,255,0.05),
     /* Inner bottom */
@@ -300,7 +300,8 @@ body {
     /* Side rims */
     inset 1.5px 0 2px rgba(255,255,255,0.025),
     inset -1.5px 0 2px rgba(255,255,255,0.025),
-    /* Gold underglow — the backlight effect */
+    /* Gold backlight — eases in from 0 */
+    0 12px 40px rgba(200,168,78,0.12),
     0 20px 50px -10px rgba(200,168,78,0.08);
 }
 
@@ -350,6 +351,23 @@ body {
 .sway-4 { animation-delay: -4.5s; }
 .sway-5 { animation-delay: -0.8s; }
 .sway-6 { animation-delay: -2.2s; }
+
+/* ─── Reduced motion — respect user preference ──────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .card-alive,
+  .animate-fade-in-up,
+  .compass-ring,
+  .pulse-glow {
+    animation: none !important;
+  }
+  .card-alive {
+    transition-duration: 0.01ms !important;
+  }
+  .animate-fade-in-up {
+    opacity: 1 !important;
+  }
+}
 
 /* ═══════════════════════════════════════════════════════════════════════
    STYLE: Liquid Glass
