@@ -84,38 +84,51 @@ export function Navigation() {
 
         {/* ─── Desktop Banner ─── */}
         <div
-          className="hidden lg:block relative ml-auto"
+          className="hidden lg:block relative ml-auto mr-[-12px]"
           style={{
-            padding: "5px",
-            background: "linear-gradient(170deg, rgba(28,27,34,0.92) 0%, rgba(18,17,24,0.95) 40%, rgba(14,13,18,0.92) 100%)",
-            border: "1px solid rgba(200,168,78,0.08)",
-            borderRadius: "14px",
+            padding: "6px 8px",
+            background: "linear-gradient(168deg, rgba(32,31,38,0.94) 0%, rgba(22,21,28,0.96) 35%, rgba(16,15,20,0.94) 70%, rgba(20,19,26,0.92) 100%)",
+            border: "1px solid rgba(200,168,78,0.07)",
+            borderRadius: "16px",
             boxShadow: [
-              // Outer depth — dark drop shadow for 3D lift
-              "0 6px 24px rgba(0,0,0,0.55)",
-              "0 2px 8px rgba(0,0,0,0.4)",
-              // Bottom edge shadow for clay thickness
-              "0 3px 1px rgba(0,0,0,0.3)",
-              // Inner top highlight — lit from above
-              "inset 0 1px 1px rgba(255,255,255,0.06)",
-              // Inner bottom shadow — concave depth
-              "inset 0 -1px 2px rgba(0,0,0,0.25)",
-              // Subtle inner side highlights
-              "inset 1px 0 1px rgba(255,255,255,0.02)",
-              "inset -1px 0 1px rgba(255,255,255,0.02)",
+              // Primary lift shadow
+              "0 8px 32px rgba(0,0,0,0.6)",
+              "0 3px 12px rgba(0,0,0,0.45)",
+              // Clay thickness — bottom edge bevel
+              "0 4px 2px -1px rgba(0,0,0,0.35)",
+              "0 2px 0 rgba(0,0,0,0.2)",
+              // Inner top highlight — strong lit-from-above
+              "inset 0 2px 2px rgba(255,255,255,0.07)",
+              "inset 0 1px 0 rgba(255,255,255,0.05)",
+              // Inner bottom concavity
+              "inset 0 -2px 3px rgba(0,0,0,0.3)",
+              // Side rim light
+              "inset 2px 0 2px rgba(255,255,255,0.025)",
+              "inset -2px 0 2px rgba(255,255,255,0.025)",
+              // Faint gold ambient from content
+              "0 0 40px rgba(200,168,78,0.03)",
             ].join(", "),
-            transition: "box-shadow 0.5s ease, transform 0.5s ease",
-            transform: scrolled ? "translateY(0)" : "translateY(0)",
+            transition: "box-shadow 0.5s ease",
           }}
         >
           {/* Top rim highlight — rounded to match border */}
           <div
             className="absolute top-0 left-0 right-0 h-[1px] overflow-hidden"
-            style={{ borderRadius: "14px 14px 0 0" }}
+            style={{ borderRadius: "16px 16px 0 0" }}
           >
             <div
-              className="h-full mx-8"
-              style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent)" }}
+              className="h-full mx-6"
+              style={{ background: "linear-gradient(90deg, transparent 5%, rgba(255,255,255,0.08) 50%, transparent 95%)" }}
+            />
+          </div>
+          {/* Bottom bevel highlight — gives clay edge */}
+          <div
+            className="absolute bottom-0 left-0 right-0 h-[1px] overflow-hidden"
+            style={{ borderRadius: "0 0 16px 16px" }}
+          >
+            <div
+              className="h-full mx-10"
+              style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent)" }}
             />
           </div>
 
@@ -126,37 +139,42 @@ export function Navigation() {
               style={{
                 left: `${indicatorStyle.left}px`,
                 width: `${indicatorStyle.width}px`,
-                top: "1px",
-                bottom: "1px",
+                top: "2px",
+                bottom: "2px",
                 opacity: indicatorStyle.opacity,
                 transition: [
                   "left 0.55s cubic-bezier(0.34, 1.56, 0.64, 1)",
                   "width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
                   "opacity 0.3s ease",
                 ].join(", "),
-                borderRadius: "10px",
-                background: "linear-gradient(170deg, rgba(200,168,78,0.1) 0%, rgba(200,168,78,0.04) 60%, rgba(200,168,78,0.02) 100%)",
-                border: "1px solid rgba(200,168,78,0.18)",
+                borderRadius: "11px",
+                background: "linear-gradient(168deg, rgba(200,168,78,0.1) 0%, rgba(200,168,78,0.05) 50%, rgba(200,168,78,0.02) 100%)",
+                border: "1px solid rgba(200,168,78,0.15)",
                 boxShadow: [
-                  // Outer glow
-                  "0 2px 10px rgba(200,168,78,0.06)",
-                  // Depth — pressed into the banner surface
-                  "0 1px 3px rgba(0,0,0,0.3)",
-                  // Inner top light
-                  "inset 0 1px 1px rgba(255,255,255,0.05)",
-                  // Inner bottom depth
-                  "inset 0 -1px 1px rgba(0,0,0,0.15)",
+                  // Outer soft glow
+                  "0 2px 12px rgba(200,168,78,0.06)",
+                  // Clay depth — sits recessed into banner
+                  "0 2px 4px rgba(0,0,0,0.35)",
+                  "0 1px 1px rgba(0,0,0,0.2)",
+                  // Inner top lit edge
+                  "inset 0 1.5px 1.5px rgba(255,255,255,0.06)",
+                  "inset 0 0.5px 0 rgba(255,255,255,0.04)",
+                  // Inner bottom recess
+                  "inset 0 -1.5px 2px rgba(0,0,0,0.2)",
+                  // Side rims
+                  "inset 1px 0 1px rgba(255,255,255,0.02)",
+                  "inset -1px 0 1px rgba(255,255,255,0.02)",
                 ].join(", "),
               }}
             >
               {/* Gold accent glow under active pill */}
               <div
-                className="absolute -bottom-[4px] left-[25%] right-[25%] h-[2px]"
+                className="absolute -bottom-[5px] left-[20%] right-[20%] h-[3px]"
                 style={{
                   background: "radial-gradient(ellipse at center, var(--gold) 0%, transparent 70%)",
-                  opacity: 0.35,
-                  filter: "blur(1px)",
-                  borderRadius: "1px",
+                  opacity: 0.3,
+                  filter: "blur(2px)",
+                  borderRadius: "2px",
                 }}
               />
             </div>
@@ -166,7 +184,7 @@ export function Navigation() {
                 key={link.href}
                 href={link.href}
                 ref={(el) => { linkRefs.current[i] = el; }}
-                className={`relative px-4 py-3 text-[10px] tracking-[0.2em] uppercase font-mono transition-colors duration-300 whitespace-nowrap select-none ${
+                className={`relative px-5 py-3 text-[11px] tracking-[0.18em] uppercase font-mono transition-colors duration-300 whitespace-nowrap select-none ${
                   pathname === link.href
                     ? "text-gold"
                     : "text-muted-light/60 hover:text-gold/70"
