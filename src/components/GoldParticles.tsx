@@ -121,6 +121,16 @@ export function GoldParticles({
           p.opacity = 0.85;
         }
 
+        // Edge fade — particles near borders fade out smoothly
+        const edgeZone = 60;
+        let edgeFade = 1;
+        if (p.y < edgeZone) edgeFade = Math.min(edgeFade, p.y / edgeZone);
+        if (p.y > h - edgeZone) edgeFade = Math.min(edgeFade, (h - p.y) / edgeZone);
+        if (p.x < edgeZone) edgeFade = Math.min(edgeFade, p.x / edgeZone);
+        if (p.x > w - edgeZone) edgeFade = Math.min(edgeFade, (w - p.x) / edgeZone);
+        edgeFade = Math.max(0, edgeFade);
+        p.opacity *= edgeFade;
+
         // Reset
         if (p.life >= p.maxLife || p.y < -20 || p.x < -20 || p.x > w + 20) {
           Object.assign(p, createParticle());
