@@ -28,17 +28,15 @@ export function Hero() {
         <CompassLogoLarge />
       </div>
 
-      {/* Gold corner accents — top-right and bottom-right only */}
+      {/* Subtle corner glow — soft radial, no sharp edges */}
       <ThunderShimmer interval={14000} intensity={0.2}>
-        <div className="absolute top-0 right-0 w-40 h-40">
-          <div className="absolute top-10 right-10 w-20 h-px bg-gradient-to-l from-gold/50 to-transparent" />
-          <div className="absolute top-10 right-10 w-px h-20 bg-gradient-to-b from-gold/50 to-transparent" />
+        <div className="absolute top-0 right-0 w-48 h-48 pointer-events-none">
+          <div className="absolute top-8 right-8 w-24 h-24 rounded-full bg-gold/[0.04] blur-2xl" />
         </div>
       </ThunderShimmer>
       <ThunderShimmer interval={13000} intensity={0.15}>
-        <div className="absolute bottom-0 right-0 w-40 h-40">
-          <div className="absolute bottom-10 right-10 w-20 h-px bg-gradient-to-l from-gold/30 to-transparent" />
-          <div className="absolute bottom-10 right-10 w-px h-20 bg-gradient-to-t from-gold/30 to-transparent" />
+        <div className="absolute bottom-0 right-0 w-48 h-48 pointer-events-none">
+          <div className="absolute bottom-8 right-8 w-24 h-24 rounded-full bg-gold/[0.03] blur-2xl" />
         </div>
       </ThunderShimmer>
 

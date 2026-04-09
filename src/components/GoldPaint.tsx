@@ -365,12 +365,12 @@ export function GoldReveal({
         style={{
           background:
             direction === "up"
-              ? "linear-gradient(to top, color-mix(in srgb, var(--gold) 15%, transparent), transparent)"
+              ? "linear-gradient(to top, color-mix(in srgb, var(--gold) 6%, transparent), transparent)"
               : direction === "right"
-                ? "linear-gradient(to left, color-mix(in srgb, var(--gold) 15%, transparent), transparent)"
-                : "linear-gradient(to right, color-mix(in srgb, var(--gold) 15%, transparent), transparent)",
-          opacity: isVisible ? 0 : 1,
-          transition: `opacity 1s ease ${delay}ms`,
+                ? "linear-gradient(to left, color-mix(in srgb, var(--gold) 6%, transparent), transparent)"
+                : "linear-gradient(to right, color-mix(in srgb, var(--gold) 6%, transparent), transparent)",
+          opacity: isVisible ? 0 : 0.7,
+          transition: `opacity 0.5s ease ${delay}ms`,
         }}
       />
     </div>

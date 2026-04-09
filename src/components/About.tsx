@@ -113,7 +113,7 @@ export function About() {
             <div className="mt-14 grid grid-cols-2 sm:grid-cols-4 gap-6">
               {stats.map((stat, i) => (
                 <GoldReveal key={stat.label} delay={400 + i * 100} direction="up">
-                  <div className={`border-l border-gold/25 pl-4 card-alive sway-${(i % 4) + 1}`}>
+                  <div className="border-l border-gold/20 pl-4 rounded-sm">
                     <div className="text-2xl font-extralight text-gradient-gold">
                       {stat.value}
                     </div>
