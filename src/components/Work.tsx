@@ -72,7 +72,7 @@ export function Work() {
         <div className="flex flex-col gap-8">
           {projects.map((project, i) => (
             <GoldReveal key={project.title} delay={i * 150} direction="up">
-              <div className={`group border border-gold/[0.08] bg-card relative overflow-hidden hover:border-gold/20 card-alive sway-${(i % 3) + 1}`}>
+              <div className={`group border border-gold/[0.08] bg-card relative overflow-hidden hover:border-gold/20 rounded-2xl card-alive sway-${(i % 3) + 1}`}>
                 {/* Top accent */}
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
 
@@ -104,7 +104,7 @@ export function Work() {
                       {project.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="border border-gold/10 bg-gold/[0.02] px-3 py-1 text-[9px] tracking-wider uppercase text-muted font-mono"
+                          className="border border-gold/10 bg-gold/[0.02] px-3 py-1 text-[9px] tracking-wider uppercase text-muted font-mono rounded-full"
                         >
                           {tag}
                         </span>

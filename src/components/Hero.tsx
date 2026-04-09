@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { CompassLogoLarge } from "./CompassLogo";
-import { GoldBrushText, ThunderShimmer } from "./GoldPaint";
+import { GoldBrushText, ThunderShimmer, WordReveal } from "./GoldPaint";
 import { GoldParticles } from "./GoldParticles";
 
 const services = [
@@ -68,17 +68,25 @@ export function Hero() {
                   </GoldBrushText>
                 </ThunderShimmer>
                 <br />
-                <span className="text-foreground-warm opacity-60 text-5xl md:text-6xl lg:text-[4.5rem] font-thin tracking-[0.05em]">
+                <WordReveal
+                  className="text-foreground-warm opacity-60 text-5xl md:text-6xl lg:text-[4.5rem] font-thin tracking-[0.05em]"
+                  delay={100}
+                  stagger={80}
+                >
                   Studios
-                </span>
+                </WordReveal>
               </h1>
             </div>
 
             <div className="animate-fade-in-up delay-400 mt-10">
-              <p className="max-w-md text-base text-muted-light leading-relaxed font-light">
-                An AI-native technology studio. We architect intelligent systems
-                and engineer interfaces that feel like the future arrived early.
-              </p>
+              <WordReveal
+                as="p"
+                className="max-w-md text-base text-muted-light leading-relaxed font-light"
+                delay={0}
+                stagger={40}
+              >
+                An AI-native technology studio. We architect intelligent systems and engineer interfaces that feel like the future arrived early.
+              </WordReveal>
             </div>
 
             {/* CTAs */}
@@ -86,7 +94,7 @@ export function Hero() {
               <ThunderShimmer interval={10000} intensity={0.3}>
                 <Link
                   href="/capabilities"
-                  className="group relative border border-gold/40 px-9 py-4 text-[11px] tracking-[0.25em] uppercase text-gold hover:bg-gold hover:text-background transition-all duration-500 overflow-hidden"
+                  className="group relative border border-gold/40 px-9 py-4 text-[11px] tracking-[0.25em] uppercase text-gold hover:bg-gold hover:text-background transition-all duration-500 overflow-hidden rounded-xl"
                 >
                   <span className="relative z-10">View Capabilities</span>
                   <div className="absolute inset-0 bg-gradient-to-r from-gold/0 via-gold/10 to-gold/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -115,17 +123,27 @@ export function Hero() {
 
                 <div>
                   {/* Title */}
-                  <h3 className="text-lg md:text-xl font-extralight tracking-wide text-foreground-warm group-hover:text-gold transition-colors duration-500">
+                  <WordReveal
+                    as="h3"
+                    className="text-lg md:text-xl font-extralight tracking-wide text-foreground-warm group-hover:text-gold transition-colors duration-500"
+                    delay={i * 120}
+                    stagger={70}
+                  >
                     {s.title}
-                  </h3>
+                  </WordReveal>
 
                   {/* Underline — expands on hover */}
                   <div className="mt-1.5 h-px w-8 group-hover:w-full bg-gradient-to-r from-gold/50 to-gold/0 transition-all duration-700 ease-out" />
 
                   {/* Desc */}
-                  <p className="mt-2 text-sm text-muted leading-relaxed font-light opacity-60 group-hover:opacity-100 transition-opacity duration-500">
+                  <WordReveal
+                    as="p"
+                    className="mt-2 text-sm text-muted leading-relaxed font-light opacity-60 group-hover:opacity-100 transition-opacity duration-500"
+                    delay={i * 120 + 150}
+                    stagger={30}
+                  >
                     {s.desc}
-                  </p>
+                  </WordReveal>
                 </div>
               </div>
             ))}

@@ -77,7 +77,7 @@ export function Contact() {
 
           {/* Right — Form */}
           <GoldReveal delay={200} direction="right">
-            <div className="border border-gold/[0.08] bg-card p-8 md:p-10 relative card-alive sway-2">
+            <div className="border border-gold/[0.08] bg-card p-8 md:p-10 relative rounded-2xl overflow-hidden card-alive sway-2">
               {/* Corner accents */}
               <div className="absolute top-0 left-0 w-4 h-4">
                 <div className="absolute top-0 left-0 w-full h-px bg-gold/30" />
@@ -159,7 +159,7 @@ export function Contact() {
 
                 <button
                   type="submit"
-                  className="mt-3 border border-gold/30 px-9 py-4 text-[11px] tracking-[0.25em] uppercase text-gold hover:bg-gold hover:text-background transition-all duration-500 self-start"
+                  className="mt-3 border border-gold/30 px-9 py-4 text-[11px] tracking-[0.25em] uppercase text-gold hover:bg-gold hover:text-background transition-all duration-500 self-start rounded-xl"
                 >
                   Send Brief
                 </button>

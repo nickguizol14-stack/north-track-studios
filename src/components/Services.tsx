@@ -101,7 +101,7 @@ export function Services() {
               delay={i * 100}
               direction={i % 2 === 0 ? "left" : "right"}
             >
-              <div className={`group relative border border-gold/[0.08] bg-card h-full p-8 hover:border-gold/25 card-alive sway-${(i % 6) + 1}`}>
+              <div className={`group relative border border-gold/[0.08] bg-card h-full p-8 hover:border-gold/25 rounded-2xl overflow-hidden card-alive sway-${(i % 6) + 1}`}>
                 {/* Top gradient accent */}
                 <div
                   className={`absolute top-0 left-0 right-0 h-px bg-gradient-to-r ${cap.accent}`}
@@ -143,7 +143,7 @@ export function Services() {
                   {cap.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="border border-gold/[0.08] bg-gold/[0.02] px-2.5 py-1 text-[9px] tracking-wider uppercase text-muted font-mono group-hover:border-gold/15 transition-colors duration-500"
+                      className="border border-gold/[0.08] bg-gold/[0.02] px-2.5 py-1 text-[9px] tracking-wider uppercase text-muted font-mono group-hover:border-gold/15 transition-colors duration-500 rounded-full"
                     >
                       {tag}
                     </span>
