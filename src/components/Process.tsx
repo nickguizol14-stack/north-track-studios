@@ -4,39 +4,34 @@ import { GoldBrushText, GoldReveal, ThunderShimmer, WordReveal } from "./GoldPai
 
 const steps = [
   {
-    phase: "Discovery",
-    title: "Map the Terrain",
+    phase: "Consultation",
+    title: "Understand Your Vision",
     description:
-      "Deep technical discovery. We audit your existing systems, interview stakeholders, and map the full landscape — constraints, opportunities, and the shortest path to production value.",
-    duration: "1–2 weeks",
+      "We start with a deep conversation. What are you building, who is it for, and what does success look like? We listen first, then align on scope, goals, and the path forward.",
   },
   {
-    phase: "Architecture",
-    title: "Draw the Blueprint",
+    phase: "Research",
+    title: "Map the Landscape",
     description:
-      "System design that accounts for scale, cost, and operational reality. Data models, API contracts, infrastructure topology, and AI integration points — all documented before a line of code is written.",
-    duration: "1–2 weeks",
+      "We audit existing systems, study your market, and research the technical landscape. Constraints, opportunities, and the shortest path to production value — all mapped before a line of code.",
   },
   {
-    phase: "Engineering",
-    title: "Build with Precision",
+    phase: "Reconvene",
+    title: "Align & Architect",
+    description:
+      "We present our findings and proposed architecture. Data models, API contracts, infrastructure topology, and AI integration points — reviewed together so nothing is left to assumption.",
+  },
+  {
+    phase: "Build Phase",
+    title: "Engineer with Precision",
     description:
       "Iterative development in tight cycles. Weekly demos, continuous integration, automated testing. Every component is production-ready from sprint one — not a prototype that gets rewritten later.",
-    duration: "4–12 weeks",
   },
   {
-    phase: "Launch",
-    title: "Deploy & Monitor",
+    phase: "Delivery / Alterations",
+    title: "Launch & Refine",
     description:
-      "Staged rollouts with canary deployments, real-time monitoring, and automated rollback. We don't throw code over the wall — we stay through launch and beyond, ensuring the system performs.",
-    duration: "1–2 weeks",
-  },
-  {
-    phase: "Evolution",
-    title: "Iterate & Scale",
-    description:
-      "Post-launch optimization, feature iteration, and scaling. Performance tuning, model retraining, infrastructure right-sizing — we treat launched products as living systems, not finished artifacts.",
-    duration: "Ongoing",
+      "Staged rollouts with real-time monitoring and automated rollback. Post-launch we iterate — performance tuning, feature refinement, and scaling. We treat shipped products as living systems.",
   },
 ];
 
@@ -91,24 +86,17 @@ export function Process() {
                   <div
                     className={`pl-12 md:pl-0 border border-gold/[0.05] bg-card/30 p-6 rounded-2xl overflow-hidden card-alive sway-${(i % 5) + 1} ${
                       i % 2 === 0
-                        ? "md:pr-16 md:text-right"
-                        : "md:col-start-2 md:pl-16"
+                        ? "md:mr-8"
+                        : "md:col-start-2 md:ml-8"
                     }`}
                   >
-                    <div className="flex items-center gap-3 mb-3"
-                      style={{ justifyContent: i % 2 === 0 ? undefined : undefined }}
-                    >
-                      <span className="text-[10px] tracking-[0.4em] uppercase text-gold/50 font-mono">
-                        {step.phase}
-                      </span>
-                      <span className="text-[9px] text-muted font-mono">
-                        {step.duration}
-                      </span>
-                    </div>
+                    <span className="text-[10px] tracking-[0.4em] uppercase text-gold/50 font-mono">
+                      {step.phase}
+                    </span>
 
                     <WordReveal
                       as="h3"
-                      className="text-xl font-extralight tracking-tight text-foreground-warm"
+                      className="mt-3 text-xl font-extralight tracking-tight text-foreground-warm"
                       delay={i * 80}
                       stagger={70}
                     >
