@@ -11,8 +11,8 @@ export function Footer() {
               <Image
                 src="/logo.png"
                 alt="North Track Studios"
-                width={130}
-                height={74}
+                width={120}
+                height={80}
                 className="select-none"
               />
             </div>
@@ -55,9 +55,9 @@ export function Footer() {
               >
                 hello@northtrackstudios.com
               </a>
-              <span className="text-sm text-muted hover:text-gold transition-colors duration-300 font-light">GitHub</span>
-              <span className="text-sm text-muted hover:text-gold transition-colors duration-300 font-light">LinkedIn</span>
-              <span className="text-sm text-muted hover:text-gold transition-colors duration-300 font-light">X / Twitter</span>
+              <span className="text-sm text-muted font-light">GitHub</span>
+              <span className="text-sm text-muted font-light">LinkedIn</span>
+              <span className="text-sm text-muted font-light">X / Twitter</span>
             </div>
           </div>
         </div>

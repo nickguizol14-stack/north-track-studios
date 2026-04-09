@@ -881,7 +881,7 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
           src="/logo.png"
           alt="North Track Studios"
           width={420}
-          height={240}
+          height={280}
           priority
           className="select-none"
           style={{ filter: "drop-shadow(0 0 20px rgba(200,168,78,0.1))" }}
