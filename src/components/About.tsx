@@ -1,6 +1,6 @@
 "use client";
 
-import { GoldBrushText, GoldReveal, ThunderShimmer, WordReveal } from "./GoldPaint";
+import { GoldBrushText, GoldReveal, ThunderShimmer } from "./GoldPaint";
 import { GoldParticles } from "./GoldParticles";
 
 const stats = [
@@ -77,36 +77,31 @@ export function About() {
           {/* Left — narrative */}
           <div>
             <GoldReveal delay={100}>
-              <WordReveal
-                as="p"
-                className="text-lg text-foreground-warm leading-relaxed font-light"
-                delay={100}
-                stagger={35}
-              >
-                North Track Studios operates at the boundary between artificial intelligence and human craft. We are engineers, researchers, and designers who believe the next generation of technology should feel as considered as it is capable.
-              </WordReveal>
+              <p className="text-lg text-foreground-warm leading-relaxed font-light">
+                North Track Studios operates at the boundary between artificial
+                intelligence and human craft. We are engineers, researchers, and
+                designers who believe the next generation of technology should
+                feel as considered as it is capable.
+              </p>
             </GoldReveal>
 
             <GoldReveal delay={200}>
-              <WordReveal
-                as="p"
-                className="mt-6 text-base text-muted-light leading-relaxed"
-                delay={100}
-                stagger={30}
-              >
-                We partner with companies building at the frontier — startups deploying their first AI agent, enterprises modernizing decade-old systems, and visionaries who need a technical team that moves as fast as their ambition. From architecture to deployment, we own every layer.
-              </WordReveal>
+              <p className="mt-6 text-base text-muted-light leading-relaxed">
+                We partner with companies building at the frontier — startups
+                deploying their first AI agent, enterprises modernizing decade-old
+                systems, and visionaries who need a technical team that moves as
+                fast as their ambition. From architecture to deployment, we own
+                every layer.
+              </p>
             </GoldReveal>
 
             <GoldReveal delay={300}>
-              <WordReveal
-                as="p"
-                className="mt-6 text-base text-muted leading-relaxed"
-                delay={100}
-                stagger={30}
-              >
-                Our name comes from a simple idea: there is always a direction forward. North Track is the bearing you follow when the terrain is unmapped. That's the work we do — navigate complexity, chart the path, build the bridge.
-              </WordReveal>
+              <p className="mt-6 text-base text-muted leading-relaxed">
+                Our name comes from a simple idea: there is always a direction
+                forward. North Track is the bearing you follow when the terrain
+                is unmapped. That&apos;s the work we do — navigate complexity,
+                chart the path, build the bridge.
+              </p>
             </GoldReveal>
 
             {/* Stats */}
@@ -139,22 +134,12 @@ export function About() {
                       0{i + 1}
                     </span>
                     <div>
-                      <WordReveal
-                        as="h3"
-                        className="text-base font-light tracking-tight text-foreground-warm group-hover:text-gold transition-colors duration-500"
-                        delay={i * 100}
-                        stagger={70}
-                      >
+                      <h3 className="text-base font-light tracking-tight text-foreground-warm group-hover:text-gold transition-colors duration-500">
                         {principle.title}
-                      </WordReveal>
-                      <WordReveal
-                        as="p"
-                        className="mt-2.5 text-sm text-muted leading-relaxed"
-                        delay={i * 100 + 150}
-                        stagger={25}
-                      >
+                      </h3>
+                      <p className="mt-2.5 text-sm text-muted leading-relaxed">
                         {principle.description}
-                      </WordReveal>
+                      </p>
                     </div>
                   </div>
                 </div>

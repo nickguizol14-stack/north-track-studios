@@ -354,7 +354,7 @@ export function GoldReveal({
         style={{
           opacity: isVisible ? 1 : 0,
           transform: isVisible ? "translate(0)" : transformMap[direction],
-          transition: `opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${delay + 300}ms, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${delay + 300}ms`,
+          transition: `opacity 0.8s ease ${delay + 300}ms, transform 0.8s ease ${delay + 300}ms`,
         }}
       >
         {children}
@@ -374,46 +374,6 @@ export function GoldReveal({
         }}
       />
     </div>
-  );
-}
-
-// ─── WordReveal — word-by-word staggered fade-in ──────────────────────
-
-interface WordRevealProps {
-  children: string;
-  className?: string;
-  delay?: number;
-  stagger?: number;
-  as?: "p" | "span" | "h1" | "h2" | "h3" | "div";
-}
-
-export function WordReveal({
-  children,
-  className = "",
-  delay = 0,
-  stagger = 80,
-  as: Tag = "span",
-}: WordRevealProps) {
-  const { ref, isVisible } = useScrollReveal(0.15);
-  const words = children.split(/\s+/);
-
-  return (
-    <Tag ref={ref as React.Ref<never>} className={className}>
-      {words.map((word, i) => (
-        <span
-          key={i}
-          style={{
-            display: "inline-block",
-            opacity: isVisible ? 1 : 0,
-            transform: isVisible ? "translateY(0)" : "translateY(12px)",
-            transition: `opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${delay + i * stagger}ms, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${delay + i * stagger}ms`,
-          }}
-        >
-          {word}
-          {i < words.length - 1 ? "\u00A0" : ""}
-        </span>
-      ))}
-    </Tag>
   );
 }
 

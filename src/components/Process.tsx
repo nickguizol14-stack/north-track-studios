@@ -1,6 +1,6 @@
 "use client";
 
-import { GoldBrushText, GoldReveal, ThunderShimmer, WordReveal } from "./GoldPaint";
+import { GoldBrushText, GoldReveal, ThunderShimmer } from "./GoldPaint";
 
 const steps = [
   {
@@ -106,22 +106,12 @@ export function Process() {
                       </span>
                     </div>
 
-                    <WordReveal
-                      as="h3"
-                      className="text-xl font-extralight tracking-tight text-foreground-warm"
-                      delay={i * 80}
-                      stagger={80}
-                    >
+                    <h3 className="text-xl font-extralight tracking-tight text-foreground-warm">
                       {step.title}
-                    </WordReveal>
-                    <WordReveal
-                      as="p"
-                      className="mt-3 text-sm text-muted leading-relaxed"
-                      delay={i * 80 + 150}
-                      stagger={25}
-                    >
+                    </h3>
+                    <p className="mt-3 text-sm text-muted leading-relaxed">
                       {step.description}
-                    </WordReveal>
+                    </p>
                   </div>
                 </div>
               </GoldReveal>
