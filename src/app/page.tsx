@@ -10,6 +10,7 @@ import { Footer } from "@/components/Footer";
 import { PageWithIntro } from "@/components/PageWithIntro";
 import { ColorSchemeSwitcher } from "@/components/ColorSchemeSwitcher";
 import { StyleSwitcher } from "@/components/StyleSwitcher";
+import { ScrollTransition } from "@/components/ScrollTransitions";
 
 export default function Home() {
   return (
@@ -17,11 +18,17 @@ export default function Home() {
       <Navigation />
       <main className="flex-1">
         <Hero />
+        <ScrollTransition variant="descent-grid" />
         <Services />
+        <ScrollTransition variant="gold-convergence" />
         <Work />
+        <ScrollTransition variant="ember-rise" />
         <About />
+        <ScrollTransition variant="compass-pulse" />
         <Process />
+        <ScrollTransition variant="brush-sweep" />
         <Survey embedded />
+        <ScrollTransition variant="settling-dust" />
         <Contact />
       </main>
       <Footer />
