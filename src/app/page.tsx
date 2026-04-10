@@ -18,17 +18,17 @@ export default function Home() {
       <Navigation />
       <main className="flex-1">
         <Hero />
-        <ScrollTransition variant="descent-grid" />
+        <ScrollTransition variant="the-forge" />
         <Services />
-        <ScrollTransition variant="gold-convergence" />
+        <ScrollTransition variant="neural-web" />
         <Work />
-        <ScrollTransition variant="ember-rise" />
+        <ScrollTransition variant="gold-pour" />
         <About />
-        <ScrollTransition variant="compass-pulse" />
+        <ScrollTransition variant="star-chart" />
         <Process />
-        <ScrollTransition variant="brush-sweep" />
+        <ScrollTransition variant="kintsugi" />
         <Survey embedded />
-        <ScrollTransition variant="settling-dust" />
+        <ScrollTransition variant="aurora" />
         <Contact />
       </main>
       <Footer />
