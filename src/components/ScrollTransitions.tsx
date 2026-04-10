@@ -872,57 +872,106 @@ function StarChart() {
         });
       }
 
-      // Constellation stars — arranged as a north star / compass shape
+      // Constellation stars — compass rose shape
+      // Long cardinal spikes, shorter intercardinal spikes,
+      // flared center body, tick-mark ring
       const constStars: { x: number; y: number }[] = [];
-      // Center
+      const cardLen = Math.min(w, h) * 0.32;  // long cardinal reach
+      const diagLen = cardLen * 0.55;          // shorter intercardinals
+      const flare = cardLen * 0.12;            // width of cardinal spike flanks
+      const innerR = cardLen * 0.2;            // inner body radius
+
+      // 0: Center
       constStars.push({ x: cx, y: cy });
-      // Cardinal points
-      const armLen = Math.min(w, h) * 0.25;
-      constStars.push({ x: cx, y: cy - armLen }); // N
-      constStars.push({ x: cx + armLen, y: cy }); // E
-      constStars.push({ x: cx, y: cy + armLen }); // S
-      constStars.push({ x: cx - armLen, y: cy }); // W
-      // Mid-points on arms
-      constStars.push({ x: cx, y: cy - armLen * 0.5 });
-      constStars.push({ x: cx + armLen * 0.5, y: cy });
-      constStars.push({ x: cx, y: cy + armLen * 0.5 });
-      constStars.push({ x: cx - armLen * 0.5, y: cy });
-      // Diagonals
-      const diagLen = armLen * 0.6;
-      constStars.push({ x: cx + diagLen * 0.7, y: cy - diagLen * 0.7 });
-      constStars.push({ x: cx + diagLen * 0.7, y: cy + diagLen * 0.7 });
-      constStars.push({ x: cx - diagLen * 0.7, y: cy + diagLen * 0.7 });
-      constStars.push({ x: cx - diagLen * 0.7, y: cy - diagLen * 0.7 });
+
+      // Cardinal tips (1-4)
+      constStars.push({ x: cx, y: cy - cardLen });           // 1 N
+      constStars.push({ x: cx + cardLen, y: cy });            // 2 E
+      constStars.push({ x: cx, y: cy + cardLen });            // 3 S
+      constStars.push({ x: cx - cardLen, y: cy });            // 4 W
+
+      // Cardinal spike flanks — give each spike a pointed shape (5-12)
+      constStars.push({ x: cx - flare, y: cy - innerR });     // 5 N-left base
+      constStars.push({ x: cx + flare, y: cy - innerR });     // 6 N-right base
+      constStars.push({ x: cx + innerR, y: cy - flare });     // 7 E-top base
+      constStars.push({ x: cx + innerR, y: cy + flare });     // 8 E-bottom base
+      constStars.push({ x: cx + flare, y: cy + innerR });     // 9 S-right base
+      constStars.push({ x: cx - flare, y: cy + innerR });     // 10 S-left base
+      constStars.push({ x: cx - innerR, y: cy + flare });     // 11 W-bottom base
+      constStars.push({ x: cx - innerR, y: cy - flare });     // 12 W-top base
+
+      // Intercardinal tips (13-16)
+      const d = diagLen * 0.707;
+      constStars.push({ x: cx + d, y: cy - d });              // 13 NE
+      constStars.push({ x: cx + d, y: cy + d });              // 14 SE
+      constStars.push({ x: cx - d, y: cy + d });              // 15 SW
+      constStars.push({ x: cx - d, y: cy - d });              // 16 NW
+
+      // Outer ring tick marks — 12 points around a circle (17-28)
+      const ringR = cardLen * 0.75;
+      for (let t = 0; t < 12; t++) {
+        const angle = (t / 12) * Math.PI * 2 - Math.PI / 2;
+        constStars.push({
+          x: cx + Math.cos(angle) * ringR,
+          y: cy + Math.sin(angle) * ringR,
+        });
+      }
 
       const startIdx = starsRef.current.length;
-      for (const cs of constStars) {
+      for (let si = 0; si < constStars.length; si++) {
+        const cs = constStars[si];
+        // Tips and center are brighter/bigger
+        const isTip = si >= 1 && si <= 4;
+        const isCenter = si === 0;
         starsRef.current.push({
-          x: cs.x + (Math.random() - 0.5) * 8,
-          y: cs.y + (Math.random() - 0.5) * 8,
-          size: Math.random() * 2 + 2,
-          brightness: Math.random() * 0.3 + 0.7,
+          x: cs.x + (Math.random() - 0.5) * 5,
+          y: cs.y + (Math.random() - 0.5) * 5,
+          size: isCenter ? 3.5 : isTip ? 3 : Math.random() * 1.5 + 1.5,
+          brightness: isCenter ? 0.9 : isTip ? 0.85 : Math.random() * 0.3 + 0.5,
           twinkleSpeed: Math.random() * 0.03 + 0.01,
           twinkleOffset: Math.random() * Math.PI * 2,
           revealDelay: 0.05 + Math.random() * 0.1,
         });
       }
 
-      // Constellation connections — tightened timing for shorter scroll
+      // Constellation connections — compass rose shape
       const c = (a: number, b: number, delay: number) => {
         constellationRef.current.push({ from: startIdx + a, to: startIdx + b, delay });
       };
-      // Center to cardinals
-      c(0, 5, 0.15); c(5, 1, 0.2);
-      c(0, 6, 0.18); c(6, 2, 0.23);
-      c(0, 7, 0.21); c(7, 3, 0.26);
-      c(0, 8, 0.24); c(8, 4, 0.29);
-      // Center to diagonals
-      c(0, 9, 0.3); c(0, 10, 0.32); c(0, 11, 0.34); c(0, 12, 0.36);
-      // Outer ring
-      c(1, 9, 0.38); c(9, 2, 0.4);
-      c(2, 10, 0.42); c(10, 3, 0.44);
-      c(3, 11, 0.46); c(11, 4, 0.48);
-      c(4, 12, 0.5); c(12, 1, 0.52);
+
+      // N spike: flank bases → tip
+      c(5, 1, 0.15); c(6, 1, 0.15);
+      // E spike
+      c(7, 2, 0.18); c(8, 2, 0.18);
+      // S spike
+      c(9, 3, 0.21); c(10, 3, 0.21);
+      // W spike
+      c(11, 4, 0.24); c(12, 4, 0.24);
+
+      // Inner body — connect flanks around center to form the compass body
+      c(6, 7, 0.28); c(8, 9, 0.30); c(10, 11, 0.32); c(12, 5, 0.34);
+
+      // Center to each flank base
+      c(0, 5, 0.12); c(0, 6, 0.12);
+      c(0, 7, 0.14); c(0, 8, 0.14);
+      c(0, 9, 0.16); c(0, 10, 0.16);
+      c(0, 11, 0.18); c(0, 12, 0.18);
+
+      // Intercardinal spikes from body corners
+      c(6, 13, 0.36); c(7, 13, 0.36);   // NE
+      c(8, 14, 0.38); c(9, 14, 0.38);   // SE
+      c(10, 15, 0.40); c(11, 15, 0.40); // SW
+      c(12, 16, 0.42); c(5, 16, 0.42);  // NW
+
+      // Outer ring connections — dotted circle
+      for (let t = 0; t < 12; t++) {
+        c(17 + t, 17 + ((t + 1) % 12), 0.44 + t * 0.008);
+      }
+      // Connect ring to nearest cardinal/intercardinal tips
+      c(17, 1, 0.50);  // ring-N → N tip
+      c(20, 2, 0.51);  // ring-E → E tip
+      c(23, 3, 0.52);  // ring-S → S tip
+      c(26, 4, 0.53);  // ring-W → W tip
     }
 
     return () => window.removeEventListener("resize", resize);
