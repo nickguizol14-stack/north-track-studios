@@ -30,7 +30,7 @@ export function ScrollTransition({
     "the-forge": "100vh",
     "neural-web": "80vh",
     "gold-pour": "100vh",
-    "star-chart": "80vh",
+    "star-chart": "45vh",
     "kintsugi": "90vh",
     "aurora": "80vh",
   };
@@ -903,26 +903,26 @@ function StarChart() {
           brightness: Math.random() * 0.3 + 0.7,
           twinkleSpeed: Math.random() * 0.03 + 0.01,
           twinkleOffset: Math.random() * Math.PI * 2,
-          revealDelay: 0.15 + Math.random() * 0.15,
+          revealDelay: 0.05 + Math.random() * 0.1,
         });
       }
 
-      // Constellation connections
+      // Constellation connections — tightened timing for shorter scroll
       const c = (a: number, b: number, delay: number) => {
         constellationRef.current.push({ from: startIdx + a, to: startIdx + b, delay });
       };
       // Center to cardinals
-      c(0, 5, 0.35); c(5, 1, 0.4);
-      c(0, 6, 0.38); c(6, 2, 0.43);
-      c(0, 7, 0.41); c(7, 3, 0.46);
-      c(0, 8, 0.44); c(8, 4, 0.49);
+      c(0, 5, 0.15); c(5, 1, 0.2);
+      c(0, 6, 0.18); c(6, 2, 0.23);
+      c(0, 7, 0.21); c(7, 3, 0.26);
+      c(0, 8, 0.24); c(8, 4, 0.29);
       // Center to diagonals
-      c(0, 9, 0.5); c(0, 10, 0.52); c(0, 11, 0.54); c(0, 12, 0.56);
+      c(0, 9, 0.3); c(0, 10, 0.32); c(0, 11, 0.34); c(0, 12, 0.36);
       // Outer ring
-      c(1, 9, 0.6); c(9, 2, 0.62);
-      c(2, 10, 0.64); c(10, 3, 0.66);
-      c(3, 11, 0.68); c(11, 4, 0.7);
-      c(4, 12, 0.72); c(12, 1, 0.74);
+      c(1, 9, 0.38); c(9, 2, 0.4);
+      c(2, 10, 0.42); c(10, 3, 0.44);
+      c(3, 11, 0.46); c(11, 4, 0.48);
+      c(4, 12, 0.5); c(12, 1, 0.52);
     }
 
     return () => window.removeEventListener("resize", resize);
@@ -946,8 +946,12 @@ function StarChart() {
 
     const p = progress;
 
-    // Deep space background
-    ctx.fillStyle = "#040406";
+    // Deep space background — gradient from section bg to darker
+    const bgGrad = ctx.createLinearGradient(0, 0, 0, h);
+    bgGrad.addColorStop(0, "#070709");
+    bgGrad.addColorStop(0.5, "#050507");
+    bgGrad.addColorStop(1, "#070709");
+    ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, w, h);
 
     const stars = starsRef.current;
@@ -1015,8 +1019,8 @@ function StarChart() {
     }
 
     // Center north star glow — appears after constellation forms
-    if (p > 0.6) {
-      const glowIntensity = easeInOut(Math.min(1, (p - 0.6) / 0.3));
+    if (p > 0.4) {
+      const glowIntensity = easeInOut(Math.min(1, (p - 0.4) / 0.3));
       const pulse = Math.sin(frame * 0.03) * 0.15 + 0.85;
       const nsR = Math.min(w, h) * 0.12;
       const nsGrad = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, nsR);

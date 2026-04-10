@@ -1,6 +1,7 @@
 "use client";
 
 import { GoldBrushText, GoldReveal, ThunderShimmer, WordReveal } from "./GoldPaint";
+import { ConstellationBackground } from "./ConstellationBackground";
 
 const steps = [
   {
@@ -37,8 +38,11 @@ const steps = [
 
 export function Process() {
   return (
-    <section id="process" className="relative py-36">
-      <div className="mx-auto max-w-7xl px-6">
+    <section id="process" className="relative py-36 overflow-hidden">
+      {/* Constellation background — continues from Star Chart transition */}
+      <ConstellationBackground />
+
+      <div className="relative z-10 mx-auto max-w-7xl px-6">
         {/* Section header */}
         <div className="mb-24">
           <GoldReveal>
