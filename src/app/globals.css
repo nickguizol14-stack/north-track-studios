@@ -170,3 +170,10 @@ body {
 
 /* For first-load (one-shot) the parent JS sets animation-iteration-count: 1.
    The brainstorm demos used infinite loops to show the moment repeatedly. */
+
+/* ─── Brief questionnaire ─── */
+@keyframes opt-drift {
+  0% { opacity: 0; transform: translateY(0); }
+  25% { opacity: 0.9; }
+  100% { opacity: 0; transform: translateY(-22px); }
+}
