@@ -128,3 +128,8 @@ body {
     transform: translateY(-32px) scale(0.4);
   }
 }
+
+/* Burst-particle activation */
+.burst-host.fire .burst-p {
+  animation: bp-rise 1.4s ease-out forwards;
+}
