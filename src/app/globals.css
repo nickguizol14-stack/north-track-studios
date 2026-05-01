@@ -133,3 +133,40 @@ body {
 .burst-host.fire .burst-p {
   animation: bp-rise 1.4s ease-out forwards;
 }
+
+/* ─── Intro stage animations ─── */
+@keyframes a-typewipe {
+  0% { clip-path: inset(0 100% 0 0); }
+  25%, 100% { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes a-rule-grow {
+  0%, 28% { width: 0; opacity: 0; }
+  36% { width: 0; opacity: 1; }
+  44%, 100% { width: 100%; opacity: 1; }
+}
+
+@keyframes rule-bloom {
+  0%, 38% { opacity: 0; }
+  46% { opacity: 1; }
+  62%, 100% { opacity: 0.6; }
+}
+
+@keyframes stage-bloom {
+  0%, 35% { opacity: 0; }
+  44% { opacity: 1; }
+  62%, 100% { opacity: 0.5; }
+}
+
+@keyframes esp-fade-in {
+  0%, 52% { opacity: 0; transform: translateY(6px); }
+  66%, 100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scroll-cue-stem-pulse {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(1.4); }
+}
+
+/* For first-load (one-shot) the parent JS sets animation-iteration-count: 1.
+   The brainstorm demos used infinite loops to show the moment repeatedly. */
