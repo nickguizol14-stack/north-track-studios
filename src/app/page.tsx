@@ -1,35 +1,44 @@
-import { Navigation } from "@/components/Navigation";
-import { Hero } from "@/components/Hero";
-import { Services } from "@/components/Services";
-import { Work } from "@/components/Work";
-import { About } from "@/components/About";
-import { Process } from "@/components/Process";
-import { Survey } from "@/components/Survey";
-import { Contact } from "@/components/Contact";
-import { Footer } from "@/components/Footer";
-import { PageWithIntro } from "@/components/PageWithIntro";
-import { ColorSchemeSwitcher } from "@/components/ColorSchemeSwitcher";
-import { StyleSwitcher } from "@/components/StyleSwitcher";
-import { ScrollTransition } from "@/components/ScrollTransitions";
+"use client";
+import { useState } from "react";
+import { ScrollProgress } from "@/components/nav/ScrollProgress";
+import { NavShell } from "@/components/nav/NavShell";
+import { IntroStage } from "@/components/intro/IntroStage";
+import { PracticeChapter } from "@/components/chapters/PracticeChapter";
+import { CapabilitiesChapter } from "@/components/chapters/capabilities/CapabilitiesChapter";
+import { WorkChapter } from "@/components/chapters/work/WorkChapter";
+import { ProcessChapter } from "@/components/chapters/process/ProcessChapter";
+import { BriefTeaser } from "@/components/chapters/BriefTeaser";
+import { ContactClosing } from "@/components/closing/ContactClosing";
+import { FooterMini } from "@/components/closing/FooterMini";
+import { ChapterBreak } from "@/components/primitives";
 
 export default function Home() {
+  const [handedOff, setHandedOff] = useState(false);
+
   return (
-    <PageWithIntro>
-      <Navigation />
-      <main className="flex-1">
-        <Hero />
-        <Services />
-        <ScrollTransition variant="neural-web" />
-        <Work />
-        <About />
-        <ScrollTransition variant="star-chart" />
-        <Process />
-        <Survey embedded />
-        <Contact />
-      </main>
-      <Footer />
-      <StyleSwitcher />
-      <ColorSchemeSwitcher />
-    </PageWithIntro>
+    <>
+      <ScrollProgress />
+      <NavShell show={handedOff} />
+
+      <IntroStage onHandoffChange={setHandedOff} />
+
+      <PracticeChapter />
+      <ChapterBreak n="01" />
+
+      <CapabilitiesChapter />
+      <ChapterBreak n="02" />
+
+      <WorkChapter />
+      <ChapterBreak n="03" />
+
+      <ProcessChapter />
+      <ChapterBreak n="04" />
+
+      <BriefTeaser />
+      <ChapterBreak n="05" />
+
+      <ContactClosing />
+      <FooterMini />
+    </>
   );
 }
