@@ -1,19 +1,13 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { useReducedMotion } from "./useReducedMotion";
 
 export interface SpringOptions {
-  /** Pull strength toward target. Default 0.16. */
   stiffness?: number;
-  /** Velocity decay per tick. Default 0.76. */
   damping?: number;
-  /** Below this magnitude of motion, snap to target and stop. Default 0.05. */
   restThreshold?: number;
 }
 
-/**
- * Spring-driven reactive value. Reads `getTarget` each rAF and lerps toward it
- * with velocity. Returns the displayed value as React state (re-renders on change).
- */
 export function useSpringValue(
   getTarget: () => number,
   { stiffness = 0.16, damping = 0.76, restThreshold = 0.05 }: SpringOptions = {},
@@ -22,14 +16,29 @@ export function useSpringValue(
   const valueRef = useRef(0);
   const velocityRef = useRef(0);
   const rafRef = useRef<number>(0);
+  const reduced = useReducedMotion();
 
   useEffect(() => {
+    if (reduced) {
+      function snap() {
+        const t = getTarget();
+        valueRef.current = t;
+        setDisplayed(t);
+      }
+      snap();
+      window.addEventListener("scroll", snap, { passive: true });
+      window.addEventListener("resize", snap);
+      return () => {
+        window.removeEventListener("scroll", snap);
+        window.removeEventListener("resize", snap);
+      };
+    }
+
     function tick() {
       const target = getTarget();
       const force = (target - valueRef.current) * stiffness;
       velocityRef.current = velocityRef.current * damping + force;
       valueRef.current += velocityRef.current;
-      // Update React state only when change is meaningful
       if (Math.abs(valueRef.current - displayed) > restThreshold) {
         setDisplayed(valueRef.current);
       }
@@ -38,7 +47,7 @@ export function useSpringValue(
     rafRef.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafRef.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getTarget, stiffness, damping, restThreshold]);
+  }, [getTarget, stiffness, damping, restThreshold, reduced]);
 
   return displayed;
 }
