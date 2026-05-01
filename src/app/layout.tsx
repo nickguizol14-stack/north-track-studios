@@ -1,46 +1,42 @@
+// src/app/layout.tsx
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Fraunces, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
   subsets: ["latin"],
+  weight: ["200", "300", "400", "500"],
+  variable: "--font-sans",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const fraunces = Fraunces({
   subsets: ["latin"],
+  weight: ["300", "400", "500"],
+  style: ["normal", "italic"],
+  variable: "--font-serif",
+  display: "swap",
+});
+
+const jetbrains = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["300", "400", "500"],
+  variable: "--font-mono",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "North Track Studios — Engineering the Future",
+  title: "NorthTrack Studios — A studio for applied intelligence",
   description:
-    "North Track Studios is a cutting-edge technology studio specializing in software engineering, AI systems, and digital infrastructure. We build what others blueprint.",
-  keywords: [
-    "software engineering",
-    "AI",
-    "technology studio",
-    "digital infrastructure",
-    "North Track Studios",
-  ],
-  openGraph: {
-    title: "North Track Studios",
-    description: "Engineering the Future",
-    type: "website",
-  },
+    "A small studio working at the intersection of applied AI and the surfaces that carry it.",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="en" className={`${inter.variable} ${fraunces.variable} ${jetbrains.variable}`}>
+      <body>{children}</body>
     </html>
   );
 }
